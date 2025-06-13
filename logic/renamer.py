@@ -18,7 +18,8 @@ class Renamer:
         counter = 1
         for item in self.items:
             orig_path = item.original_path
-            ordered_tags = list(item.tags)
+            # sort tags to ensure deterministic naming order
+            ordered_tags = sorted(item.tags)
             new_basename = item.build_new_name(self.project, counter, date_str, ordered_tags)
             dirpath = os.path.dirname(orig_path)
             candidate = os.path.join(dirpath, new_basename)
