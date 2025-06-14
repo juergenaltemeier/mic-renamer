@@ -225,57 +225,15 @@ class RenamerApp(QWidget):
         super().__init__()
         self.setWindowTitle(tr("app_title"))
 
-        splitter = QSplitter(Qt.Horizontal, self)
         main_layout = QVBoxLayout(self)
 
         self.toolbar = QToolBar()
         self.setup_toolbar()
         main_layout.addWidget(self.toolbar)
-        main_layout.addWidget(splitter)
 
-        # Linkes Panel
-        left_widget = QWidget()
-        left_layout = QVBoxLayout(left_widget)
-
-        toolbar = QHBoxLayout()
-        btn_fit = QPushButton("Fit")
-        btn_fit.clicked.connect(lambda: self.image_viewer.zoom_fit())
-        toolbar.addWidget(btn_fit)
-        btn_prev = QPushButton("←")
-        btn_prev.clicked.connect(self.goto_previous_item)
-        toolbar.addWidget(btn_prev)
-        btn_next = QPushButton("→")
-        btn_next.clicked.connect(self.goto_next_item)
-        toolbar.addWidget(btn_next)
-        btn_rot_left = QPushButton("⟲")
-        btn_rot_left.clicked.connect(lambda: self.image_viewer.rotate_left())
-        toolbar.addWidget(btn_rot_left)
-        btn_rot_right = QPushButton("⟳")
-        btn_rot_right.clicked.connect(lambda: self.image_viewer.rotate_right())
-        toolbar.addWidget(btn_rot_right)
-        left_layout.addLayout(toolbar)
-
-        self.image_viewer = ImageViewer()
-        left_layout.addWidget(self.image_viewer, 5)
-
-        self.zoom_slider = QSlider(Qt.Horizontal)
-        self.zoom_slider.setMinimum(10)
-        self.zoom_slider.setMaximum(500)
-        self.zoom_slider.setValue(100)
-        self.zoom_slider.setTickInterval(10)
-        self.zoom_slider.setTickPosition(QSlider.TicksBelow)
-        self.zoom_slider.valueChanged.connect(self.on_zoom_slider_changed)
-        left_layout.addWidget(self.zoom_slider)
-
-        self.table_widget = DragDropTableWidget()
-        left_layout.addWidget(self.table_widget, 5)
-
-        splitter.addWidget(left_widget)
-
-        # Rechtes Panel
-        right_widget = QWidget()
-        controls_layout = QVBoxLayout(right_widget)
-
+        # container for project/suffix controls and selected file label
+        controls_widget = QWidget()
+        controls_layout = QVBoxLayout(controls_widget)
         lbl_project = QLabel(tr("project_number_label"))
         self.input_project = QLineEdit()
         self.input_project.setPlaceholderText(tr("project_number_placeholder"))
@@ -298,10 +256,56 @@ class RenamerApp(QWidget):
         self.input_item_suffix.editingFinished.connect(self.save_current_item_settings)
         controls_layout.addSpacing(10)
 
-        lbl_tags = QLabel(tr("select_tags_label"))
-        controls_layout.addWidget(lbl_tags)
+        main_layout.addWidget(controls_widget)
+
+        grid = QGridLayout()
+        main_layout.addLayout(grid)
+
+        viewer_widget = QWidget()
+        viewer_layout = QVBoxLayout(viewer_widget)
+
+        viewer_toolbar = QHBoxLayout()
+        btn_fit = QPushButton("Fit")
+        btn_fit.clicked.connect(lambda: self.image_viewer.zoom_fit())
+        viewer_toolbar.addWidget(btn_fit)
+        btn_prev = QPushButton("←")
+        btn_prev.clicked.connect(self.goto_previous_item)
+        viewer_toolbar.addWidget(btn_prev)
+        btn_next = QPushButton("→")
+        btn_next.clicked.connect(self.goto_next_item)
+        viewer_toolbar.addWidget(btn_next)
+        btn_rot_left = QPushButton("⟲")
+        btn_rot_left.clicked.connect(lambda: self.image_viewer.rotate_left())
+        viewer_toolbar.addWidget(btn_rot_left)
+        btn_rot_right = QPushButton("⟳")
+        btn_rot_right.clicked.connect(lambda: self.image_viewer.rotate_right())
+        viewer_toolbar.addWidget(btn_rot_right)
+        viewer_layout.addLayout(viewer_toolbar)
+
+        self.image_viewer = ImageViewer()
+        viewer_layout.addWidget(self.image_viewer, 5)
+
+        self.zoom_slider = QSlider(Qt.Horizontal)
+        self.zoom_slider.setMinimum(10)
+        self.zoom_slider.setMaximum(500)
+        self.zoom_slider.setValue(100)
+        self.zoom_slider.setTickInterval(10)
+        self.zoom_slider.setTickPosition(QSlider.TicksBelow)
+        self.zoom_slider.valueChanged.connect(self.on_zoom_slider_changed)
+        viewer_layout.addWidget(self.zoom_slider)
+
+        self.table_widget = DragDropTableWidget()
+
+        grid.addWidget(viewer_widget, 0, 0)
+        grid.addWidget(self.table_widget, 0, 1)
+
+        # Tag container spanning both columns
         tag_container = QWidget()
-        tag_layout = QGridLayout(tag_container)
+        tag_main_layout = QVBoxLayout(tag_container)
+        lbl_tags = QLabel(tr("select_tags_label"))
+        tag_main_layout.addWidget(lbl_tags)
+        checkbox_container = QWidget()
+        tag_layout = QGridLayout(checkbox_container)
         tag_layout.setContentsMargins(0, 0, 0, 0)
         columns = 4
         row = col = 0
@@ -317,24 +321,13 @@ class RenamerApp(QWidget):
             if col >= columns:
                 col = 0
                 row += 1
-        controls_layout.addWidget(tag_container)
-        controls_layout.addSpacing(10)
+        tag_main_layout.addWidget(checkbox_container)
 
-        # buttons moved to toolbar
-
-        controls_layout.addStretch()
-        splitter.addWidget(right_widget)
+        grid.addWidget(tag_container, 1, 0, 1, 2)
 
         # Initial deaktivieren
         self.set_item_controls_enabled(False)
         self.table_widget.currentCellChanged.connect(self.on_table_selection_changed)
-
-        # Splitter: initial 60/40 und sichtbarer Handle
-        splitter.setHandleWidth(8)
-        splitter.setStretchFactor(0, 0)
-        splitter.setStretchFactor(1, 1)
-        # Set initial sizes (ggf. anpassen)
-        splitter.setSizes([600, 400])
 
         self.update_translations()
 
