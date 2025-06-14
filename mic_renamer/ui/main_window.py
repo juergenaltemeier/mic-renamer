@@ -596,7 +596,13 @@ class RenamerApp(QWidget):
 
     def execute_rename_with_progress(self, table_mapping):
         total = len(table_mapping)
-        progress = QProgressDialog("Renaming files...", "Abort", 0, total, self)
+        progress = QProgressDialog(
+            tr("renaming_files"),
+            tr("abort"),
+            0,
+            total,
+            self,
+        )
         progress.setWindowModality(Qt.WindowModal)
         progress.setMinimumDuration(200)
         progress.setValue(0)

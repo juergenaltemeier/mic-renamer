@@ -29,6 +29,10 @@ TRANSLATIONS = {
         'accepted_ext_label': 'Accepted File Extensions (comma separated):',
         'language_label': 'Language:',
         'tags_label': 'Tags'
+        , 'current_name': 'Current Name'
+        , 'proposed_new_name': 'Proposed New Name'
+        , 'renaming_files': 'Renaming files...'
+        , 'abort': 'Abort'
     },
     'de': {
         'app_title': 'Foto/Video Umbenenner',
@@ -58,6 +62,10 @@ TRANSLATIONS = {
         'accepted_ext_label': 'Erlaubte Dateiendungen (durch Komma getrennt):',
         'language_label': 'Sprache:',
         'tags_label': 'Tags'
+        , 'current_name': 'Aktueller Name'
+        , 'proposed_new_name': 'Vorgeschlagener neuer Name'
+        , 'renaming_files': 'Dateien werden umbenannt...'
+        , 'abort': 'Abbrechen'
     }
 }
 

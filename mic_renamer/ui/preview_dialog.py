@@ -8,7 +8,10 @@ def show_preview(parent, mapping: list[tuple]):
     dlg.setWindowTitle(tr("preview_rename"))
     layout = QVBoxLayout(dlg)
     table = QTableWidget(len(mapping), 2)
-    table.setHorizontalHeaderLabels(["Current Name", "Proposed New Name"])
+    table.setHorizontalHeaderLabels([
+        tr("current_name"),
+        tr("proposed_new_name")
+    ])
     table.verticalHeader().setVisible(False)
     table.setEditTriggers(QTableWidget.NoEditTriggers)
     table.setSelectionMode(QTableWidget.NoSelection)
