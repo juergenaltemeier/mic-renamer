@@ -4,7 +4,7 @@ A desktop application to rename photos and videos using project numbers, tags an
 
 ## Setup
 
-1. Install Python 3.8+.
+1. Install Python 3.10 or newer.
 2. Create and activate a virtual environment:
    ```bash
    python -m venv venv
