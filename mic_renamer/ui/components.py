@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QListWidget, QListWidgetItem
 from PySide6.QtCore import Qt
 import os
 
-from logic.settings import ItemSettings
+from ..logic.settings import ItemSettings
 
 class DragDropListWidget(QListWidget):
     def __init__(self):

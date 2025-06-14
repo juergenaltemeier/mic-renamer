@@ -4,23 +4,30 @@ import os
 from datetime import datetime
 from PySide6.QtWidgets import QMessageBox
 
-from logic.settings import ItemSettings
-from utils.file_utils import ensure_unique_name
+from .settings import ItemSettings, RenameConfig
+from ..utils.file_utils import ensure_unique_name
 
 class Renamer:
-    def __init__(self, project: str, items: list[ItemSettings]):
+    def __init__(self, project: str, items: list[ItemSettings], config: RenameConfig | None = None):
         self.project = project
         self.items = items
+        self.config = config or RenameConfig()
 
     def build_mapping(self) -> list[tuple[ItemSettings, str, str]]:
-        date_str = datetime.now().strftime("%y%m%d")
+        date_str = datetime.now().strftime(self.config.date_format)
         mapping = []
-        counter = 1
+        counter = self.config.start_index
         for item in self.items:
             orig_path = item.original_path
             # sort tags to ensure deterministic naming order
             ordered_tags = sorted(item.tags)
-            new_basename = item.build_new_name(self.project, counter, date_str, ordered_tags)
+            new_basename = item.build_new_name(
+                self.project,
+                counter,
+                date_str,
+                ordered_tags,
+                self.config,
+            )
             dirpath = os.path.dirname(orig_path)
             candidate = os.path.join(dirpath, new_basename)
             unique = ensure_unique_name(candidate, orig_path)
