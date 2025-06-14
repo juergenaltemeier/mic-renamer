@@ -1,14 +1,19 @@
 import os
 from PySide6.QtWidgets import (
     QWidget, QSplitter, QHBoxLayout, QVBoxLayout, QGridLayout,
-    QPushButton, QSlider, QFileDialog, QMessageBox,
+    QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
     QGraphicsView, QGraphicsScene, QStyle,
     QApplication, QLabel, QLineEdit,
     QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView,
     QProgressDialog, QDialog, QDialogButtonBox, QAbstractItemView
 )
-from PySide6.QtGui import QPixmap, QPainter, QColor
+from PySide6.QtGui import QPixmap, QPainter, QColor, QAction
 from PySide6.QtCore import Qt
+
+from .. import config, save_config
+from ..config.app_config import load_config
+from ..utils.i18n import tr, set_language
+from .settings_dialog import SettingsDialog
 from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
 from ..logic.tag_loader import load_tags
@@ -218,10 +223,14 @@ class DragDropTableWidget(QTableWidget):
 class RenamerApp(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Photo/Video Renamer")
+        self.setWindowTitle(tr("app_title"))
 
         splitter = QSplitter(Qt.Horizontal, self)
-        main_layout = QHBoxLayout(self)
+        main_layout = QVBoxLayout(self)
+
+        self.toolbar = QToolBar()
+        self.setup_toolbar()
+        main_layout.addWidget(self.toolbar)
         main_layout.addWidget(splitter)
 
         # Linkes Panel
@@ -267,29 +276,29 @@ class RenamerApp(QWidget):
         right_widget = QWidget()
         controls_layout = QVBoxLayout(right_widget)
 
-        lbl_project = QLabel("Project Number:")
+        lbl_project = QLabel(tr("project_number_label"))
         self.input_project = QLineEdit()
-        self.input_project.setPlaceholderText("z.B. C230105")
+        self.input_project.setPlaceholderText(tr("project_number_placeholder"))
         controls_layout.addWidget(lbl_project)
         controls_layout.addWidget(self.input_project)
         controls_layout.addSpacing(10)
 
-        lbl_selected = QLabel("Selected File:")
+        lbl_selected = QLabel(tr("selected_file_label"))
         self.label_selected_file = QLabel("<none>")
         self.label_selected_file.setWordWrap(True)
         controls_layout.addWidget(lbl_selected)
         controls_layout.addWidget(self.label_selected_file)
         controls_layout.addSpacing(5)
 
-        lbl_suffix = QLabel("Custom Suffix for this file:")
+        lbl_suffix = QLabel(tr("custom_suffix_label"))
         self.input_item_suffix = QLineEdit()
-        self.input_item_suffix.setPlaceholderText("z.B. DSC00138")
+        self.input_item_suffix.setPlaceholderText(tr("custom_suffix_placeholder"))
         controls_layout.addWidget(lbl_suffix)
         controls_layout.addWidget(self.input_item_suffix)
         self.input_item_suffix.editingFinished.connect(self.save_current_item_settings)
         controls_layout.addSpacing(10)
 
-        lbl_tags = QLabel("Select Tags for this file:")
+        lbl_tags = QLabel(tr("select_tags_label"))
         controls_layout.addWidget(lbl_tags)
         tag_container = QWidget()
         tag_layout = QGridLayout(tag_container)
@@ -311,31 +320,7 @@ class RenamerApp(QWidget):
         controls_layout.addWidget(tag_container)
         controls_layout.addSpacing(10)
 
-        btn_add = QPushButton("Add Files...")
-        btn_add.clicked.connect(self.add_files_dialog)
-        controls_layout.addWidget(btn_add)
-        btn_add_folder = QPushButton("Add Folder...")
-        icon_folder = QApplication.style().standardIcon(QStyle.SP_DirOpenIcon)
-        btn_add_folder.setIcon(icon_folder)
-        btn_add_folder.clicked.connect(self.add_folder_dialog)
-        controls_layout.addWidget(btn_add_folder)
-        controls_layout.addSpacing(10)
-
-        hbtn = QHBoxLayout()
-        style = QApplication.style()
-        btn_preview = QPushButton("Preview Rename")
-        btn_preview.setIcon(style.standardIcon(QStyle.SP_FileDialogDetailedView))
-        btn_preview.clicked.connect(self.preview_rename)
-        hbtn.addWidget(btn_preview)
-        btn_direct = QPushButton("Rename All")
-        btn_direct.setIcon(style.standardIcon(QStyle.SP_DialogApplyButton))
-        btn_direct.clicked.connect(self.direct_rename)
-        hbtn.addWidget(btn_direct)
-        controls_layout.addLayout(hbtn)
-
-        btn_clear = QPushButton("Clear List")
-        btn_clear.clicked.connect(self.clear_all)
-        controls_layout.addWidget(btn_clear)
+        # buttons moved to toolbar
 
         controls_layout.addStretch()
         splitter.addWidget(right_widget)
@@ -351,15 +336,76 @@ class RenamerApp(QWidget):
         # Set initial sizes (ggf. anpassen)
         splitter.setSizes([600, 400])
 
+        self.update_translations()
+
+    def setup_toolbar(self):
+        style = QApplication.style()
+        tb = self.toolbar
+
+        act_add_files = QAction(style.standardIcon(QStyle.SP_FileIcon), tr("add_files"), self)
+        act_add_files.setToolTip(tr("add_files"))
+        act_add_files.triggered.connect(self.add_files_dialog)
+        tb.addAction(act_add_files)
+
+        act_add_folder = QAction(style.standardIcon(QStyle.SP_DirOpenIcon), tr("add_folder"), self)
+        act_add_folder.setToolTip(tr("add_folder"))
+        act_add_folder.triggered.connect(self.add_folder_dialog)
+        tb.addAction(act_add_folder)
+
+        act_preview = QAction(style.standardIcon(QStyle.SP_FileDialogDetailedView), tr("preview_rename"), self)
+        act_preview.setToolTip(tr("preview_rename"))
+        act_preview.triggered.connect(self.preview_rename)
+        tb.addAction(act_preview)
+
+        act_rename = QAction(style.standardIcon(QStyle.SP_DialogApplyButton), tr("rename_all"), self)
+        act_rename.setToolTip(tr("rename_all"))
+        act_rename.triggered.connect(self.direct_rename)
+        tb.addAction(act_rename)
+
+        act_clear = QAction(style.standardIcon(QStyle.SP_DialogResetButton), tr("clear_list"), self)
+        act_clear.setToolTip(tr("clear_list"))
+        act_clear.triggered.connect(self.clear_all)
+        tb.addAction(act_clear)
+
+        act_settings = QAction(style.standardIcon(QStyle.SP_FileDialogInfoView), tr("settings_title"), self)
+        act_settings.setToolTip(tr("settings_title"))
+        act_settings.triggered.connect(self.open_settings)
+        tb.addAction(act_settings)
+
+    def open_settings(self):
+        dlg = SettingsDialog(self)
+        if dlg.exec() == QDialog.Accepted:
+            cfg = load_config()
+            set_language(cfg.get("language", "en"))
+            self.update_translations()
+            self.tags_info = load_tags()
+            # rebuild tag checkboxes maybe later
+
+    def update_translations(self):
+        self.setWindowTitle(tr("app_title"))
+        actions = self.toolbar.actions()
+        labels = [
+            "add_files", "add_folder", "preview_rename",
+            "rename_all", "clear_list", "settings_title"
+        ]
+        for action, key in zip(actions, labels):
+            action.setText(tr(key))
+            action.setToolTip(tr(key))
+        # update form labels
+        self.input_project.setPlaceholderText(tr("project_number_placeholder"))
+        self.input_item_suffix.setPlaceholderText(tr("custom_suffix_placeholder"))
+
     def add_files_dialog(self):
+        exts = " ".join(f"*{e}" for e in ItemSettings.ACCEPT_EXTENSIONS)
+        filter_str = f"Images and Videos ({exts})"
         files, _ = QFileDialog.getOpenFileNames(
-            self, "Select Files", "",
-            "Images and Videos (*.jpg *.jpeg *.png *.gif *.bmp *.mp4 *.avi *.mov *.mkv)"
+            self, tr("add_files"), "",
+            filter_str
         )
         self.table_widget.add_paths(files)
 
     def add_folder_dialog(self):
-        folder = QFileDialog.getExistingDirectory(self, "Select Folder")
+        folder = QFileDialog.getExistingDirectory(self, tr("add_folder"))
         if folder:
             entries = os.listdir(folder)
             paths = [
@@ -472,11 +518,11 @@ class RenamerApp(QWidget):
     def build_rename_mapping(self):
         project = self.input_project.text().strip()
         if not project:
-            QMessageBox.warning(self, "Missing Project Number", "Bitte Projekt-Nummer eingeben.")
+            QMessageBox.warning(self, tr("missing_project"), tr("missing_project_msg"))
             return None
         n = self.table_widget.rowCount()
         if n == 0:
-            QMessageBox.information(self, "No Files", "Keine Dateien in der Liste zum Umbenennen.")
+            QMessageBox.information(self, tr("no_files"), tr("no_files_msg"))
             return None
         self.save_current_item_settings()
         items = []
@@ -506,7 +552,7 @@ class RenamerApp(QWidget):
                     table_mapping.append((row, orig, new_name, new))
                     break
         dlg = QDialog(self)
-        dlg.setWindowTitle("Preview Rename")
+        dlg.setWindowTitle(tr("preview_rename"))
         dlg_layout = QVBoxLayout(dlg)
         tbl = QTableWidget(len(table_mapping), 2, dlg)
         tbl.setHorizontalHeaderLabels(["Current Name", "Proposed New Name"])
@@ -533,8 +579,8 @@ class RenamerApp(QWidget):
         if mapping is None:
             return
         reply = QMessageBox.question(
-            self, "Confirm Rename",
-            "Willst du direkt umbenennen ohne Vorschau?",
+            self, tr("confirm_rename"),
+            tr("confirm_rename_msg"),
             QMessageBox.Yes | QMessageBox.No
         )
         if reply == QMessageBox.Yes:
@@ -569,13 +615,17 @@ class RenamerApp(QWidget):
             except Exception as e:
                 QMessageBox.warning(
                     self,
-                    "Rename Failed",
+                    tr("rename_failed"),
                     f"Fehler beim Umbenennen:\\n{orig}\\n→ {new_path}\\nError: {e}"
                 )
             done += 1
             progress.setValue(done)
         progress.close()
         if progress.wasCanceled():
-            QMessageBox.information(self, "Partial Rename", f"Abgebrochen: {done} von {total} Dateien umbenannt.")
+            QMessageBox.information(
+                self,
+                tr("partial_rename"),
+                tr("partial_rename_msg").format(done=done, total=total)
+            )
         else:
-            QMessageBox.information(self, "Done", "Alle Dateien wurden umbenannt.")
+            QMessageBox.information(self, tr("done"), tr("rename_done"))

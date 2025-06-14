@@ -1,10 +1,11 @@
 from PySide6.QtWidgets import QDialog, QTableWidget, QTableWidgetItem, QVBoxLayout, QDialogButtonBox
 from PySide6.QtCore import Qt
 import os
+from ..utils.i18n import tr
 
 def show_preview(parent, mapping: list[tuple]):
     dlg = QDialog(parent)
-    dlg.setWindowTitle("Preview Rename")
+    dlg.setWindowTitle(tr("preview_rename"))
     layout = QVBoxLayout(dlg)
     table = QTableWidget(len(mapping), 2)
     table.setHorizontalHeaderLabels(["Current Name", "Proposed New Name"])
@@ -24,3 +25,4 @@ def show_preview(parent, mapping: list[tuple]):
     btns.accepted.connect(dlg.accept)
     btns.rejected.connect(dlg.reject)
     return dlg.exec() == QDialog.Accepted
+
