@@ -300,24 +300,14 @@ class RenamerApp(QWidget):
 
         lbl_tags = QLabel(tr("select_tags_label"))
         controls_layout.addWidget(lbl_tags)
-        tag_container = QWidget()
-        tag_layout = QGridLayout(tag_container)
-        tag_layout.setContentsMargins(0, 0, 0, 0)
-        columns = 4
-        row = col = 0
+        self.tag_container = QWidget()
+        self.tag_layout = QGridLayout(self.tag_container)
+        self.tag_layout.setContentsMargins(0, 0, 0, 0)
+        self.tags_columns = 4
         self.tags_info = load_tags()
         self.checkbox_map = {}
-        for code, desc in self.tags_info.items():
-            cb = QCheckBox(f"{code}: {desc}")
-            cb.setProperty("code", code)
-            cb.stateChanged.connect(self.save_current_item_settings)
-            tag_layout.addWidget(cb, row, col)
-            self.checkbox_map[code] = cb
-            col += 1
-            if col >= columns:
-                col = 0
-                row += 1
-        controls_layout.addWidget(tag_container)
+        self.build_tag_checkboxes()
+        controls_layout.addWidget(self.tag_container)
         controls_layout.addSpacing(10)
 
         # buttons moved to toolbar
@@ -378,8 +368,50 @@ class RenamerApp(QWidget):
             cfg = load_config()
             set_language(cfg.get("language", "en"))
             self.update_translations()
+            # remember current selection
+            row = self.table_widget.currentRow()
+            current_tags = set()
+            if row >= 0:
+                item0 = self.table_widget.item(row, 0)
+                if item0:
+                    settings: ItemSettings = item0.data(ROLE_SETTINGS)
+                    if settings:
+                        current_tags = set(settings.tags)
+
             self.tags_info = load_tags()
-            # rebuild tag checkboxes maybe later
+            self.build_tag_checkboxes(current_tags)
+
+            # re-apply selection values for the current row
+            if row >= 0:
+                self.on_table_selection_changed(row, 0)
+
+    def build_tag_checkboxes(self, selected_tags: set[str] | None = None):
+        """Recreate the tag checkbox grid."""
+        if selected_tags is None:
+            selected_tags = set()
+
+        # remove existing checkboxes
+        while self.tag_layout.count():
+            item = self.tag_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.setParent(None)
+
+        self.checkbox_map = {}
+        row = col = 0
+        for code, desc in self.tags_info.items():
+            cb = QCheckBox(f"{code}: {desc}")
+            cb.setProperty("code", code)
+            cb.stateChanged.connect(self.save_current_item_settings)
+            cb.blockSignals(True)
+            cb.setChecked(code in selected_tags)
+            cb.blockSignals(False)
+            self.tag_layout.addWidget(cb, row, col)
+            self.checkbox_map[code] = cb
+            col += 1
+            if col >= self.tags_columns:
+                col = 0
+                row += 1
 
     def update_translations(self):
         self.setWindowTitle(tr("app_title"))
