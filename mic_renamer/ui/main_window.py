@@ -629,3 +629,4 @@ class RenamerApp(QWidget):
             )
         else:
             QMessageBox.information(self, tr("done"), tr("rename_done"))
+
