@@ -3,13 +3,15 @@ import os
 
 PACKAGE_ROOT = os.path.dirname(os.path.dirname(__file__))
 CONFIG_FILE = os.path.join(PACKAGE_ROOT, "config", "app_settings.json")
+DEFAULT_TAGS_FILE = os.path.join(PACKAGE_ROOT, "config", "tags.json")
 
 DEFAULT_CONFIG = {
     "accepted_extensions": [
         ".jpg", ".jpeg", ".png", ".gif", ".bmp",
         ".mp4", ".avi", ".mov", ".mkv"
     ],
-    "language": "en"
+    "language": "en",
+    "tags_file": DEFAULT_TAGS_FILE,
 }
 
 _config = None

@@ -4,9 +4,12 @@ from PySide6.QtWidgets import (
     QPushButton
 )
 from PySide6.QtCore import Qt
+import os
 
 from ..config.app_config import load_config, save_config
-from ..logic.tag_loader import load_tags
+from ..logic.tag_loader import (
+    load_tags, DEFAULT_TAGS_FILE, ENV_TAGS_FILE
+)
 from ..utils.i18n import tr
 
 
@@ -15,6 +18,9 @@ class SettingsDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle(tr("settings_title"))
         self.cfg = load_config().copy()
+        self.tags_file = os.environ.get(
+            ENV_TAGS_FILE, self.cfg.get("tags_file") or DEFAULT_TAGS_FILE
+        )
         layout = QVBoxLayout(self)
 
         # accepted extensions
@@ -36,7 +42,7 @@ class SettingsDialog(QDialog):
 
         # tags editor (simple table)
         layout.addWidget(QLabel(tr("tags_label")))
-        tags = load_tags()
+        tags = load_tags(self.tags_file)
         self.tbl_tags = QTableWidget(len(tags), 2)
         self.tbl_tags.setHorizontalHeaderLabels(["Code", "Description"])
         for row, (code, desc) in enumerate(tags.items()):
@@ -67,6 +73,7 @@ class SettingsDialog(QDialog):
         self.cfg['accepted_extensions'] = exts
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
+        self.cfg['tags_file'] = self.tags_file
         save_config(self.cfg)
         # save tags
         tags = {}
@@ -79,8 +86,7 @@ class SettingsDialog(QDialog):
                 if code:
                     tags[code] = desc
         # store tags file
-        from ..logic.tag_loader import DEFAULT_TAGS_FILE
-        with open(DEFAULT_TAGS_FILE, 'w', encoding='utf-8') as f:
+        with open(self.tags_file, 'w', encoding='utf-8') as f:
             import json
             json.dump(tags, f, indent=2)
         super().accept()
