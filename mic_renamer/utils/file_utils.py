@@ -10,3 +10,4 @@ def ensure_unique_name(candidate: str, original_path: str) -> str:
         new_path = f"{base}_{counter:03d}{ext}"
         counter += 1
     return new_path
+

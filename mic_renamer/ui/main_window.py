@@ -9,9 +9,9 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QPixmap, QPainter, QColor
 from PySide6.QtCore import Qt
-from logic.settings import ItemSettings
-from logic.renamer import Renamer
-from logic.tag_loader import load_tags
+from ..logic.settings import ItemSettings
+from ..logic.renamer import Renamer
+from ..logic.tag_loader import load_tags
 
 ROLE_SETTINGS = Qt.UserRole + 1
 
