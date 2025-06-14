@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (
     QPushButton
 )
 from PySide6.QtCore import Qt
+import os
 
 from ..config.app_config import load_config, save_config
 from ..logic.tag_loader import load_tags
@@ -26,7 +27,18 @@ class SettingsDialog(QDialog):
         hl = QHBoxLayout()
         hl.addWidget(QLabel(tr("language_label")))
         self.combo_lang = QComboBox()
-        self.combo_lang.addItems(["en", "de"])
+        translations_dir = self.cfg.get("translations_dir")
+        langs = []
+        if translations_dir and os.path.isdir(translations_dir):
+            langs = [
+                os.path.splitext(f)[0]
+                for f in os.listdir(translations_dir)
+                if f.endswith(".json")
+            ]
+            langs.sort()
+        if not langs:
+            langs = ["en"]
+        self.combo_lang.addItems(langs)
         current_lang = self.cfg.get("language", "en")
         index = self.combo_lang.findText(current_lang)
         if index >= 0:

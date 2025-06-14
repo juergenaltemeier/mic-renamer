@@ -1,72 +1,49 @@
+import json
+import os
+
 current_language = 'en'
 
-TRANSLATIONS = {
-    'en': {
-        'app_title': 'Photo/Video Renamer',
-        'project_number_label': 'Project Number:',
-        'project_number_placeholder': 'e.g. C230105',
-        'selected_file_label': 'Selected File:',
-        'custom_suffix_label': 'Custom Suffix for this file:',
-        'custom_suffix_placeholder': 'e.g. DSC00138',
-        'select_tags_label': 'Select Tags for this file:',
-        'add_files': 'Add Files...',
-        'add_folder': 'Add Folder...',
-        'preview_rename': 'Preview Rename',
-        'rename_all': 'Rename All',
-        'clear_list': 'Clear List',
-        'missing_project': 'Missing Project Number',
-        'missing_project_msg': 'Please enter project number.',
-        'no_files': 'No Files',
-        'no_files_msg': 'No files to rename.',
-        'confirm_rename': 'Confirm Rename',
-        'confirm_rename_msg': 'Rename without preview?',
-        'rename_failed': 'Rename Failed',
-        'partial_rename': 'Partial Rename',
-        'partial_rename_msg': 'Canceled: {done} of {total} files renamed.',
-        'done': 'Done',
-        'rename_done': 'All files renamed.',
-        'settings_title': 'Settings',
-        'accepted_ext_label': 'Accepted File Extensions (comma separated):',
-        'language_label': 'Language:',
-        'tags_label': 'Tags'
-    },
-    'de': {
-        'app_title': 'Foto/Video Umbenenner',
-        'project_number_label': 'Projektnummer:',
-        'project_number_placeholder': 'z.B. C230105',
-        'selected_file_label': 'Ausgewählte Datei:',
-        'custom_suffix_label': 'Individueller Suffix für diese Datei:',
-        'custom_suffix_placeholder': 'z.B. DSC00138',
-        'select_tags_label': 'Tags für diese Datei wählen:',
-        'add_files': 'Dateien hinzufügen...',
-        'add_folder': 'Ordner hinzufügen...',
-        'preview_rename': 'Umbenennen Vorschau',
-        'rename_all': 'Alle umbenennen',
-        'clear_list': 'Liste leeren',
-        'missing_project': 'Fehlende Projektnummer',
-        'missing_project_msg': 'Bitte Projektnummer eingeben.',
-        'no_files': 'Keine Dateien',
-        'no_files_msg': 'Keine Dateien zum Umbenennen.',
-        'confirm_rename': 'Umbenennen bestätigen',
-        'confirm_rename_msg': 'Ohne Vorschau umbenennen?',
-        'rename_failed': 'Fehler beim Umbenennen',
-        'partial_rename': 'Teilweises Umbenennen',
-        'partial_rename_msg': 'Abgebrochen: {done} von {total} Dateien umbenannt.',
-        'done': 'Fertig',
-        'rename_done': 'Alle Dateien wurden umbenannt.',
-        'settings_title': 'Einstellungen',
-        'accepted_ext_label': 'Erlaubte Dateiendungen (durch Komma getrennt):',
-        'language_label': 'Sprache:',
-        'tags_label': 'Tags'
-    }
-}
+_translations_cache: dict[str, dict[str, str]] = {}
+_translations_dir: str | None = None
+
+
+def _get_translations_dir() -> str:
+    """Return directory where translation files are stored."""
+    global _translations_dir
+    if _translations_dir is None:
+        default_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "translations")
+        try:
+            from ..config.app_config import load_config
+            cfg = load_config()
+            _translations_dir = cfg.get("translations_dir", default_dir)
+        except Exception:
+            _translations_dir = default_dir
+    return _translations_dir
+
+
+def _load_language(lang: str) -> dict[str, str]:
+    if lang in _translations_cache:
+        return _translations_cache[lang]
+    dir_path = _get_translations_dir()
+    path = os.path.join(dir_path, f"{lang}.json")
+    data = {}
+    if os.path.isfile(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            data = {}
+    _translations_cache[lang] = data
+    return data
+
 
 def set_language(lang: str):
+    """Set current language and load translations lazily."""
     global current_language
-    if lang in TRANSLATIONS:
-        current_language = lang
+    _load_language(lang)
+    current_language = lang
 
 
 def tr(key: str) -> str:
-    return TRANSLATIONS.get(current_language, {}).get(key, key)
+    return _load_language(current_language).get(key, key)
 

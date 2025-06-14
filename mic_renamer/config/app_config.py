@@ -3,13 +3,15 @@ import os
 
 PACKAGE_ROOT = os.path.dirname(os.path.dirname(__file__))
 CONFIG_FILE = os.path.join(PACKAGE_ROOT, "config", "app_settings.json")
+TRANSLATIONS_DIR = os.path.join(PACKAGE_ROOT, "config", "translations")
 
 DEFAULT_CONFIG = {
     "accepted_extensions": [
         ".jpg", ".jpeg", ".png", ".gif", ".bmp",
         ".mp4", ".avi", ".mov", ".mkv"
     ],
-    "language": "en"
+    "language": "en",
+    "translations_dir": TRANSLATIONS_DIR
 }
 
 _config = None
