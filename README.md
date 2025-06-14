@@ -17,8 +17,9 @@ Dieser Satz dient als Test für eine kleine Änderung.
 - ui/main_window.py (enthält RenamerApp mit Drag&Drop, Preview, Rename)
 - logic/renamer.py (Renamer-Klasse)
 - logic/settings.py (ItemSettings)
-- ui/components.py (DragDropListWidget, TAGS_INFO)
+- ui/components.py (DragDropListWidget)
 - utils/file_utils.py
+- config/tags.json (definiert verfügbare Tags)
 
 Hier ist der Inhalt von ui/main_window.py:
 <kopiere den gesamten Code hier>
