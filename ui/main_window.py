@@ -9,9 +9,9 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QPixmap, QPainter, QColor
 from PySide6.QtCore import Qt
-from ui.components import TAGS_INFO
 from logic.settings import ItemSettings
 from logic.renamer import Renamer
+from logic.tag_loader import load_tags
 
 ROLE_SETTINGS = Qt.UserRole + 1
 
@@ -293,8 +293,9 @@ class RenamerApp(QWidget):
         controls_layout.addWidget(lbl_tags)
         tag_container = QWidget()
         tag_layout = QVBoxLayout(tag_container)
+        self.tags_info = load_tags()
         self.checkbox_map = {}
-        for code, desc in TAGS_INFO.items():
+        for code, desc in self.tags_info.items():
             cb = QCheckBox(f"{code}: {desc}")
             cb.setProperty("code", code)
             cb.stateChanged.connect(self.save_current_item_settings)

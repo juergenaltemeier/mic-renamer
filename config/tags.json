@@ -1,0 +1,10 @@
+{
+  "AU": "Autoclave Unit",
+  "VC": "Valve Controller",
+  "CU": "Control Unit",
+  "HS": "Heat Sensor",
+  "FU": "Filter Unit",
+  "FA": "Filter Array",
+  "FC": "Filter Control",
+  "FG": "Filter Gauge"
+}
