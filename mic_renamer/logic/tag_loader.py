@@ -1,11 +1,11 @@
 import json
 import os
 
-PACKAGE_ROOT = os.path.dirname(os.path.dirname(__file__))
-DEFAULT_TAGS_FILE = os.path.join(PACKAGE_ROOT, "config", "tags.json")
+from ..config.app_config import get_config_dir, load_config
+
+DEFAULT_TAGS_FILE = os.path.join(get_config_dir(), "tags.json")
 
 try:
-    from ..config.app_config import load_config
     CONFIG_TAGS_FILE = load_config().get("tags_file")
 except Exception:
     CONFIG_TAGS_FILE = None

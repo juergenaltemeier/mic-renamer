@@ -15,3 +15,7 @@ A desktop application to rename photos and videos using project numbers, tags an
    ```bash
    python -m mic_renamer
    ```
+
+Configuration files are stored in the user specific configuration directory
+(e.g. `~/.config/mic-renamer` on Linux). Set the `RENAMER_CONFIG_DIR`
+environment variable to override this location.
