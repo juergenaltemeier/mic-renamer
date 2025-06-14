@@ -1,6 +1,7 @@
 # Photo/Video Renamer
 
 Desktop-App zum Umbenennen von Bildern/Videos nach Projekt, Tags, Datum, Suffix.
+Dieser Satz dient als Test für eine kleine Änderung.
 
 ## Setup
 
