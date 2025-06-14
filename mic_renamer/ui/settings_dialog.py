@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 from ..config.app_config import load_config, save_config
 from ..logic.tag_loader import load_tags
 from ..utils.i18n import tr
+from ..logic.settings import ItemSettings
 
 
 class SettingsDialog(QDialog):
@@ -68,6 +69,9 @@ class SettingsDialog(QDialog):
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
         save_config(self.cfg)
+        # reload to update globals
+        cfg = load_config()
+        ItemSettings.ACCEPT_EXTENSIONS = cfg.get("accepted_extensions", [])
         # save tags
         tags = {}
         for row in range(self.tbl_tags.rowCount()):
