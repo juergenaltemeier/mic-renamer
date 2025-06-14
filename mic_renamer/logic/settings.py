@@ -13,7 +13,10 @@ class RenameConfig:
     start_index: int = 1
 
 
-ACCEPT_EXTENSIONS = [
+from ..config.app_config import load_config
+
+# load accepted extensions from config
+ACCEPT_EXTENSIONS = load_config().get("accepted_extensions", [
     ".jpg",
     ".jpeg",
     ".png",
@@ -23,7 +26,7 @@ ACCEPT_EXTENSIONS = [
     ".avi",
     ".mov",
     ".mkv",
-]
+])
 
 
 @dataclass
