@@ -1,9 +1,9 @@
 import os
 from PySide6.QtWidgets import (
-    QWidget, QSplitter, QHBoxLayout, QVBoxLayout,
+    QWidget, QSplitter, QHBoxLayout, QVBoxLayout, QGridLayout,
     QPushButton, QSlider, QFileDialog, QMessageBox,
     QGraphicsView, QGraphicsScene, QStyle,
-    QApplication, QLabel, QLineEdit, QScrollArea,
+    QApplication, QLabel, QLineEdit,
     QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView,
     QProgressDialog, QDialog, QDialogButtonBox, QAbstractItemView
 )
@@ -292,21 +292,23 @@ class RenamerApp(QWidget):
         lbl_tags = QLabel("Select Tags for this file:")
         controls_layout.addWidget(lbl_tags)
         tag_container = QWidget()
-        tag_layout = QVBoxLayout(tag_container)
+        tag_layout = QGridLayout(tag_container)
+        tag_layout.setContentsMargins(0, 0, 0, 0)
+        columns = 4
+        row = col = 0
         self.tags_info = load_tags()
         self.checkbox_map = {}
         for code, desc in self.tags_info.items():
             cb = QCheckBox(f"{code}: {desc}")
             cb.setProperty("code", code)
             cb.stateChanged.connect(self.save_current_item_settings)
-            tag_layout.addWidget(cb)
+            tag_layout.addWidget(cb, row, col)
             self.checkbox_map[code] = cb
-        tag_layout.addStretch()
-        scroll_tags = QScrollArea()
-        scroll_tags.setWidgetResizable(True)
-        scroll_tags.setWidget(tag_container)
-        scroll_tags.setFixedHeight(150)
-        controls_layout.addWidget(scroll_tags)
+            col += 1
+            if col >= columns:
+                col = 0
+                row += 1
+        controls_layout.addWidget(tag_container)
         controls_layout.addSpacing(10)
 
         btn_add = QPushButton("Add Files...")
