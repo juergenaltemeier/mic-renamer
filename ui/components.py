@@ -4,30 +4,7 @@ from PySide6.QtWidgets import QListWidget, QListWidgetItem
 from PySide6.QtCore import Qt
 import os
 
-# Definiere hier TAGS_INFO
-TAGS_INFO = {
-    "AU": "Autoclave Unit",
-    "VC": "Valve Controller",
-    "CU": "Control Unit",
-    "HS": "Heat Sensor",
-    "FU": "Filter Unit",
-    "FA": "Filter Unit",
-    "FC": "Filter Unit",
-    "FG": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    "FU": "Filter Unit",
-    # Bei Bedarf weitere Tags hinzufügen
-}
-
-ACCEPT_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.mp4', '.avi', '.mov', '.mkv']
+from logic.settings import ItemSettings
 
 class DragDropListWidget(QListWidget):
     def __init__(self):
@@ -55,7 +32,7 @@ class DragDropListWidget(QListWidget):
                 path = url.toLocalFile()
                 if os.path.isfile(path):
                     ext = os.path.splitext(path)[1].lower()
-                    if ext in ACCEPT_EXTENSIONS:
+                    if ext in ItemSettings.ACCEPT_EXTENSIONS:
                         exists = any(self.item(i).data(Qt.UserRole) == path for i in range(self.count()))
                         if not exists:
                             item = QListWidgetItem(os.path.basename(path))

@@ -10,17 +10,14 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-# === Konfiguration: Tags und Beschreibungen ===
-TAGS_INFO = {
-    "AU": "Autoclave Unit",
-    "VC": "Valve Controller",
-    "CU": "Control Unit",
-    "HS": "Heat Sensor",
-    "FU": "Filter Unit",
-    # Weitere hinzufügen...
-}
+from logic.tag_loader import load_tags
 
-ACCEPT_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.mp4', '.avi', '.mov', '.mkv']
+# === Konfiguration: Tags und Beschreibungen ===
+TAGS_INFO = load_tags()
+
+from logic.settings import ItemSettings
+
+ACCEPT_EXTENSIONS = ItemSettings.ACCEPT_EXTENSIONS
 ROLE_SETTINGS = Qt.UserRole + 1
 
 class DragDropListWidget(QListWidget):
