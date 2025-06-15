@@ -3,7 +3,7 @@ from __future__ import annotations
 from PySide6.QtWidgets import QWidget, QGridLayout, QCheckBox, QVBoxLayout, QLabel
 
 from ...logic.tag_service import tag_service
-from ..theming import theme_manager
+from .. import theming
 from ...utils.i18n import tr
 
 
@@ -18,7 +18,7 @@ class TagPanel(QWidget):
         self.tag_layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.container)
         self.rebuild()
-        theme_manager.apply_palette(self)
+        theming.theme_manager.apply_theme_all()
 
     def rebuild(self) -> None:
         while self.tag_layout.count():

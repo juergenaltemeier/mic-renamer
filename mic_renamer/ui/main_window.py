@@ -18,7 +18,7 @@ from .panels.image_preview import ImagePreviewPanel
 from .panels.file_table import FileTablePanel
 from .panels.tag_panel import TagPanel
 from .panels.settings_dialog import SettingsDialog
-from .theming import theme_manager
+from . import theming
 from ..config.config_manager import config_manager
 from ..utils.state_manager import state_manager
 from ..utils.logging_setup import init_logging
@@ -37,7 +37,7 @@ class MainWindow(QWidget):
         self.setMinimumSize(800, 600)
         set_language(cfg.get("language", "en"))
         self.setWindowTitle(tr("app_title"))
-        theme_manager.apply_palette(self)
+        theming.theme_manager.apply_theme_all()
 
         layout = QVBoxLayout(self)
         self.toolbar = QToolBar()
@@ -100,8 +100,8 @@ class MainWindow(QWidget):
         dlg = SettingsDialog(self)
         if dlg.exec() == dlg.Accepted:
             config_manager.load()
-            theme_manager.reload()
-            theme_manager.apply_palette(self)
+            theming.theme_manager = theming.ThemeManager()
+            theming.theme_manager.apply_theme_all()
             self.tag_panel.rebuild()
 
 

@@ -12,7 +12,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt, QItemSelection, QItemSelectionModel, QTimer
 
 from ...logic.settings import ItemSettings
-from ..theming import theme_manager
+from .. import theming
 
 
 class FileTablePanel(QTableWidget):
@@ -40,7 +40,7 @@ class FileTablePanel(QTableWidget):
         self.itemChanged.connect(self.handle_item_changed)
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
-        theme_manager.apply_palette(self)
+        theming.theme_manager.apply_theme_all()
 
     def set_equal_column_widths(self):
         if self._initial_columns:
