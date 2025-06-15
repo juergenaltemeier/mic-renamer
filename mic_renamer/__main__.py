@@ -13,7 +13,8 @@ if __name__ == '__main__':
         pass
     app = QApplication(sys.argv)
     window = RenamerApp()
-    window.resize(1000, 600)
+    window.setMinimumSize(1200, 800)
+    window.resize(1200, 800)
     window.show()
     sys.exit(app.exec())
 
