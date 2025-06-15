@@ -8,11 +8,9 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
 )
-from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt, QItemSelection, QItemSelectionModel, QTimer
 
 from ...logic.settings import ItemSettings
-from .. import theming
 
 
 class FileTablePanel(QTableWidget):
@@ -40,7 +38,6 @@ class FileTablePanel(QTableWidget):
         self.itemChanged.connect(self.handle_item_changed)
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
-        theming.theme_manager.apply_theme_all()
 
     def set_equal_column_widths(self):
         if self._initial_columns:
@@ -102,8 +99,6 @@ class FileTablePanel(QTableWidget):
             check_item.setCheckState(Qt.Unchecked)
             fname_item = QTableWidgetItem(os.path.basename(path))
             fname_item.setData(Qt.UserRole, path)
-            fname_item.setBackground(QColor(30, 30, 30))
-            fname_item.setForeground(QColor(220, 220, 220))
             tags_item = QTableWidgetItem("")
             suffix_item = QTableWidgetItem("")
             tags_item.setToolTip("")
