@@ -20,4 +20,6 @@ Configuration files are stored in the user specific configuration directory
 (e.g. `~/.config/mic_renamer` on Linux). Set the `RENAMER_CONFIG_DIR`
 environment variable to override this location. Defaults are bundled in
 `mic_renamer/config/defaults.yaml` and will be merged with your custom
-configuration at startup.
+configuration at startup. A default `tags.json` file containing available tag
+codes is copied to the configuration directory on first run if it does not
+already exist.

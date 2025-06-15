@@ -9,3 +9,4 @@ accepted_extensions:
   - .mov
   - .mkv
 language: en
+tags_file: tags.json

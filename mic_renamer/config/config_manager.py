@@ -27,6 +27,8 @@ class ConfigManager:
             except Exception:
                 data = {}
         defaults = yaml.safe_load(self.defaults_path.read_text())
+        # ensure default path for the tags file in user config directory
+        defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         self._config = {**defaults, **data}
         return self._config
 
