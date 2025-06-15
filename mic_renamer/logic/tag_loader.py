@@ -28,10 +28,16 @@ def load_tags(file_path: str | None = None) -> dict:
                 pass
     if not path.is_file():
         path = BUNDLED_TAGS_FILE
-        if not path.is_file():
-            return {}
+    if not path.is_file():
+        return {}
+    try:
         with path.open("r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+        if isinstance(data, dict):
+            return data
+    except Exception:
+        pass
+    return {}
 
 
 def restore_default_tags() -> None:
