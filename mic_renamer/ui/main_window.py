@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QProgressDialog, QDialog, QDialogButtonBox, QAbstractItemView
 )
 from PySide6.QtGui import QPixmap, QPainter, QColor, QAction
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer, QItemSelectionModel
 
 from .. import config, save_config
 from ..config.app_config import load_config
@@ -169,6 +169,7 @@ class AspectRatioWidget(QWidget):
 class DragDropTableWidget(QTableWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._updating_checks = False
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Suffix"])
         header = self.horizontalHeader()
@@ -185,6 +186,21 @@ class DragDropTableWidget(QTableWidget):
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(24)
         self.itemSelectionChanged.connect(self.sync_check_column)
+        self.itemChanged.connect(self.handle_item_changed)
+        self._initial_columns = False
+        QTimer.singleShot(0, self.set_equal_column_widths)
+
+    def set_equal_column_widths(self):
+        if self._initial_columns:
+            return
+        self._initial_columns = True
+        header = self.horizontalHeader()
+        total = self.viewport().width() - header.sectionSize(0)
+        if total <= 0:
+            return
+        w = total // 3
+        for i in range(1, 4):
+            self.setColumnWidth(i, w)
 
     def on_header_double_clicked(self, index: int):
         header = self.horizontalHeader()
@@ -249,11 +265,23 @@ class DragDropTableWidget(QTableWidget):
 
     def sync_check_column(self):
         selected = {idx.row() for idx in self.selectionModel().selectedRows()}
+        self._updating_checks = True
         for row in range(self.rowCount()):
             item = self.item(row, 0)
             if not item:
                 continue
             item.setCheckState(Qt.Checked if row in selected else Qt.Unchecked)
+        self._updating_checks = False
+
+    def handle_item_changed(self, item: QTableWidgetItem):
+        if self._updating_checks or item.column() != 0:
+            return
+        row = item.row()
+        index = self.model().index(row, 0)
+        if item.checkState() == Qt.Checked:
+            self.selectionModel().select(index, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+        else:
+            self.selectionModel().select(index, QItemSelectionModel.Deselect | QItemSelectionModel.Rows)
 
 class RenamerApp(QWidget):
     def __init__(self):
@@ -266,16 +294,7 @@ class RenamerApp(QWidget):
         self.setup_toolbar()
         main_layout.addWidget(self.toolbar)
 
-        # selected file label only
-        controls_widget = QWidget()
-        controls_layout = QVBoxLayout(controls_widget)
-        lbl_selected = QLabel(tr("selected_file_label"))
-        self.label_selected_file = QLabel("<none>")
-        self.label_selected_file.setWordWrap(True)
-        controls_layout.addWidget(lbl_selected)
-        controls_layout.addWidget(self.label_selected_file)
-        controls_layout.addSpacing(5)
-        main_layout.addWidget(controls_widget)
+        # no separate selected file display
 
         grid = QGridLayout()
         main_layout.addLayout(grid)
@@ -396,13 +415,6 @@ class RenamerApp(QWidget):
         tb.addWidget(self.lbl_project)
         tb.addWidget(self.input_project)
 
-        self.lbl_suffix = QLabel(tr("custom_suffix_label"))
-        self.input_item_suffix = QLineEdit()
-        self.input_item_suffix.setMaximumWidth(120)
-        self.input_item_suffix.setPlaceholderText(tr("custom_suffix_placeholder"))
-        self.input_item_suffix.editingFinished.connect(self.save_current_item_settings)
-        tb.addWidget(self.lbl_suffix)
-        tb.addWidget(self.input_item_suffix)
 
     def open_settings(self):
         dlg = SettingsDialog(self)
@@ -425,9 +437,7 @@ class RenamerApp(QWidget):
             action.setToolTip(tr(key))
         # update form labels
         self.lbl_project.setText(tr("project_number_label"))
-        self.lbl_suffix.setText(tr("custom_suffix_label"))
         self.input_project.setPlaceholderText(tr("project_number_placeholder"))
-        self.input_item_suffix.setPlaceholderText(tr("custom_suffix_placeholder"))
 
     def add_files_dialog(self):
         exts = " ".join(f"*{e}" for e in ItemSettings.ACCEPT_EXTENSIONS)
@@ -453,7 +463,6 @@ class RenamerApp(QWidget):
     def on_table_selection_changed(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
-            self.label_selected_file.setText("<none>")
             self.image_viewer.load_image("")
             self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
@@ -471,15 +480,7 @@ class RenamerApp(QWidget):
                 item0.setData(ROLE_SETTINGS, st)
             settings_list.append(st)
         first = settings_list[0]
-        if len(rows) == 1:
-            self.label_selected_file.setText(os.path.basename(first.original_path))
-        else:
-            self.label_selected_file.setText(f"{len(rows)} files selected")
 
-        self.input_item_suffix.blockSignals(True)
-        same_suffix = all(s.suffix == first.suffix for s in settings_list)
-        self.input_item_suffix.setText(first.suffix if same_suffix else "")
-        self.input_item_suffix.blockSignals(False)
 
         intersect = set(settings_list[0].tags)
         union = set(settings_list[0].tags)
@@ -507,13 +508,11 @@ class RenamerApp(QWidget):
         if not rows:
             return
         checkbox_states = {code: cb.checkState() for code, cb in self.checkbox_map.items()}
-        suffix_text = self.input_item_suffix.text().strip()
         for row in rows:
             item0 = self.table_widget.item(row, 1)
             settings: ItemSettings = item0.data(ROLE_SETTINGS)
             if settings is None:
                 continue
-            settings.suffix = suffix_text
             for code, state in checkbox_states.items():
                 if state == Qt.Checked:
                     settings.tags.add(code)
@@ -594,16 +593,13 @@ class RenamerApp(QWidget):
             self.table_widget.selectRow(row + 1)
 
     def set_item_controls_enabled(self, enabled: bool):
-        self.input_item_suffix.setEnabled(enabled)
         for cb in self.checkbox_map.values():
             cb.setEnabled(enabled)
 
     def clear_all(self):
         self.table_widget.setRowCount(0)
-        self.label_selected_file.setText("<none>")
         self.image_viewer.load_image("")
         self.zoom_slider.setValue(100)
-        self.input_item_suffix.setText("")
         for cb in self.checkbox_map.values():
             cb.setChecked(False)
         self.set_item_controls_enabled(False)
