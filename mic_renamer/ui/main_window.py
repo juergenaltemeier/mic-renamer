@@ -81,6 +81,7 @@ class RenamerApp(QWidget):
 
         # Tag container spanning both columns with manual toggle
         self.tag_panel = TagPanel()
+        self.tag_panel.tagToggled.connect(self.on_tag_toggled)
         self.btn_toggle_tags = QPushButton()
         self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
         grid.addWidget(self.btn_toggle_tags, 1, 0, 1, 2, Qt.AlignLeft)
@@ -259,6 +260,30 @@ class RenamerApp(QWidget):
             cell_tags.setToolTip(tags_str)
             cell_suffix.setText(settings.suffix)
             cell_suffix.setToolTip(settings.suffix)
+            self.update_row_background(row, settings)
+        self.table_widget.sync_check_column()
+
+    def on_tag_toggled(self, code: str, state: int) -> None:
+        """Apply tag changes from the tag panel to all selected rows immediately."""
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        if not rows:
+            return
+        for row in rows:
+            item0 = self.table_widget.item(row, 1)
+            if not item0:
+                continue
+            settings: ItemSettings = item0.data(ROLE_SETTINGS)
+            if settings is None:
+                settings = ItemSettings(item0.data(Qt.UserRole))
+                item0.setData(ROLE_SETTINGS, settings)
+            if state in (Qt.Checked, Qt.PartiallyChecked):
+                settings.tags.add(code)
+            elif state == Qt.Unchecked:
+                settings.tags.discard(code)
+            tags_str = ",".join(sorted(settings.tags))
+            cell_tags = self.table_widget.item(row, 2)
+            cell_tags.setText(tags_str)
+            cell_tags.setToolTip(tags_str)
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
 
