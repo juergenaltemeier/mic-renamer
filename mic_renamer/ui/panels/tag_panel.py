@@ -18,6 +18,14 @@ class TagPanel(QWidget):
         layout.addWidget(self.container)
         self.rebuild()
 
+    def selected_tags(self) -> set[str]:
+        """Return the set of currently checked tag codes."""
+        selected = set()
+        for code, cb in self.checkbox_map.items():
+            if cb.isChecked():
+                selected.add(code)
+        return selected
+
     def rebuild(self) -> None:
         while self.tag_layout.count():
             item = self.tag_layout.takeAt(0)

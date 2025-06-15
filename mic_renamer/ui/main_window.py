@@ -53,11 +53,21 @@ class MainWindow(QWidget):
         grid.addWidget(self.table_panel, 0, 1)
         grid.addWidget(self.tag_panel, 1, 0, 1, 2)
 
+        self.table_panel.selectionModel().currentRowChanged.connect(
+            self.on_row_changed
+        )
+
         self.setup_toolbar()
         state_manager.load()
         geo = state_manager.get("geometry")
         if geo:
             self.restoreGeometry(bytes.fromhex(geo))
+
+    def on_row_changed(self, current, previous):
+        row = current.row()
+        item = self.table_panel.item(row, 1)
+        path = item.data(Qt.UserRole) if item else ""
+        self.preview_panel.load_image(path)
 
     def closeEvent(self, event):
         state_manager.set("geometry", self.saveGeometry().toHex().data().decode())
@@ -78,6 +88,65 @@ class MainWindow(QWidget):
         act_settings = QAction(QIcon.fromTheme("preferences-system"), tr("settings_title"), self)
         act_settings.triggered.connect(self.open_settings)
         self.toolbar.addAction(act_settings)
+
+        act_preview = QAction(style.standardIcon(QStyle.SP_FileDialogDetailedView), tr("preview_rename"), self)
+        act_preview.triggered.connect(self.preview_rename)
+        self.toolbar.addAction(act_preview)
+
+        act_rename = QAction(style.standardIcon(QStyle.SP_DialogApplyButton), tr("rename_all"), self)
+        act_rename.triggered.connect(self.rename_all)
+        self.toolbar.addAction(act_rename)
+
+    # Rename helpers
+    def build_mapping(self) -> tuple[str, list[tuple[ItemSettings, str, str]]] | None:
+        from PySide6.QtWidgets import QInputDialog
+
+        project, ok = QInputDialog.getText(self, tr("project_number_label"), tr("project_number_placeholder"))
+        if not ok or not project:
+            QMessageBox.warning(self, tr("missing_project"), tr("missing_project_msg"))
+            return None
+        items: list[ItemSettings] = []
+        for row in range(self.table_panel.rowCount()):
+            fname_item = self.table_panel.item(row, 1)
+            if not fname_item:
+                continue
+            path = fname_item.data(Qt.UserRole)
+            suffix = self.table_panel.item(row, 3).text().strip() if self.table_panel.item(row, 3) else ""
+            tags_str = self.table_panel.item(row, 2).text() if self.table_panel.item(row, 2) else ""
+            tags = {t.strip() for t in tags_str.split(',') if t.strip()}
+            tags.update(self.tag_panel.selected_tags())
+            items.append(ItemSettings(path, tags, suffix))
+        renamer = Renamer(project, items)
+        return project, renamer.build_mapping()
+
+    def preview_rename(self) -> None:
+        result = self.build_mapping()
+        if not result:
+            return
+        project, mapping = result
+        from .preview_dialog import show_preview
+
+        if show_preview(self, mapping):
+            Renamer(project, []).execute_rename(mapping, self)
+            self.update_table_after_rename(mapping)
+
+    def rename_all(self) -> None:
+        result = self.build_mapping()
+        if not result:
+            return
+        project, mapping = result
+        if QMessageBox.question(self, tr("confirm_rename"), tr("confirm_rename_msg")) == QMessageBox.Yes:
+            Renamer(project, []).execute_rename(mapping, self)
+            self.update_table_after_rename(mapping)
+
+    def update_table_after_rename(self, mapping: list[tuple[ItemSettings, str, str]]):
+        for _, orig, new in mapping:
+            for row in range(self.table_panel.rowCount()):
+                item = self.table_panel.item(row, 1)
+                if item and item.data(Qt.UserRole) == orig:
+                    item.setText(os.path.basename(new))
+                    item.setData(Qt.UserRole, new)
+                    break
 
     # Dialogs
     def add_files_dialog(self):

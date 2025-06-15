@@ -6,6 +6,8 @@ from typing import Dict, Iterable
 
 from ..config.config_manager import config_manager
 
+_PACKAGE_DIR = Path(__file__).resolve().parents[1]
+
 
 def _tags_path() -> Path:
     cfg = config_manager
@@ -20,7 +22,17 @@ class TagService:
         self.load()
 
     def load(self) -> None:
+        """Load tag definitions from the user config directory.
+
+        If no tags file exists in the user directory, fall back to the
+        bundled default ``tags.json`` shipped with the package. This mirrors
+        the behaviour of the pre-refactored version where default tags were
+        always available.
+        """
         path = _tags_path()
+        if not path.is_file():
+            default_path = _PACKAGE_DIR / "config" / "tags.json"
+            path = default_path
         if path.is_file():
             try:
                 with path.open("r", encoding="utf-8") as fh:
