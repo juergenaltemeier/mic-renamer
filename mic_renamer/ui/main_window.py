@@ -19,7 +19,6 @@ from .panels.image_preview import ImagePreviewPanel
 from .panels.file_table import FileTablePanel
 from .panels.tag_panel import TagPanel
 from .panels.settings_dialog import SettingsDialog
-from . import theming
 from ..config.config_manager import config_manager
 from ..utils.state_manager import state_manager
 from ..utils.logging_setup import init_logging
@@ -38,10 +37,6 @@ class MainWindow(QWidget):
         self.setMinimumSize(800, 600)
         set_language(cfg.get("language", "en"))
         self.setWindowTitle(tr("app_title"))
-        # apply the current theme before constructing child widgets so that all
-        # widgets pick up the palette and style sheet. ``setAutoFillBackground``
-        # ensures the background color from the palette is actually painted.
-        theming.theme_manager.apply_theme_all()
         self.setAutoFillBackground(True)
 
         layout = QVBoxLayout(self)
@@ -105,8 +100,6 @@ class MainWindow(QWidget):
         dlg = SettingsDialog(self)
         if dlg.exec() == QDialog.Accepted:
             config_manager.load()
-            theming.theme_manager.reload()
-            theming.theme_manager.apply_theme_all()
             self.tag_panel.rebuild()
 
 
