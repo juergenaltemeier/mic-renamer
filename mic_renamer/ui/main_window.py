@@ -9,8 +9,9 @@ from PySide6.QtWidgets import (
     QToolBar,
     QFileDialog,
     QMessageBox,
+    QStyle,
 )
-from PySide6.QtGui import QAction, QIcon, QStyle
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtCore import Qt
 
 from .panels.image_preview import ImagePreviewPanel
