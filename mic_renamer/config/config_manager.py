@@ -51,3 +51,11 @@ class ConfigManager:
         cfg = self.load()
         cfg[key] = value
         self.save(cfg)
+
+    def restore_defaults(self) -> dict:
+        """Overwrite config file with bundled defaults."""
+        defaults = yaml.safe_load(self.defaults_path.read_text())
+        defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
+        self._config = defaults
+        self.save(defaults)
+        return defaults
