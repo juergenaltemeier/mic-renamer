@@ -1,4 +1,5 @@
 import os
+import re
 from PySide6.QtWidgets import (
     QWidget, QSplitter, QHBoxLayout, QVBoxLayout, QGridLayout,
     QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
@@ -7,8 +8,8 @@ from PySide6.QtWidgets import (
     QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView,
     QProgressDialog, QDialog, QDialogButtonBox, QAbstractItemView
 )
-from PySide6.QtGui import QPixmap, QPainter, QColor, QAction
-from PySide6.QtCore import Qt, QTimer, QItemSelectionModel
+from PySide6.QtGui import QPixmap, QPainter, QColor, QAction, QIcon
+from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
 
 from .. import config, save_config
 from ..config.app_config import load_config
@@ -278,10 +279,22 @@ class DragDropTableWidget(QTableWidget):
             return
         row = item.row()
         index = self.model().index(row, 0)
-        if item.checkState() == Qt.Checked:
-            self.selectionModel().select(index, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+        mods = QApplication.keyboardModifiers()
+        if mods & Qt.ShiftModifier and self.selectionModel().hasSelection():
+            cur = self.selectionModel().currentIndex().row()
+            start = min(cur, row)
+            end = max(cur, row)
+            selection = QItemSelection(
+                self.model().index(start, 0),
+                self.model().index(end, self.columnCount() - 1),
+            )
+            command = QItemSelectionModel.Select if item.checkState() == Qt.Checked else QItemSelectionModel.Deselect
+            self.selectionModel().select(selection, command | QItemSelectionModel.Rows)
         else:
-            self.selectionModel().select(index, QItemSelectionModel.Deselect | QItemSelectionModel.Rows)
+            if item.checkState() == Qt.Checked:
+                self.selectionModel().select(index, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+            else:
+                self.selectionModel().select(index, QItemSelectionModel.Deselect | QItemSelectionModel.Rows)
 
 class RenamerApp(QWidget):
     def __init__(self):
@@ -341,37 +354,56 @@ class RenamerApp(QWidget):
         grid.addWidget(viewer_widget, 0, 0)
         grid.addWidget(self.table_widget, 0, 1)
 
-        # Tag container spanning both columns
-        tag_container = QWidget()
-        tag_main_layout = QVBoxLayout(tag_container)
+        # Tag container spanning both columns with manual toggle
+        self.tag_container = QWidget()
+        tag_main_layout = QVBoxLayout(self.tag_container)
         lbl_tags = QLabel(tr("select_tags_label"))
         tag_main_layout.addWidget(lbl_tags)
-        checkbox_container = QWidget()
-        tag_layout = QGridLayout(checkbox_container)
-        tag_layout.setContentsMargins(0, 0, 0, 0)
-        columns = 4
-        row = col = 0
-        self.tags_info = load_tags()
+        self.checkbox_container = QWidget()
+        self.tag_layout = QGridLayout(self.checkbox_container)
+        self.tag_layout.setContentsMargins(0, 0, 0, 0)
+        self.tags_info = {}
         self.checkbox_map = {}
-        for code, desc in self.tags_info.items():
-            cb = QCheckBox(f"{code}: {desc}")
-            cb.setProperty("code", code)
-            cb.stateChanged.connect(self.save_current_item_settings)
-            tag_layout.addWidget(cb, row, col)
-            self.checkbox_map[code] = cb
-            col += 1
-            if col >= columns:
-                col = 0
-                row += 1
-        tag_main_layout.addWidget(checkbox_container)
+        self.rebuild_tag_checkboxes()
+        tag_main_layout.addWidget(self.checkbox_container)
 
-        grid.addWidget(tag_container, 1, 0, 1, 2)
-
+        self.btn_toggle_tags = QPushButton()
+        self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
+        grid.addWidget(self.btn_toggle_tags, 1, 0, 1, 2, Qt.AlignLeft)
+        grid.addWidget(self.tag_container, 2, 0, 1, 2)
+        self.tag_container.setVisible(False)
+        
         # Initial deaktivieren
         self.set_item_controls_enabled(False)
         self.table_widget.itemSelectionChanged.connect(self.on_table_selection_changed)
 
         self.update_translations()
+
+    def toggle_tag_panel(self):
+        visible = self.tag_container.isVisible()
+        self.tag_container.setVisible(not visible)
+        self.btn_toggle_tags.setText(tr("hide_tags") if not visible else tr("show_tags"))
+
+    def rebuild_tag_checkboxes(self):
+        while self.tag_layout.count():
+            item = self.tag_layout.takeAt(0)
+            w = item.widget()
+            if w:
+                w.deleteLater()
+        self.checkbox_map = {}
+        self.tags_info = load_tags()
+        columns = 4
+        row = col = 0
+        for code, desc in self.tags_info.items():
+            cb = QCheckBox(f"{code}: {desc}")
+            cb.setProperty("code", code)
+            cb.stateChanged.connect(self.save_current_item_settings)
+            self.tag_layout.addWidget(cb, row, col)
+            self.checkbox_map[code] = cb
+            col += 1
+            if col >= columns:
+                col = 0
+                row += 1
 
     def setup_toolbar(self):
         style = QApplication.style()
@@ -402,7 +434,8 @@ class RenamerApp(QWidget):
         act_clear.triggered.connect(self.clear_all)
         tb.addAction(act_clear)
 
-        act_settings = QAction(style.standardIcon(QStyle.SP_FileDialogInfoView), tr("settings_title"), self)
+        gear_icon = QIcon.fromTheme("preferences-system", style.standardIcon(QStyle.SP_FileDialogDetailedView))
+        act_settings = QAction(gear_icon, tr("settings_title"), self)
         act_settings.setToolTip(tr("settings_title"))
         act_settings.triggered.connect(self.open_settings)
         tb.addAction(act_settings)
@@ -410,6 +443,8 @@ class RenamerApp(QWidget):
         tb.addSeparator()
         self.lbl_project = QLabel(tr("project_number_label"))
         self.input_project = QLineEdit()
+        self.input_project.setInputMask("C000000;_")
+        self.input_project.setText("C")
         self.input_project.setMaximumWidth(120)
         self.input_project.setPlaceholderText(tr("project_number_placeholder"))
         tb.addWidget(self.lbl_project)
@@ -422,8 +457,7 @@ class RenamerApp(QWidget):
             cfg = load_config()
             set_language(cfg.get("language", "en"))
             self.update_translations()
-            self.tags_info = load_tags()
-            # rebuild tag checkboxes maybe later
+            self.rebuild_tag_checkboxes()
 
     def update_translations(self):
         self.setWindowTitle(tr("app_title"))
@@ -438,6 +472,10 @@ class RenamerApp(QWidget):
         # update form labels
         self.lbl_project.setText(tr("project_number_label"))
         self.input_project.setPlaceholderText(tr("project_number_placeholder"))
+        if self.tag_container.isVisible():
+            self.btn_toggle_tags.setText(tr("hide_tags"))
+        else:
+            self.btn_toggle_tags.setText(tr("show_tags"))
 
     def add_files_dialog(self):
         exts = " ".join(f"*{e}" for e in ItemSettings.ACCEPT_EXTENSIONS)
@@ -552,9 +590,14 @@ class RenamerApp(QWidget):
         if settings is None:
             return
         if col == 2:
-            tags = {t.strip() for t in item.text().split(',') if t.strip()}
-            settings.tags = tags
-            text = ",".join(sorted(tags))
+            raw_tags = {t.strip() for t in item.text().split(',') if t.strip()}
+            valid_tags = {t for t in raw_tags if t in self.tags_info}
+            invalid = raw_tags - valid_tags
+            if invalid:
+                QMessageBox.warning(self, "Invalid Tags", 
+                                    "Invalid tags: " + ", ".join(sorted(invalid)))
+            settings.tags = valid_tags
+            text = ",".join(sorted(valid_tags))
             if text != item.text():
                 self._ignore_table_changes = True
                 item.setText(text)
@@ -606,7 +649,7 @@ class RenamerApp(QWidget):
 
     def build_rename_mapping(self):
         project = self.input_project.text().strip()
-        if not project:
+        if not re.fullmatch(r"C\d{6}", project):
             QMessageBox.warning(self, tr("missing_project"), tr("missing_project_msg"))
             return None
         n = self.table_widget.rowCount()
