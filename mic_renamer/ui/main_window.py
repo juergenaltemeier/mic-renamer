@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QMessageBox,
     QStyle,
+    QDialog,
 )
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtCore import Qt
@@ -102,7 +103,7 @@ class MainWindow(QWidget):
 
     def open_settings(self):
         dlg = SettingsDialog(self)
-        if dlg.exec() == dlg.Accepted:
+        if dlg.exec() == QDialog.Accepted:
             config_manager.load()
             theming.theme_manager.reload()
             theming.theme_manager.apply_theme_all()
