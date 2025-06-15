@@ -4,7 +4,6 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QS
 from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtCore import Qt
 
-from .. import theming
 
 
 class ImageViewer(QGraphicsView):
@@ -166,7 +165,6 @@ class ImagePreviewPanel(QWidget):
         btn_rot_left.clicked.connect(self.viewer.rotate_left)
         btn_rot_right.clicked.connect(self.viewer.rotate_right)
         self.zoom_slider.valueChanged.connect(self.on_zoom)
-        theming.theme_manager.apply_theme_all()
 
     def on_zoom(self, value: int):
         self.viewer._zoom_pct = value

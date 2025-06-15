@@ -100,7 +100,7 @@ class MainWindow(QWidget):
         dlg = SettingsDialog(self)
         if dlg.exec() == dlg.Accepted:
             config_manager.load()
-            theming.theme_manager = theming.ThemeManager()
+            theming.theme_manager.reload()
             theming.theme_manager.apply_theme_all()
             self.tag_panel.rebuild()
 

@@ -21,6 +21,9 @@ Configuration files are stored in the user specific configuration directory
 environment variable to override this location. Default values are bundled in
 `mic_renamer/config/defaults.yaml` and are loaded on first start.
 
-Configuration files are stored in the user specific configuration directory
-(e.g. `~/.config/mic-renamer` on Linux). Set the `RENAMER_CONFIG_DIR`
-environment variable to override this location.
+## Theming
+
+Colors for the user interface can be customised via the `theme` section of the
+configuration file. The application validates color values before applying them
+and falls back to safe defaults if a value is invalid. Use the *Settings* dialog
+to reload the configuration and reapply the theme at runtime.
