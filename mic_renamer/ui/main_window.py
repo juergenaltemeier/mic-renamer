@@ -37,7 +37,11 @@ class MainWindow(QWidget):
         self.setMinimumSize(800, 600)
         set_language(cfg.get("language", "en"))
         self.setWindowTitle(tr("app_title"))
+        # apply the current theme before constructing child widgets so that all
+        # widgets pick up the palette and style sheet. ``setAutoFillBackground``
+        # ensures the background color from the palette is actually painted.
         theming.theme_manager.apply_theme_all()
+        self.setAutoFillBackground(True)
 
         layout = QVBoxLayout(self)
         self.toolbar = QToolBar()
