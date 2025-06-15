@@ -13,6 +13,8 @@ theme:
   primary_blue: "#2F6FDE"
   background_white: "#FFFFFF"
   accent_red: "#D94C4C"
+  text_color: "#000000"
+  debug_minimal: false
 window:
   width: 1400
   height: 800
