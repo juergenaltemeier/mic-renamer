@@ -8,9 +8,13 @@ A desktop application to rename photos and videos using project numbers, tags an
 2. Create and activate a virtual environment:
    ```bash
    python -m venv venv
-   source venv/bin/activate  # on Windows use .\venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
+ source venv/bin/activate  # on Windows use .\venv\Scripts\activate
+  pip install -r requirements.txt
+  ```
+   If you encounter a `ModuleNotFoundError: No module named 'yaml'` error when
+   starting the application, it means the dependencies were not installed.
+   Re-run the `pip install -r requirements.txt` command to install the required
+   packages including **PyYAML**.
 3. Start the application:
    ```bash
    python -m mic_renamer

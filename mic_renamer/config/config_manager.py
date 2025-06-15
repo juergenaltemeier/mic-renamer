@@ -5,7 +5,12 @@ import os
 from pathlib import Path
 from typing import Any
 
-import yaml
+try:
+    import yaml
+except ModuleNotFoundError as exc:  # pragma: no cover - runtime dependency check
+    raise ModuleNotFoundError(
+        "PyYAML is required to run MicRenamer. Install it with 'pip install -r requirements.txt'"
+    ) from exc
 from appdirs import user_config_dir
 
 
