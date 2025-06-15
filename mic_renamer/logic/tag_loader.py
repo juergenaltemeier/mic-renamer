@@ -30,7 +30,16 @@ def load_tags(file_path: str | None = None) -> dict:
         path = BUNDLED_TAGS_FILE
         if not path.is_file():
             return {}
-    with path.open("r", encoding="utf-8") as f:
-        return json.load(f)
+        with path.open("r", encoding="utf-8") as f:
+            return json.load(f)
+
+
+def restore_default_tags() -> None:
+    """Reset the user's tags.json to the bundled defaults."""
+    try:
+        DEFAULT_TAGS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        DEFAULT_TAGS_FILE.write_text(BUNDLED_TAGS_FILE.read_text(), encoding="utf-8")
+    except Exception:
+        pass
 
 

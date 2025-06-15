@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QProgressDialog, QDialog, QDialogButtonBox, QAbstractItemView,
     QHeaderView, QStyle, QTableWidget, QTableWidgetItem
 )
-from PySide6.QtGui import QColor, QAction, QIcon
+from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPainter, QFont
 from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
 
 from .. import config_manager
@@ -16,6 +16,19 @@ from .settings_dialog import SettingsDialog
 from .panels import ImageViewer, AspectRatioWidget, DragDropTableWidget, TagPanel
 from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
+
+
+def gear_icon_fallback(size: int = 16) -> QIcon:
+    """Create a simple gear icon using the Unicode gear symbol."""
+    pix = QPixmap(size, size)
+    pix.fill(Qt.transparent)
+    p = QPainter(pix)
+    font = QFont()
+    font.setPointSize(int(size * 0.8))
+    p.setFont(font)
+    p.drawText(pix.rect(), Qt.AlignCenter, "\u2699")
+    p.end()
+    return QIcon(pix)
 
 
 ROLE_SETTINGS = Qt.UserRole + 1
@@ -131,7 +144,7 @@ class RenamerApp(QWidget):
         act_clear.triggered.connect(self.clear_all)
         tb.addAction(act_clear)
 
-        gear_icon = QIcon.fromTheme("preferences-system", style.standardIcon(QStyle.SP_FileDialogDetailedView))
+        gear_icon = QIcon.fromTheme("preferences-system", gear_icon_fallback())
         act_settings = QAction(gear_icon, tr("settings_title"), self)
         act_settings.setToolTip(tr("settings_title"))
         act_settings.triggered.connect(self.open_settings)
@@ -223,16 +236,20 @@ class RenamerApp(QWidget):
             intersect &= st.tags
             union |= st.tags
         for code, cb in self.tag_panel.checkbox_map.items():
+            desc = self.tag_panel.tags_info.get(code, "")
             cb.blockSignals(True)
             if code in intersect:
                 cb.setTristate(False)
                 cb.setCheckState(Qt.Checked)
+                cb.setText(f"{code}: {desc}")
             elif code in union:
                 cb.setTristate(True)
                 cb.setCheckState(Qt.PartiallyChecked)
+                cb.setText(f"[~] {code}: {desc}")
             else:
                 cb.setTristate(False)
                 cb.setCheckState(Qt.Unchecked)
+                cb.setText(f"{code}: {desc}")
             cb.blockSignals(False)
 
         self.load_preview(first.original_path)
@@ -286,6 +303,7 @@ class RenamerApp(QWidget):
             cell_tags.setToolTip(tags_str)
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
+        QTimer.singleShot(0, self.on_table_selection_changed)
 
     def update_row_background(self, row: int, settings: ItemSettings):
         for col in range(4):
