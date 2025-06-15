@@ -101,7 +101,19 @@ class ThemeManager:
             f" color: {self.colors['highlight_text_color']};"
             f" }}"
         )
-        style_sheet = "\n".join([btn_style, btn_pressed, header_style, select_style])
+        widget_style = (
+            f"QWidget {{"
+            f" background-color: {self.colors['background_white']};"
+            f" color: {self.colors['text_color']};"
+            f" }}"
+        )
+        style_sheet = "\n".join([
+            widget_style,
+            btn_style,
+            btn_pressed,
+            header_style,
+            select_style,
+        ])
         app.setStyleSheet(style_sheet)
 
     def apply_theme_all(self) -> None:
