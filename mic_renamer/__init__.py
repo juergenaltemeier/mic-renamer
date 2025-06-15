@@ -1,11 +1,10 @@
 """Photo/Video renamer package."""
 
-from .config.app_config import load_config, save_config
+from .config.config_manager import config_manager
 from .utils.i18n import set_language
 
-# load configuration on import
-config = load_config()
-set_language(config.get("language", "en"))
+config_manager.load()
+set_language(config_manager.get("language", "en"))
 
-__all__ = ["config", "save_config"]
+__all__ = ["config_manager"]
 

@@ -3,7 +3,9 @@
 import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt
-from .ui.main_window import RenamerApp
+
+from .ui.main_window import MainWindow
+
 
 if __name__ == '__main__':
     try:
@@ -12,9 +14,7 @@ if __name__ == '__main__':
     except Exception:
         pass
     app = QApplication(sys.argv)
-    window = RenamerApp()
-    window.setMinimumSize(1200, 800)
-    window.resize(1200, 800)
+    window = MainWindow()
     window.show()
     sys.exit(app.exec())
 
