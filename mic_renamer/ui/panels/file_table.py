@@ -5,12 +5,11 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QHeaderView,
     QApplication,
-    QItemSelectionModel,
-    QItemSelection,
     QAbstractItemView,
 )
 from PySide6.QtGui import QColor
-from PySide6.QtCore import Qt, QTimer
+# Corrected import: QItemSelectionModel and QItemSelection come from QtCore, not QtWidgets
+from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
 
 from ...logic.settings import ItemSettings
 
