@@ -23,9 +23,3 @@ environment variable to override this location. Default values are bundled in
 dialog lets you change the path of the configuration file or reset all
 settings to these defaults.
 
-## Theming
-
-Colors for the user interface can be customised via the `theme` section of the
-configuration file. The application validates color values before applying them
-and falls back to safe defaults if a value is invalid. Use the *Settings* dialog
-to reload the configuration and reapply the theme at runtime.

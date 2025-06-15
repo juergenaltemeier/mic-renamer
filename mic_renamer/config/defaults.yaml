@@ -9,17 +9,6 @@ accepted_extensions:
   - .avi
   - .mov
   - .mkv
-theme:
-  primary_blue: "#2F6FDE"
-  background_white: "#FFFFFF"
-  accent_red: "#D94C4C"
-  text_color: "#000000"
-  base_color: "#FFFFFF"
-  alternate_base_color: "#F8F9FA"
-  button_text_color: "#FFFFFF"
-  highlight_color: "#2F6FDE"
-  highlight_text_color: "#FFFFFF"
-  debug_minimal: false
 window:
   width: 1400
   height: 800
