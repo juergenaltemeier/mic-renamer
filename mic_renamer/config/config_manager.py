@@ -19,6 +19,24 @@ class ConfigManager:
         self.defaults_file = Path(__file__).with_name("defaults.yaml")
         self._data: dict[str, Any] = {}
 
+    def set_config_file(self, path: str | Path) -> None:
+        """Change the location of the configuration file."""
+        p = Path(path).expanduser()
+        self.config_dir = p.parent
+        self.config_file = p
+
+    def load_defaults(self) -> dict[str, Any]:
+        try:
+            with self.defaults_file.open("r", encoding="utf-8") as fh:
+                return yaml.safe_load(fh) or {}
+        except Exception as exc:
+            logging.error("Failed to load defaults: %s", exc)
+            return {}
+
+    def reset_defaults(self) -> None:
+        """Replace current config with default values."""
+        self._data = self.load_defaults()
+
     def load(self) -> None:
         """Load configuration from disk, falling back to defaults."""
         self._data = {}
@@ -30,12 +48,7 @@ class ConfigManager:
             logging.warning("Failed to load config %s: %s", self.config_file, exc)
             self._data = {}
         if not self._data:
-            try:
-                with self.defaults_file.open("r", encoding="utf-8") as fh:
-                    self._data = yaml.safe_load(fh) or {}
-            except Exception as exc:
-                logging.error("Failed to load defaults: %s", exc)
-                self._data = {}
+            self._data = self.load_defaults()
 
     def get(self, key: str, default: Any | None = None) -> Any:
         return self._data.get(key, default)

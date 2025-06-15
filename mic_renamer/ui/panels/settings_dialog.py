@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QDialogButtonBox, QComboBox, QTableWidget, QTableWidgetItem,
-    QPushButton
+    QPushButton, QFileDialog
 )
 from PySide6.QtCore import Qt
 
@@ -34,6 +34,20 @@ class SettingsDialog(QDialog):
         hl.addWidget(self.combo_lang)
         layout.addLayout(hl)
 
+        # config file location
+        hl_cfg = QHBoxLayout()
+        hl_cfg.addWidget(QLabel(tr("config_file_label")))
+        self.edit_cfg = QLineEdit(str(config_manager.config_file))
+        btn_browse = QPushButton(tr("browse"))
+        btn_browse.clicked.connect(self.browse_config)
+        hl_cfg.addWidget(self.edit_cfg)
+        hl_cfg.addWidget(btn_browse)
+        layout.addLayout(hl_cfg)
+
+        btn_reset = QPushButton(tr("reset_defaults"))
+        btn_reset.clicked.connect(self.reset_defaults)
+        layout.addWidget(btn_reset)
+
         # tags editor (simple table)
         layout.addWidget(QLabel(tr("tags_label")))
         tags = tag_service.all_tags()
@@ -61,12 +75,27 @@ class SettingsDialog(QDialog):
         self.tbl_tags.setItem(row, 0, QTableWidgetItem(""))
         self.tbl_tags.setItem(row, 1, QTableWidgetItem(""))
 
+    def browse_config(self):
+        path, _ = QFileDialog.getSaveFileName(self, tr("browse"), str(self.edit_cfg.text()))
+        if path:
+            self.edit_cfg.setText(path)
+
+    def reset_defaults(self):
+        config_manager.reset_defaults()
+        self.cfg = config_manager._data.copy()
+        self.edit_ext.setText(", ".join(self.cfg.get("accepted_extensions", [])))
+        index = self.combo_lang.findText(self.cfg.get("language", "en"))
+        if index >= 0:
+            self.combo_lang.setCurrentIndex(index)
+        self.edit_cfg.setText(str(config_manager.config_file))
+
     def accept(self):
         # save extensions
         exts = [e.strip() for e in self.edit_ext.text().split(',') if e.strip()]
         self.cfg['accepted_extensions'] = exts
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
+        config_manager.set_config_file(self.edit_cfg.text())
         config_manager._data = self.cfg
         config_manager.save()
         # save tags

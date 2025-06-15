@@ -19,7 +19,9 @@ A desktop application to rename photos and videos using project numbers, tags an
 Configuration files are stored in the user specific configuration directory
 (e.g. `~/.config/mic-renamer` on Linux). Set the `RENAMER_CONFIG_DIR`
 environment variable to override this location. Default values are bundled in
-`mic_renamer/config/defaults.yaml` and are loaded on first start.
+`mic_renamer/config/defaults.yaml` and are loaded on first start. The *Settings*
+dialog lets you change the path of the configuration file or reset all
+settings to these defaults.
 
 ## Theming
 
