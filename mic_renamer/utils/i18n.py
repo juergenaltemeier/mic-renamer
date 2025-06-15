@@ -30,7 +30,10 @@ TRANSLATIONS = {
         'hide_tags': 'Hide tags',
         'accepted_ext_label': 'Accepted File Extensions (comma separated):',
         'language_label': 'Language:',
-        'tags_label': 'Tags'
+        'tags_label': 'Tags',
+        'config_file_label': 'Config File:',
+        'browse': 'Browse...',
+        'reset_defaults': 'Reset to Defaults'
         , 'current_name': 'Current Name'
         , 'proposed_new_name': 'Proposed New Name'
         , 'renaming_files': 'Renaming files...'
@@ -65,7 +68,10 @@ TRANSLATIONS = {
         'language_label': 'Sprache:',
         'tags_label': 'Tags',
         'show_tags': 'Tags anzeigen',
-        'hide_tags': 'Tags ausblenden'
+        'hide_tags': 'Tags ausblenden',
+        'config_file_label': 'Konfigurationsdatei:',
+        'browse': 'Durchsuchen...',
+        'reset_defaults': 'Auf Standard zurücksetzen'
         , 'current_name': 'Aktueller Name'
         , 'proposed_new_name': 'Vorgeschlagener neuer Name'
         , 'renaming_files': 'Dateien werden umbenannt...'
