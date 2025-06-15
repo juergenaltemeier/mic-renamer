@@ -1,12 +1,16 @@
-"""Panel containing tag checkboxes."""
+"""Panel showing available tags as checkboxes."""
 from PySide6.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QLabel, QCheckBox
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 
 from ...logic.tag_loader import load_tags
 from ...utils.i18n import tr
 
 
 class TagPanel(QWidget):
+    """Panel showing available tags as checkboxes."""
+
+    tagToggled = Signal(str, int)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QVBoxLayout(self)
@@ -32,6 +36,7 @@ class TagPanel(QWidget):
         for code, desc in self.tags_info.items():
             cb = QCheckBox(f"{code}: {desc}")
             cb.setProperty("code", code)
+            cb.stateChanged.connect(lambda state, c=code: self.tagToggled.emit(c, state))
             self.tag_layout.addWidget(cb, row, col)
             self.checkbox_map[code] = cb
             col += 1
