@@ -5,16 +5,16 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from ..config.app_config import load_config, save_config
-from ..logic.tag_loader import load_tags
-from ..utils.i18n import tr
+from ...config.config_manager import config_manager
+from ...logic.tag_service import tag_service
+from ...utils.i18n import tr
 
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle(tr("settings_title"))
-        self.cfg = load_config().copy()
+        self.cfg = config_manager._data.copy()
         layout = QVBoxLayout(self)
 
         # accepted extensions
@@ -36,7 +36,7 @@ class SettingsDialog(QDialog):
 
         # tags editor (simple table)
         layout.addWidget(QLabel(tr("tags_label")))
-        tags = load_tags()
+        tags = tag_service.all_tags()
         self.tbl_tags = QTableWidget(len(tags), 2)
         self.tbl_tags.setHorizontalHeaderLabels(["Code", "Description"])
         for row, (code, desc) in enumerate(tags.items()):
@@ -67,7 +67,8 @@ class SettingsDialog(QDialog):
         self.cfg['accepted_extensions'] = exts
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
-        save_config(self.cfg)
+        config_manager._data = self.cfg
+        config_manager.save()
         # save tags
         tags = {}
         for row in range(self.tbl_tags.rowCount()):
@@ -78,10 +79,11 @@ class SettingsDialog(QDialog):
                 desc = desc_item.text().strip()
                 if code:
                     tags[code] = desc
-        # store tags file
-        from ..logic.tag_loader import DEFAULT_TAGS_FILE
-        with open(DEFAULT_TAGS_FILE, 'w', encoding='utf-8') as f:
-            import json
-            json.dump(tags, f, indent=2)
+        tag_service.tags = tags
+        try:
+            tag_service.save()
+        except Exception as exc:
+            print(f"Failed to save tags: {exc}")
         super().accept()
+
 

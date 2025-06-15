@@ -1,6 +1,6 @@
 # Photo/Video Renamer
 
-A desktop application to rename photos and videos using project numbers, tags and optional suffixes.
+A desktop application to rename photos and videos using project numbers, tags and optional suffixes. The code base is organised into dedicated packages for configuration, UI panels, logic services and utilities.
 
 ## Setup
 
@@ -15,6 +15,11 @@ A desktop application to rename photos and videos using project numbers, tags an
    ```bash
    python -m mic_renamer
    ```
+
+Configuration files are stored in the user specific configuration directory
+(e.g. `~/.config/mic-renamer` on Linux). Set the `RENAMER_CONFIG_DIR`
+environment variable to override this location. Default values are bundled in
+`mic_renamer/config/defaults.yaml` and are loaded on first start.
 
 Configuration files are stored in the user specific configuration directory
 (e.g. `~/.config/mic-renamer` on Linux). Set the `RENAMER_CONFIG_DIR`

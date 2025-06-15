@@ -1,0 +1,18 @@
+language: en
+accepted_extensions:
+  - .jpg
+  - .jpeg
+  - .png
+  - .gif
+  - .bmp
+  - .mp4
+  - .avi
+  - .mov
+  - .mkv
+theme:
+  primary_blue: "#2F6FDE"
+  background_white: "#FFFFFF"
+  accent_red: "#D94C4C"
+window:
+  width: 1400
+  height: 800
