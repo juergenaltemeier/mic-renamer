@@ -120,6 +120,30 @@ class ImageViewer(QGraphicsView):
         self._rotation = (self._rotation + 90) % 360
         self.apply_transformations()
 
+    def zoom_fit(self):
+        if not self.pixmap_item:
+            return
+        view_rect = self.viewport().rect()
+        scene_rect = self.scene().sceneRect().toRect()
+        if scene_rect.isEmpty():
+            return
+        factor_w = view_rect.width() / scene_rect.width()
+        factor_h = view_rect.height() / scene_rect.height()
+        factor = min(factor_w, factor_h)
+        # Setze Zoom und behalte Rotation
+        self._zoom_pct = int(factor * 100)
+        # Reset und anwenden
+        self.resetTransform()
+        if self._rotation != 0:
+            self.rotate(self._rotation)
+        self.scale(factor, factor)
+        # Scrollbars zurücksetzen
+        try:
+            self.horizontalScrollBar().setValue(0)
+            self.verticalScrollBar().setValue(0)
+        except Exception:
+            pass
+
 class AspectRatioWidget(QWidget):
     def __init__(self, aspect_ratio=16/9, parent=None):
         super().__init__(parent)
@@ -144,30 +168,6 @@ class AspectRatioWidget(QWidget):
         y = (h - target_h) // 2
         self._widget.setGeometry(x, y, target_w, target_h)
         super().resizeEvent(event)
-
-    def zoom_fit(self):
-        if not self.pixmap_item:
-            return
-        view_rect = self.viewport().rect()
-        scene_rect = self.scene().sceneRect().toRect()
-        if scene_rect.isEmpty():
-            return
-        factor_w = view_rect.width() / scene_rect.width()
-        factor_h = view_rect.height() / scene_rect.height()
-        factor = min(factor_w, factor_h)
-        # Setze Zoom und behalte Rotation
-        self._zoom_pct = int(factor * 100)
-        # Reset und anwenden
-        self.resetTransform()
-        if self._rotation != 0:
-            self.rotate(self._rotation)
-        self.scale(factor, factor)
-        # Scrollbars zurücksetzen
-        try:
-            self.horizontalScrollBar().setValue(0)
-            self.verticalScrollBar().setValue(0)
-        except Exception:
-            pass
 
 class DragDropTableWidget(QTableWidget):
     def __init__(self, parent=None):
@@ -352,6 +352,9 @@ class RenamerApp(QWidget):
         # Initial deaktivieren
         self.set_item_controls_enabled(False)
         self.table_widget.itemSelectionChanged.connect(self.on_table_selection_changed)
+        self.table_widget.itemChanged.connect(self.on_table_item_changed)
+
+        self.table_updating = False
 
         self.update_translations()
 
@@ -539,6 +542,32 @@ class RenamerApp(QWidget):
             else:
                 item.setBackground(QColor(30, 30, 30))
                 item.setForeground(QColor(220, 220, 220))
+
+    def on_table_item_changed(self, item: QTableWidgetItem):
+        if self.table_updating:
+            return
+        row = item.row()
+        col = item.column()
+        if col not in (2, 3):
+            return
+        item0 = self.table_widget.item(row, 1)
+        settings: ItemSettings = item0.data(ROLE_SETTINGS)
+        if settings is None:
+            settings = ItemSettings(item0.data(Qt.UserRole))
+            item0.setData(ROLE_SETTINGS, settings)
+        if col == 2:
+            tags = {t.strip() for t in item.text().split(',') if t.strip()}
+            settings.tags = tags
+            item.setText(','.join(sorted(tags)))
+            item.setToolTip(item.text())
+        else:
+            settings.suffix = item.text().strip()
+            item.setToolTip(settings.suffix)
+        self.update_row_background(row, settings)
+        if row in [i.row() for i in self.table_widget.selectionModel().selectedRows()]:
+            self.table_updating = True
+            self.on_table_selection_changed()
+            self.table_updating = False
 
     def load_preview(self, path: str):
         ext = os.path.splitext(path)[1].lower()
