@@ -4,6 +4,8 @@ import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt
 from .ui.main_window import RenamerApp
+from . import theme
+from .ui.theming import apply_theme
 
 if __name__ == '__main__':
     try:
@@ -12,6 +14,7 @@ if __name__ == '__main__':
     except Exception:
         pass
     app = QApplication(sys.argv)
+    apply_theme(app, theme)
     window = RenamerApp()
     window.resize(1000, 600)
     window.show()

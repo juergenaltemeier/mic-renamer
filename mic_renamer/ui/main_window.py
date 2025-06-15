@@ -17,6 +17,7 @@ from .settings_dialog import SettingsDialog
 from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
 from ..logic.tag_loader import load_tags
+from .multi_select_combo import MultiSelectComboBox
 
 ROLE_SETTINGS = Qt.UserRole + 1
 
@@ -145,8 +146,10 @@ class ImageViewer(QGraphicsView):
             pass
 
 class DragDropTableWidget(QTableWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, tag_factory=None, tag_changed_callback=None):
         super().__init__(parent)
+        self.tag_factory = tag_factory
+        self.tag_changed_callback = tag_changed_callback
         self.setColumnCount(3)
         self.setHorizontalHeaderLabels(["Filename", "Tags", "Suffix"])
         header = self.horizontalHeader()
@@ -212,11 +215,16 @@ class DragDropTableWidget(QTableWidget):
             fname_item.setForeground(QColor(220, 220, 220))
             tags_item = QTableWidgetItem("")
             suffix_item = QTableWidgetItem("")
-            tags_item.setToolTip("")    
+            tags_item.setToolTip("")
             suffix_item.setToolTip("")
             self.setItem(row, 0, fname_item)
             self.setItem(row, 1, tags_item)
             self.setItem(row, 2, suffix_item)
+            if self.tag_factory:
+                widget = self.tag_factory()
+                if self.tag_changed_callback:
+                    widget.selectionChanged.connect(lambda r=row, w=widget: self.tag_changed_callback(r, w))
+                self.setCellWidget(row, 1, widget)
         if self.rowCount() > 0 and not self.selectionModel().hasSelection():
             self.selectRow(0)
 
@@ -226,37 +234,20 @@ class RenamerApp(QWidget):
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
+        self.setObjectName("MainPanel")
 
         self.toolbar = QToolBar()
         self.setup_toolbar()
         main_layout.addWidget(self.toolbar)
 
-        # container for project/suffix controls and selected file label
-        controls_widget = QWidget()
-        controls_layout = QVBoxLayout(controls_widget)
-        lbl_project = QLabel(tr("project_number_label"))
+        # project and suffix fields directly on toolbar
         self.input_project = QLineEdit()
         self.input_project.setPlaceholderText(tr("project_number_placeholder"))
-        controls_layout.addWidget(lbl_project)
-        controls_layout.addWidget(self.input_project)
-        controls_layout.addSpacing(10)
-
-        lbl_selected = QLabel(tr("selected_file_label"))
-        self.label_selected_file = QLabel("<none>")
-        self.label_selected_file.setWordWrap(True)
-        controls_layout.addWidget(lbl_selected)
-        controls_layout.addWidget(self.label_selected_file)
-        controls_layout.addSpacing(5)
-
-        lbl_suffix = QLabel(tr("custom_suffix_label"))
+        self.toolbar.addWidget(self.input_project)
         self.input_item_suffix = QLineEdit()
         self.input_item_suffix.setPlaceholderText(tr("custom_suffix_placeholder"))
-        controls_layout.addWidget(lbl_suffix)
-        controls_layout.addWidget(self.input_item_suffix)
         self.input_item_suffix.editingFinished.connect(self.save_current_item_settings)
-        controls_layout.addSpacing(10)
-
-        main_layout.addWidget(controls_widget)
+        self.toolbar.addWidget(self.input_item_suffix)
 
         grid = QGridLayout()
         main_layout.addLayout(grid)
@@ -294,7 +285,11 @@ class RenamerApp(QWidget):
         self.zoom_slider.valueChanged.connect(self.on_zoom_slider_changed)
         viewer_layout.addWidget(self.zoom_slider)
 
-        self.table_widget = DragDropTableWidget()
+        self.tags_info = load_tags()
+        self.table_widget = DragDropTableWidget(
+            tag_factory=lambda: MultiSelectComboBox(self.tags_info),
+            tag_changed_callback=self.on_table_widget_tag_changed,
+        )
 
         grid.addWidget(viewer_widget, 0, 0)
         grid.addWidget(self.table_widget, 0, 1)
@@ -304,24 +299,9 @@ class RenamerApp(QWidget):
         tag_main_layout = QVBoxLayout(tag_container)
         lbl_tags = QLabel(tr("select_tags_label"))
         tag_main_layout.addWidget(lbl_tags)
-        checkbox_container = QWidget()
-        tag_layout = QGridLayout(checkbox_container)
-        tag_layout.setContentsMargins(0, 0, 0, 0)
-        columns = 4
-        row = col = 0
-        self.tags_info = load_tags()
-        self.checkbox_map = {}
-        for code, desc in self.tags_info.items():
-            cb = QCheckBox(f"{code}: {desc}")
-            cb.setProperty("code", code)
-            cb.stateChanged.connect(self.save_current_item_settings)
-            tag_layout.addWidget(cb, row, col)
-            self.checkbox_map[code] = cb
-            col += 1
-            if col >= columns:
-                col = 0
-                row += 1
-        tag_main_layout.addWidget(checkbox_container)
+        self.tag_selector = MultiSelectComboBox(self.tags_info)
+        self.tag_selector.selectionChanged.connect(self.save_current_item_settings)
+        tag_main_layout.addWidget(self.tag_selector)
 
         grid.addWidget(tag_container, 1, 0, 1, 2)
 
@@ -411,7 +391,6 @@ class RenamerApp(QWidget):
 
     def on_table_selection_changed(self, row, col):
         if row < 0 or row >= self.table_widget.rowCount():
-            self.label_selected_file.setText("<none>")
             self.image_viewer.load_image("")
             self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
@@ -420,7 +399,6 @@ class RenamerApp(QWidget):
         self.set_item_controls_enabled(True)
         item0 = self.table_widget.item(row, 0)
         path = item0.data(Qt.UserRole)
-        self.label_selected_file.setText(os.path.basename(path))
         settings: ItemSettings = item0.data(ROLE_SETTINGS)
         if settings is None:
             settings = ItemSettings(path)
@@ -429,10 +407,9 @@ class RenamerApp(QWidget):
         self.input_item_suffix.blockSignals(True)
         self.input_item_suffix.setText(settings.suffix)
         self.input_item_suffix.blockSignals(False)
-        for code, cb in self.checkbox_map.items():
-            cb.blockSignals(True)
-            cb.setChecked(code in settings.tags)
-            cb.blockSignals(False)
+        self.tag_selector.blockSignals(True)
+        self.tag_selector.set_selected_codes(settings.tags)
+        self.tag_selector.blockSignals(False)
 
         # Preview laden mit Fit
         self.load_preview(path)
@@ -447,7 +424,7 @@ class RenamerApp(QWidget):
         if not settings:
             return
         settings.suffix = self.input_item_suffix.text().strip()
-        selected = {code for code, cb in self.checkbox_map.items() if cb.isChecked()}
+        selected = self.tag_selector.selected_codes()
         settings.tags = selected
         tags_str = ",".join(sorted(settings.tags))
         cell_tags = self.table_widget.item(row, 1)
@@ -456,6 +433,30 @@ class RenamerApp(QWidget):
         cell_tags.setToolTip(tags_str)
         cell_suffix.setText(settings.suffix)
         cell_suffix.setToolTip(settings.suffix)
+        widget = self.table_widget.cellWidget(row, 1)
+        if isinstance(widget, MultiSelectComboBox):
+            widget.blockSignals(True)
+            widget.set_selected_codes(settings.tags)
+            widget.blockSignals(False)
+        self.update_row_background(row, settings)
+
+    def on_table_widget_tag_changed(self, row: int, widget: MultiSelectComboBox):
+        item0 = self.table_widget.item(row, 0)
+        if not item0:
+            return
+        settings: ItemSettings = item0.data(ROLE_SETTINGS)
+        if settings is None:
+            settings = ItemSettings(item0.data(Qt.UserRole))
+            item0.setData(ROLE_SETTINGS, settings)
+        settings.tags = widget.selected_codes()
+        tags_str = ",".join(sorted(settings.tags))
+        cell_tags = self.table_widget.item(row, 1)
+        cell_tags.setText(tags_str)
+        cell_tags.setToolTip(tags_str)
+        if row == self.table_widget.currentRow():
+            self.tag_selector.blockSignals(True)
+            self.tag_selector.set_selected_codes(settings.tags)
+            self.tag_selector.blockSignals(False)
         self.update_row_background(row, settings)
 
     def update_row_background(self, row: int, settings: ItemSettings):
@@ -495,17 +496,14 @@ class RenamerApp(QWidget):
 
     def set_item_controls_enabled(self, enabled: bool):
         self.input_item_suffix.setEnabled(enabled)
-        for cb in self.checkbox_map.values():
-            cb.setEnabled(enabled)
+        self.tag_selector.setEnabled(enabled)
 
     def clear_all(self):
         self.table_widget.setRowCount(0)
-        self.label_selected_file.setText("<none>")
         self.image_viewer.load_image("")
         self.zoom_slider.setValue(100)
         self.input_item_suffix.setText("")
-        for cb in self.checkbox_map.values():
-            cb.setChecked(False)
+        self.tag_selector.set_selected_codes(set())
         self.set_item_controls_enabled(False)
 
     def build_rename_mapping(self):
