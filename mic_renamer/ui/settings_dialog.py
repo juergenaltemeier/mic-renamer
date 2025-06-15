@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from ..config.app_config import load_config, save_config
+from .. import config_manager
 from ..logic.tag_loader import load_tags
 from ..utils.i18n import tr
 
@@ -14,7 +14,7 @@ class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle(tr("settings_title"))
-        self.cfg = load_config().copy()
+        self.cfg = config_manager.load().copy()
         layout = QVBoxLayout(self)
 
         # accepted extensions
@@ -67,7 +67,7 @@ class SettingsDialog(QDialog):
         self.cfg['accepted_extensions'] = exts
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
-        save_config(self.cfg)
+        config_manager.save(self.cfg)
         # save tags
         tags = {}
         for row in range(self.tbl_tags.rowCount()):

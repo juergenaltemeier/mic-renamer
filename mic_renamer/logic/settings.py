@@ -13,10 +13,10 @@ class RenameConfig:
     start_index: int = 1
 
 
-from ..config.app_config import load_config
+from .. import config_manager
 
 # load accepted extensions from config
-ACCEPT_EXTENSIONS = load_config().get("accepted_extensions", [
+ACCEPT_EXTENSIONS = config_manager.get("accepted_extensions", [
     ".jpg",
     ".jpeg",
     ".png",
