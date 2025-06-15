@@ -281,10 +281,16 @@ class RenamerApp(QWidget):
         self.table_widget.sync_check_column()
 
     def on_tag_toggled(self, code: str, state: int) -> None:
-        """Apply tag changes from the tag panel to all selected rows immediately."""
+        """Apply tag changes from the tag panel to all selected rows immediately.
+
+        ``state`` may come from ``QCheckBox.stateChanged`` which provides an
+        ``int`` rather than ``Qt.CheckState``. Convert it to ensure robust
+        comparisons.
+        """
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
             return
+        check_state = Qt.CheckState(state)
         for row in rows:
             item0 = self.table_widget.item(row, 1)
             if not item0:
@@ -293,9 +299,9 @@ class RenamerApp(QWidget):
             if settings is None:
                 settings = ItemSettings(item0.data(Qt.UserRole))
                 item0.setData(ROLE_SETTINGS, settings)
-            if state in (Qt.Checked, Qt.PartiallyChecked):
+            if check_state in (Qt.Checked, Qt.PartiallyChecked):
                 settings.tags.add(code)
-            elif state == Qt.Unchecked:
+            elif check_state == Qt.Unchecked:
                 settings.tags.discard(code)
             tags_str = ",".join(sorted(settings.tags))
             cell_tags = self.table_widget.item(row, 2)
