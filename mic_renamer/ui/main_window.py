@@ -299,7 +299,9 @@ class RenamerApp(QWidget):
                 settings.tags.discard(code)
             tags_str = ",".join(sorted(settings.tags))
             cell_tags = self.table_widget.item(row, 2)
+            self._ignore_table_changes = True
             cell_tags.setText(tags_str)
+            self._ignore_table_changes = False
             cell_tags.setToolTip(tags_str)
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
