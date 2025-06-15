@@ -36,6 +36,7 @@ TRANSLATIONS = {
         , 'proposed_new_name': 'Proposed New Name'
         , 'renaming_files': 'Renaming files...'
         , 'abort': 'Abort'
+        , 'no_tags_configured': 'No tags configured'
     },
     'de': {
         'app_title': 'Foto/Video Umbenenner',
@@ -72,6 +73,7 @@ TRANSLATIONS = {
         , 'proposed_new_name': 'Vorgeschlagener neuer Name'
         , 'renaming_files': 'Dateien werden umbenannt...'
         , 'abort': 'Abbrechen'
+        , 'no_tags_configured': 'Keine Tags konfiguriert'
     }
 }
 
