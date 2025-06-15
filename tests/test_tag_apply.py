@@ -19,7 +19,7 @@ def test_checkbox_applies_tag(app):
     win.table_widget.add_paths(["/tmp/test.jpg"])
     win.table_widget.selectRow(0)
     code = next(iter(win.tag_panel.checkbox_map))
-    win.on_tag_toggled(code, Qt.Checked.value)
+    win.on_tag_toggled(code, Qt.Checked)
     cell_text = win.table_widget.item(0, 2).text()
     assert cell_text == code
     item0 = win.table_widget.item(0, 1)
