@@ -154,17 +154,22 @@ class RenamerApp(QWidget):
         tb.addSeparator()
         self.lbl_project = QLabel(tr("project_number_label"))
         self.input_project = ProjectNumberInput()
+        self.input_project.setText(config_manager.get("last_project_number", ""))
+        self.input_project.textChanged.connect(self.save_last_project_number)
         tb.addWidget(self.lbl_project)
         tb.addWidget(self.input_project)
 
 
     def open_settings(self):
-        dlg = SettingsDialog(self)
+        dlg = SettingsDialog(self, state_manager=self.state_manager)
         if dlg.exec() == QDialog.Accepted:
             cfg = config_manager.load()
             set_language(cfg.get("language", "en"))
             self.update_translations()
             self.rebuild_tag_checkboxes()
+
+    def save_last_project_number(self, text: str) -> None:
+        config_manager.set("last_project_number", text.strip())
 
     def update_translations(self):
         self.setWindowTitle(tr("app_title"))

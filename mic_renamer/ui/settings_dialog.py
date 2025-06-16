@@ -5,17 +5,28 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
+from ..utils.state_manager import StateManager
+
 from .. import config_manager
 from ..logic.tag_loader import load_tags
 from ..utils.i18n import tr
 
 
 class SettingsDialog(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, state_manager: StateManager | None = None):
         super().__init__(parent)
+        self.state_manager = state_manager
         self.setWindowTitle(tr("settings_title"))
         self.cfg = config_manager.load().copy()
         layout = QVBoxLayout(self)
+
+        # restore size or use larger defaults
+        if self.state_manager:
+            width = self.state_manager.get("settings_width", 700)
+            height = self.state_manager.get("settings_height", 500)
+        else:
+            width, height = 700, 500
+        self.resize(width, height)
 
         # accepted extensions
         layout.addWidget(QLabel(tr("accepted_ext_label")))
@@ -116,4 +127,11 @@ class SettingsDialog(QDialog):
             self.tbl_tags.insertRow(row)
             self.tbl_tags.setItem(row, 0, QTableWidgetItem(code))
             self.tbl_tags.setItem(row, 1, QTableWidgetItem(desc))
+
+    def closeEvent(self, event):
+        if self.state_manager:
+            self.state_manager.set("settings_width", self.width())
+            self.state_manager.set("settings_height", self.height())
+            self.state_manager.save()
+        super().closeEvent(event)
 
