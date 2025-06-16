@@ -8,7 +8,12 @@ from PySide6.QtCore import Qt
 from ..utils.state_manager import StateManager
 
 from .. import config_manager
-from ..logic.tag_loader import load_tags
+from ..logic.tag_loader import (
+    load_tags,
+    load_tags_multilang,
+    DEFAULT_TAGS_FILE,
+    BUNDLED_TAGS_FILE,
+)
 from ..logic.tag_usage import reset_counts
 from ..utils.i18n import tr
 
@@ -48,7 +53,7 @@ class SettingsDialog(QDialog):
 
         # tags editor (simple table)
         layout.addWidget(QLabel(tr("tags_label")))
-        tags = load_tags()
+        tags = load_tags(language=current_lang)
         self.tbl_tags = QTableWidget(len(tags), 2)
         self.tbl_tags.setHorizontalHeaderLabels(["Code", "Description"])
         for row, (code, desc) in enumerate(tags.items()):
@@ -93,8 +98,9 @@ class SettingsDialog(QDialog):
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
         config_manager.save(self.cfg)
-        # save tags
-        tags = {}
+        # save tags for selected language
+        lang = self.combo_lang.currentText()
+        tags_all = load_tags_multilang()
         for row in range(self.tbl_tags.rowCount()):
             code_item = self.tbl_tags.item(row, 0)
             desc_item = self.tbl_tags.item(row, 1)
@@ -102,12 +108,15 @@ class SettingsDialog(QDialog):
                 code = code_item.text().strip()
                 desc = desc_item.text().strip()
                 if code:
-                    tags[code] = desc
-        # store tags file
-        from ..logic.tag_loader import DEFAULT_TAGS_FILE
+                    entry = tags_all.get(code, {})
+                    if not isinstance(entry, dict):
+                        entry = {lang: desc}
+                    else:
+                        entry[lang] = desc
+                    tags_all[code] = entry
         with open(DEFAULT_TAGS_FILE, 'w', encoding='utf-8') as f:
             import json
-            json.dump(tags, f, indent=2)
+            json.dump(tags_all, f, indent=2, ensure_ascii=False)
         super().accept()
 
     def remove_selected_tag_row(self):
@@ -121,14 +130,14 @@ class SettingsDialog(QDialog):
 
     def restore_defaults(self):
         self.cfg = config_manager.restore_defaults()
-        from ..logic.tag_loader import BUNDLED_TAGS_FILE, restore_default_tags
+        from ..logic.tag_loader import restore_default_tags
         restore_default_tags()
         self.edit_ext.setText(", ".join(self.cfg.get("accepted_extensions", [])))
         lang = self.cfg.get("language", "en")
         idx = self.combo_lang.findText(lang)
         if idx >= 0:
             self.combo_lang.setCurrentIndex(idx)
-        tags = load_tags(BUNDLED_TAGS_FILE)
+        tags = load_tags(BUNDLED_TAGS_FILE, language=lang)
         self.tbl_tags.setRowCount(0)
         for code, desc in tags.items():
             row = self.tbl_tags.rowCount()
