@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QMessageBox
 
 from .settings import ItemSettings, RenameConfig
 from ..utils.file_utils import ensure_unique_name
+from .tag_usage import increment_tags
 
 class Renamer:
     def __init__(self, project: str, items: list[ItemSettings], config: RenameConfig | None = None, dest_dir: str | None = None):
@@ -44,6 +45,7 @@ class Renamer:
         return mapping
 
     def execute_rename(self, mapping: list[tuple[ItemSettings, str, str]], parent_widget):
+        used_tags = []
         for item, orig, new in mapping:
             try:
                 orig_abs = os.path.abspath(orig)
@@ -51,9 +53,12 @@ class Renamer:
                 if orig_abs != new_abs:
                     os.rename(orig, new)
                     item.original_path = new
+                    used_tags.extend(item.tags)
             except Exception as e:
                 QMessageBox.warning(
                     parent_widget,
                     "Rename Failed",
                     f"Fehler beim Umbenennen:\n{orig}\n→ {new}\nError: {e}"
                 )
+        if used_tags:
+            increment_tags(used_tags)
