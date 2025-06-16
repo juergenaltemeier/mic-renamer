@@ -22,4 +22,5 @@ environment variable to override this location. Defaults are bundled in
 `mic_renamer/config/defaults.yaml` and will be merged with your custom
 configuration at startup. A default `tags.json` file containing available tag
 codes is copied to the configuration directory on first run if it does not
-already exist.
+already exist. The application also remembers the last used project number so it
+is restored on the next launch.
