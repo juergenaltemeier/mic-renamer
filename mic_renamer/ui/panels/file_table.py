@@ -12,6 +12,10 @@ from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
 
 from ...logic.settings import ItemSettings
+from ...logic.tag_loader import load_tags
+from ...logic.tag_service import extract_tags_from_name
+
+ROLE_SETTINGS = Qt.UserRole + 1
 
 
 class DragDropTableWidget(QTableWidget):
@@ -82,6 +86,11 @@ class DragDropTableWidget(QTableWidget):
             super().dropEvent(event)
 
     def add_paths(self, paths: list[str]):
+        tags_info = {}
+        try:
+            tags_info = load_tags()
+        except Exception:
+            tags_info = {}
         for path in paths:
             duplicate = False
             for row in range(self.rowCount()):
@@ -100,9 +109,18 @@ class DragDropTableWidget(QTableWidget):
             fname_item.setData(Qt.UserRole, path)
             fname_item.setBackground(QColor(30, 30, 30))
             fname_item.setForeground(QColor(220, 220, 220))
-            tags_item = QTableWidgetItem("")
+
+            tags = set()
+            try:
+                tags = extract_tags_from_name(path, tags_info.keys())
+            except Exception:
+                tags = set()
+            settings = ItemSettings(path, tags=tags)
+            fname_item.setData(ROLE_SETTINGS, settings)
+
+            tags_item = QTableWidgetItem(",".join(sorted(tags)))
             suffix_item = QTableWidgetItem("")
-            tags_item.setToolTip("")
+            tags_item.setToolTip(",".join(sorted(tags)))
             suffix_item.setToolTip("")
             self.setItem(row, 0, check_item)
             self.setItem(row, 1, fname_item)
