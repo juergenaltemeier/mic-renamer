@@ -20,7 +20,7 @@ class Application:
         except Exception:
             pass
         self.app = QApplication(sys.argv)
-        logo = Path(__file__).resolve().parents[1] / "Micavac_Logo.svg"
+        logo = Path(__file__).resolve().parents[1] / "favicon.png"
         if logo.is_file():
             self.app.setWindowIcon(QIcon(str(logo)))
         self.state = StateManager(config_manager.config_dir)

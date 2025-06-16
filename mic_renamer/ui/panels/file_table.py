@@ -43,7 +43,7 @@ class DragDropTableWidget(QTableWidget):
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
 
-        logo = Path(__file__).resolve().parents[2] / "Micavac_Logo.svg"
+        logo = Path(__file__).resolve().parents[2] / "favicon.png"
         self.setStyleSheet(
             f"QTableWidget::viewport{{background-image:url('{logo.as_posix()}');"
             "background-repeat:no-repeat;background-position:center;}}"
