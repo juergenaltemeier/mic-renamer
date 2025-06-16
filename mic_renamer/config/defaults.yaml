@@ -10,4 +10,5 @@ accepted_extensions:
   - .mkv
 language: en
 tags_file: tags.json
+tag_usage_file: tag_usage.json
 last_project_number: ""

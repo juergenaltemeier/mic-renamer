@@ -1,7 +1,9 @@
 """Application bootstrapper."""
 from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QIcon
 from PySide6.QtCore import Qt
 import sys
+from pathlib import Path
 
 from .ui.main_window import RenamerApp
 from .utils.state_manager import StateManager
@@ -18,6 +20,9 @@ class Application:
         except Exception:
             pass
         self.app = QApplication(sys.argv)
+        logo = Path(__file__).resolve().parents[1] / "Micavac_Logo.svg"
+        if logo.is_file():
+            self.app.setWindowIcon(QIcon(str(logo)))
         self.state = StateManager(config_manager.config_dir)
         self.window = RenamerApp(state_manager=self.state)
         min_w = config_manager.get("window_min_width", 1200)

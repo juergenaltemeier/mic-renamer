@@ -2,7 +2,7 @@ current_language = 'en'
 
 TRANSLATIONS = {
     'en': {
-        'app_title': 'Photo/Video Renamer',
+        'app_title': 'Micavac Renamer',
         'project_number_label': 'MC-No.:',
         'project_number_placeholder': 'C123456',
         'selected_file_label': 'Selected File:',
@@ -31,7 +31,9 @@ TRANSLATIONS = {
         'accepted_ext_label': 'Accepted File Extensions (comma separated):',
         'language_label': 'Language:',
         'tags_label': 'Tags',
-        'restore_defaults': 'Restore Defaults'
+        'restore_defaults': 'Restore Defaults',
+        'reset_tag_usage': 'Reset Tag Usage',
+        'remove_selected': 'Remove Selected'
         , 'current_name': 'Current Name'
         , 'proposed_new_name': 'Proposed New Name'
         , 'renaming_files': 'Renaming files...'
@@ -39,7 +41,7 @@ TRANSLATIONS = {
         , 'no_tags_configured': 'No tags configured'
     },
     'de': {
-        'app_title': 'Foto/Video Umbenenner',
+        'app_title': 'Micavac Renamer',
         'project_number_label': 'MC-Nr.:',
         'project_number_placeholder': 'C123456',
         'selected_file_label': 'Ausgewählte Datei:',
@@ -67,6 +69,8 @@ TRANSLATIONS = {
         'language_label': 'Sprache:',
         'tags_label': 'Tags',
         'restore_defaults': 'Standardeinstellungen wiederherstellen',
+        'reset_tag_usage': 'Tag-Nutzung zurücksetzen',
+        'remove_selected': 'Auswahl entfernen',
         'show_tags': 'Tags anzeigen',
         'hide_tags': 'Tags ausblenden'
         , 'current_name': 'Aktueller Name'

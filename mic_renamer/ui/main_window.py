@@ -17,6 +17,7 @@ from .panels import ImageViewer, AspectRatioWidget, DragDropTableWidget, TagPane
 from .project_number_input import ProjectNumberInput
 from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
+from ..logic.tag_usage import increment_tags
 
 
 def gear_icon_fallback(size: int = 16) -> QIcon:
@@ -92,6 +93,10 @@ class RenamerApp(QWidget):
 
         grid.addWidget(viewer_widget, 0, 0)
         grid.addWidget(self.table_widget, 0, 1)
+
+        self.btn_remove_selected = QPushButton()
+        self.btn_remove_selected.clicked.connect(self.remove_selected_items)
+        grid.addWidget(self.btn_remove_selected, 1, 1, Qt.AlignRight)
 
         # Tag container spanning both columns with manual toggle
         self.tag_panel = TagPanel()
@@ -187,6 +192,8 @@ class RenamerApp(QWidget):
             self.btn_toggle_tags.setText(tr("hide_tags"))
         else:
             self.btn_toggle_tags.setText(tr("show_tags"))
+        self.btn_remove_selected.setText(tr("remove_selected"))
+        self.btn_remove_selected.setToolTip(tr("remove_selected"))
 
     def add_files_dialog(self):
         exts = " ".join(f"*{e}" for e in ItemSettings.ACCEPT_EXTENSIONS)
@@ -397,6 +404,18 @@ class RenamerApp(QWidget):
             cb.setChecked(False)
         self.set_item_controls_enabled(False)
 
+    def remove_selected_items(self):
+        rows = sorted({idx.row() for idx in self.table_widget.selectionModel().selectedRows()}, reverse=True)
+        for row in rows:
+            self.table_widget.removeRow(row)
+        if self.table_widget.rowCount() == 0:
+            self.image_viewer.load_image("")
+            self.zoom_slider.setValue(100)
+            self.set_item_controls_enabled(False)
+        else:
+            new_row = min(rows[0], self.table_widget.rowCount() - 1)
+            self.table_widget.selectRow(new_row)
+
     def build_rename_mapping(self):
         project = self.input_project.text().strip()
         if not re.fullmatch(r"C\d{6}", project):
@@ -489,6 +508,7 @@ class RenamerApp(QWidget):
         progress.setMinimumDuration(200)
         progress.setValue(0)
         done = 0
+        used_tags = []
         for row, orig, new_name, new_path in table_mapping:
             if progress.wasCanceled():
                 break
@@ -500,6 +520,9 @@ class RenamerApp(QWidget):
                     item0 = self.table_widget.item(row, 1)
                     item0.setText(os.path.basename(new_path))
                     item0.setData(Qt.UserRole, new_path)
+                    settings = item0.data(ROLE_SETTINGS)
+                    if settings:
+                        used_tags.extend(settings.tags)
             except Exception as e:
                 QMessageBox.warning(
                     self,
@@ -517,6 +540,9 @@ class RenamerApp(QWidget):
             )
         else:
             QMessageBox.information(self, tr("done"), tr("rename_done"))
+            if used_tags:
+                increment_tags(used_tags)
+                self.tag_panel.rebuild()
 
     def closeEvent(self, event):
         if self.state_manager:
