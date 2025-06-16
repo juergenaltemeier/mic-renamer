@@ -33,8 +33,12 @@ TRANSLATIONS = {
         'tags_label': 'Tags',
         'restore_defaults': 'Restore Defaults',
         'reset_tag_usage': 'Reset Tag Usage',
-        'remove_selected': 'Remove Selected'
-        , 'current_name': 'Current Name'
+        'remove_selected': 'Remove Selected',
+        'config_path_label': 'Configuration folder',
+        'default_save_dir_label': 'Default save directory',
+        'use_original_directory': 'Use current folder?',
+        'use_original_directory_msg': 'Save renamed files in their current folder?',
+        'current_name': 'Current Name'
         , 'proposed_new_name': 'Proposed New Name'
         , 'renaming_files': 'Renaming files...'
         , 'abort': 'Abort'
@@ -78,6 +82,10 @@ TRANSLATIONS = {
         , 'renaming_files': 'Dateien werden umbenannt...'
         , 'abort': 'Abbrechen'
         , 'no_tags_configured': 'Keine Tags konfiguriert'
+        , 'config_path_label': 'Konfigurationsordner'
+        , 'default_save_dir_label': 'Standard-Speicherordner'
+        , 'use_original_directory': 'Aktuellen Ordner verwenden?'
+        , 'use_original_directory_msg': 'Umbenannte Dateien im aktuellen Ordner speichern?'
     }
 }
 

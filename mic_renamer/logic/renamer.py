@@ -8,9 +8,10 @@ from .settings import ItemSettings, RenameConfig
 from ..utils.file_utils import ensure_unique_name
 
 class Renamer:
-    def __init__(self, project: str, items: list[ItemSettings], config: RenameConfig | None = None):
+    def __init__(self, project: str, items: list[ItemSettings], config: RenameConfig | None = None, dest_dir: str | None = None):
         self.project = project
         self.items = items
+        self.dest_dir = dest_dir
         self.config = config or RenameConfig()
 
     def build_mapping(self) -> list[tuple[ItemSettings, str, str]]:
@@ -35,7 +36,7 @@ class Renamer:
                 )
                 if use_index:
                     counter += 1
-                dirpath = os.path.dirname(item.original_path)
+                dirpath = self.dest_dir or os.path.dirname(item.original_path)
                 candidate = os.path.join(dirpath, new_basename)
                 unique = ensure_unique_name(candidate, item.original_path)
                 mapping.append((item, item.original_path, unique))

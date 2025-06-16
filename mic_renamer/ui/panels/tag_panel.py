@@ -33,7 +33,8 @@ class TagPanel(QWidget):
             if w:
                 w.deleteLater()
         self.checkbox_map = {}
-        tags = self.tags_info if self.tags_info is not None else load_tags()
+        # always reload tags to pick up language or file changes
+        tags = load_tags()
         if not isinstance(tags, dict):
             self._log.warning("Invalid tags info, expected dict but got %s", type(tags).__name__)
             tags = {}

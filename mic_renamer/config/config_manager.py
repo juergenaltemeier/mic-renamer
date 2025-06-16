@@ -31,6 +31,8 @@ class ConfigManager:
         defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         # default path for tag usage statistics
         defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
+        # directory used when choosing an alternative save location
+        defaults.setdefault("default_save_directory", str(get_config_dir()))
         self._config = {**defaults, **data}
         return self._config
 
@@ -59,6 +61,7 @@ class ConfigManager:
         defaults = yaml.safe_load(self.defaults_path.read_text())
         defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
+        defaults.setdefault("default_save_directory", str(get_config_dir()))
         self._config = defaults
         self.save(defaults)
         return defaults

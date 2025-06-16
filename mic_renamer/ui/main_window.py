@@ -436,7 +436,7 @@ class RenamerApp(QWidget):
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
             self.table_widget.selectRow(new_row)
 
-    def build_rename_mapping(self):
+    def build_rename_mapping(self, dest_dir: str | None = None):
         project = self.input_project.text().strip()
         if not re.fullmatch(r"C\d{6}", project):
             QMessageBox.warning(self, tr("missing_project"), tr("missing_project_msg"))
@@ -459,12 +459,31 @@ class RenamerApp(QWidget):
             if cell_date:
                 settings.date = cell_date.text().strip()
             items.append(settings)
-        renamer = Renamer(project, items)
+        renamer = Renamer(project, items, dest_dir=dest_dir)
         mapping = renamer.build_mapping()
         return mapping
 
+    def choose_save_directory(self) -> str | None:
+        reply = QMessageBox.question(
+            self,
+            tr('use_original_directory'),
+            tr('use_original_directory_msg'),
+            QMessageBox.Yes | QMessageBox.No,
+        )
+        if reply == QMessageBox.Yes:
+            return None
+        directory = QFileDialog.getExistingDirectory(
+            self,
+            tr('default_save_dir_label'),
+            config_manager.get('default_save_directory', '')
+        )
+        if directory:
+            config_manager.set('default_save_directory', directory)
+        return directory or None
+
     def preview_rename(self):
-        mapping = self.build_rename_mapping()
+        dest = self.choose_save_directory()
+        mapping = self.build_rename_mapping(dest)
         if mapping is None:
             return
         table_mapping = []
@@ -499,7 +518,8 @@ class RenamerApp(QWidget):
             self.execute_rename_with_progress(table_mapping)
 
     def direct_rename(self):
-        mapping = self.build_rename_mapping()
+        dest = self.choose_save_directory()
+        mapping = self.build_rename_mapping(dest)
         if mapping is None:
             return
         reply = QMessageBox.question(
