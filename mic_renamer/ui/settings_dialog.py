@@ -34,10 +34,22 @@ class SettingsDialog(QDialog):
             width, height = 700, 500
         self.resize(width, height)
 
+        layout.addWidget(QLabel(f"{tr('config_path_label')}: {config_manager.config_dir}"))
+
         # accepted extensions
         layout.addWidget(QLabel(tr("accepted_ext_label")))
         self.edit_ext = QLineEdit(", ".join(self.cfg.get("accepted_extensions", [])))
         layout.addWidget(self.edit_ext)
+
+        # default save directory
+        hl_save = QHBoxLayout()
+        hl_save.addWidget(QLabel(tr('default_save_dir_label')))
+        self.edit_save_dir = QLineEdit(self.cfg.get('default_save_directory', ''))
+        btn_browse_save = QPushButton('...')
+        btn_browse_save.clicked.connect(self.choose_save_dir)
+        hl_save.addWidget(self.edit_save_dir)
+        hl_save.addWidget(btn_browse_save)
+        layout.addLayout(hl_save)
 
         # language selection
         hl = QHBoxLayout()
@@ -85,6 +97,12 @@ class SettingsDialog(QDialog):
         btns.rejected.connect(self.reject)
         layout.addWidget(btns)
 
+    def choose_save_dir(self):
+        from PySide6.QtWidgets import QFileDialog
+        dir_path = QFileDialog.getExistingDirectory(self, tr('default_save_dir_label'), self.edit_save_dir.text() or str(config_manager.get('default_save_directory', '')))
+        if dir_path:
+            self.edit_save_dir.setText(dir_path)
+
     def add_tag_row(self):
         row = self.tbl_tags.rowCount()
         self.tbl_tags.insertRow(row)
@@ -97,6 +115,7 @@ class SettingsDialog(QDialog):
         self.cfg['accepted_extensions'] = exts
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
+        self.cfg['default_save_directory'] = self.edit_save_dir.text().strip()
         config_manager.save(self.cfg)
         # save tags for selected language
         lang = self.combo_lang.currentText()
@@ -133,6 +152,7 @@ class SettingsDialog(QDialog):
         from ..logic.tag_loader import restore_default_tags
         restore_default_tags()
         self.edit_ext.setText(", ".join(self.cfg.get("accepted_extensions", [])))
+        self.edit_save_dir.setText(self.cfg.get('default_save_directory', ''))
         lang = self.cfg.get("language", "en")
         idx = self.combo_lang.findText(lang)
         if idx >= 0:
