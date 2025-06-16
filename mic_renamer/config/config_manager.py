@@ -65,3 +65,22 @@ class ConfigManager:
         self._config = defaults
         self.save(defaults)
         return defaults
+
+    def ensure_files(self) -> None:
+        """Create config and related files on first run."""
+        cfg = self.load()
+        # ensure config file exists on disk
+        if not Path(self.config_file).is_file():
+            self.save(cfg)
+        # ensure tags and usage files exist
+        from ..logic.tag_loader import restore_default_tags
+        from ..logic.tag_usage import save_counts
+        restore_default_tags()
+        usage_path = Path(cfg.get("tag_usage_file"))
+        if not usage_path.is_absolute():
+            usage_path = Path(get_config_dir()) / usage_path
+        if not usage_path.is_file():
+            try:
+                save_counts({})
+            except Exception:
+                pass

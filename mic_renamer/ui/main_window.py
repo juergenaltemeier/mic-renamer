@@ -149,6 +149,11 @@ class RenamerApp(QWidget):
         act_rename.triggered.connect(self.direct_rename)
         tb.addAction(act_rename)
 
+        act_rename_sel = QAction(style.standardIcon(QStyle.SP_DialogYesButton), tr("rename_selected"), self)
+        act_rename_sel.setToolTip(tr("rename_selected"))
+        act_rename_sel.triggered.connect(self.direct_rename_selected)
+        tb.addAction(act_rename_sel)
+
         act_clear = QAction(style.standardIcon(QStyle.SP_DialogResetButton), tr("clear_list"), self)
         act_clear.setToolTip(tr("clear_list"))
         act_clear.triggered.connect(self.clear_all)
@@ -185,7 +190,8 @@ class RenamerApp(QWidget):
         actions = self.toolbar.actions()
         labels = [
             "add_files", "add_folder", "preview_rename",
-            "rename_all", "clear_list", "settings_title"
+            "rename_all", "rename_selected", "clear_list",
+            "settings_title"
         ]
         for action, key in zip(actions, labels):
             action.setText(tr(key))
@@ -436,18 +442,22 @@ class RenamerApp(QWidget):
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
             self.table_widget.selectRow(new_row)
 
-    def build_rename_mapping(self, dest_dir: str | None = None):
+    def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
         if not re.fullmatch(r"C\d{6}", project):
             QMessageBox.warning(self, tr("missing_project"), tr("missing_project_msg"))
             return None
-        n = self.table_widget.rowCount()
-        if n == 0:
+        if rows is None:
+            n = self.table_widget.rowCount()
+            row_iter = range(n)
+        else:
+            row_iter = rows
+        if not row_iter:
             QMessageBox.information(self, tr("no_files"), tr("no_files_msg"))
             return None
         self.save_current_item_settings()
         items = []
-        for row in range(n):
+        for row in row_iter:
             item0 = self.table_widget.item(row, 1)
             path = item0.data(Qt.UserRole)
             settings: ItemSettings = item0.data(ROLE_SETTINGS)
@@ -482,8 +492,7 @@ class RenamerApp(QWidget):
         return directory or None
 
     def preview_rename(self):
-        dest = self.choose_save_directory()
-        mapping = self.build_rename_mapping(dest)
+        mapping = self.build_rename_mapping()
         if mapping is None:
             return
         table_mapping = []
@@ -532,6 +541,28 @@ class RenamerApp(QWidget):
             for settings, orig, new in mapping:
                 new_name = os.path.basename(new)
                 for row in range(self.table_widget.rowCount()):
+                    item0 = self.table_widget.item(row, 1)
+                    if item0.data(Qt.UserRole) == orig:
+                        table_mapping.append((row, orig, new_name, new))
+                        break
+            self.execute_rename_with_progress(table_mapping)
+
+    def direct_rename_selected(self):
+        dest = self.choose_save_directory()
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        mapping = self.build_rename_mapping(dest, rows)
+        if mapping is None:
+            return
+        reply = QMessageBox.question(
+            self, tr("confirm_rename"),
+            tr("confirm_rename_msg"),
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            table_mapping = []
+            for settings, orig, new in mapping:
+                new_name = os.path.basename(new)
+                for row in rows:
                     item0 = self.table_widget.item(row, 1)
                     if item0.data(Qt.UserRole) == orig:
                         table_mapping.append((row, orig, new_name, new))
