@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QDialogButtonBox, QComboBox, QTableWidget, QTableWidgetItem,
-    QPushButton
+    QPushButton, QTabWidget, QWidget
 )
 from PySide6.QtCore import Qt
 
@@ -16,6 +16,7 @@ from ..logic.tag_loader import (
 )
 from ..logic.tag_usage import reset_counts
 from ..utils.i18n import tr
+from .panels import CompressionSettingsPanel
 
 
 class SettingsDialog(QDialog):
@@ -34,14 +35,19 @@ class SettingsDialog(QDialog):
             width, height = 700, 500
         self.resize(width, height)
 
-        layout.addWidget(QLabel(f"{tr('config_path_label')}: {config_manager.config_dir}"))
+        tabs = QTabWidget()
+        layout.addWidget(tabs)
 
-        # accepted extensions
-        layout.addWidget(QLabel(tr("accepted_ext_label")))
+        general = QWidget()
+        tabs.addTab(general, tr("settings_title"))
+        gen_layout = QVBoxLayout(general)
+
+        gen_layout.addWidget(QLabel(f"{tr('config_path_label')}: {config_manager.config_dir}"))
+
+        gen_layout.addWidget(QLabel(tr("accepted_ext_label")))
         self.edit_ext = QLineEdit(", ".join(self.cfg.get("accepted_extensions", [])))
-        layout.addWidget(self.edit_ext)
+        gen_layout.addWidget(self.edit_ext)
 
-        # default save directory
         hl_save = QHBoxLayout()
         hl_save.addWidget(QLabel(tr('default_save_dir_label')))
         self.edit_save_dir = QLineEdit(self.cfg.get('default_save_directory', ''))
@@ -49,9 +55,8 @@ class SettingsDialog(QDialog):
         btn_browse_save.clicked.connect(self.choose_save_dir)
         hl_save.addWidget(self.edit_save_dir)
         hl_save.addWidget(btn_browse_save)
-        layout.addLayout(hl_save)
+        gen_layout.addLayout(hl_save)
 
-        # language selection
         hl = QHBoxLayout()
         hl.addWidget(QLabel(tr("language_label")))
         self.combo_lang = QComboBox()
@@ -61,10 +66,9 @@ class SettingsDialog(QDialog):
         if index >= 0:
             self.combo_lang.setCurrentIndex(index)
         hl.addWidget(self.combo_lang)
-        layout.addLayout(hl)
+        gen_layout.addLayout(hl)
 
-        # tags editor (simple table)
-        layout.addWidget(QLabel(tr("tags_label")))
+        gen_layout.addWidget(QLabel(tr("tags_label")))
         tags = load_tags(language=current_lang)
         self.tbl_tags = QTableWidget(len(tags), 2)
         self.tbl_tags.setHorizontalHeaderLabels(["Code", "Description"])
@@ -72,7 +76,7 @@ class SettingsDialog(QDialog):
             self.tbl_tags.setItem(row, 0, QTableWidgetItem(code))
             self.tbl_tags.setItem(row, 1, QTableWidgetItem(desc))
         self.tbl_tags.horizontalHeader().setStretchLastSection(True)
-        layout.addWidget(self.tbl_tags)
+        gen_layout.addWidget(self.tbl_tags)
 
         hl_buttons = QHBoxLayout()
         btn_add = QPushButton("+")
@@ -84,7 +88,10 @@ class SettingsDialog(QDialog):
         btn_remove.clicked.connect(self.remove_selected_tag_row)
         hl_buttons.addWidget(btn_remove)
         hl_buttons.addStretch()
-        layout.addLayout(hl_buttons)
+        gen_layout.addLayout(hl_buttons)
+
+        self.compression_panel = CompressionSettingsPanel(self.cfg)
+        tabs.addTab(self.compression_panel, tr("compression_settings"))
 
         btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         btn_restore = QPushButton(tr("restore_defaults"))
@@ -116,6 +123,7 @@ class SettingsDialog(QDialog):
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
         self.cfg['default_save_directory'] = self.edit_save_dir.text().strip()
+        self.compression_panel.update_cfg()
         config_manager.save(self.cfg)
         # save tags for selected language
         lang = self.combo_lang.currentText()
@@ -164,6 +172,7 @@ class SettingsDialog(QDialog):
             self.tbl_tags.insertRow(row)
             self.tbl_tags.setItem(row, 0, QTableWidgetItem(code))
             self.tbl_tags.setItem(row, 1, QTableWidgetItem(desc))
+        self.compression_panel.restore_defaults()
 
     def closeEvent(self, event):
         if self.state_manager:

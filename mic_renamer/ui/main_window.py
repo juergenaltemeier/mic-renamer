@@ -19,8 +19,10 @@ from .panels import (
     DragDropTableWidget,
     TagPanel,
 )
+from .rename_options_dialog import RenameOptionsDialog
 from .project_number_input import ProjectNumberInput
 from ..logic.settings import ItemSettings
+from ..logic.image_compressor import ImageCompressor
 from ..logic.renamer import Renamer
 from ..logic.tag_usage import increment_tags
 
@@ -159,6 +161,11 @@ class RenamerApp(QWidget):
         act_rename_sel.triggered.connect(self.direct_rename_selected)
         tb.addAction(act_rename_sel)
 
+        act_compress = QAction(style.standardIcon(QStyle.SP_ArrowDown), tr("compress"), self)
+        act_compress.setToolTip(tr("compress"))
+        act_compress.triggered.connect(self.compress_selected)
+        tb.addAction(act_compress)
+
         act_clear = QAction(style.standardIcon(QStyle.SP_DialogResetButton), tr("clear_list"), self)
         act_clear.setToolTip(tr("clear_list"))
         act_clear.triggered.connect(self.clear_all)
@@ -195,7 +202,7 @@ class RenamerApp(QWidget):
         actions = self.toolbar.actions()
         labels = [
             "add_files", "add_folder", "preview_rename",
-            "rename_all", "rename_selected", "clear_list",
+            "rename_all", "rename_selected", "compress", "clear_list",
             "settings_title"
         ]
         for action, key in zip(actions, labels):
@@ -343,7 +350,7 @@ class RenamerApp(QWidget):
         QTimer.singleShot(0, self.on_table_selection_changed)
 
     def update_row_background(self, row: int, settings: ItemSettings):
-        for col in range(5):
+        for col in range(self.table_widget.columnCount()):
             item = self.table_widget.item(row, col)
             if not item:
                 continue
@@ -441,6 +448,34 @@ class RenamerApp(QWidget):
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
             self.table_widget.selectRow(new_row)
 
+    def compress_rows(self, rows: list[int]):
+        cfg = config_manager.load()
+        compressor = ImageCompressor(
+            max_size_mb=cfg.get("compression_max_size_mb", 2),
+            quality=cfg.get("compression_quality", 95),
+            reduce_resolution=cfg.get("compression_reduce_resolution", True),
+        )
+        for row in rows:
+            item0 = self.table_widget.item(row, 1)
+            if not item0:
+                continue
+            path = item0.data(Qt.UserRole)
+            orig_size = os.path.getsize(path)
+            new_size, reduction = compressor.compress(path)
+            settings: ItemSettings = item0.data(ROLE_SETTINGS)
+            if settings:
+                settings.size_bytes = orig_size
+                settings.compressed_bytes = new_size
+            self.table_widget.item(row, 5).setText(f"{reduction}%")
+            self.table_widget.item(row, 6).setText(f"{new_size // 1024}kB")
+
+    def compress_selected(self):
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        if not rows:
+            return
+        self.compress_rows(rows)
+        QMessageBox.information(self, tr("done"), tr("compression_done"))
+
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
         if not re.fullmatch(r"C\d{6}", project):
@@ -526,47 +561,35 @@ class RenamerApp(QWidget):
             self.execute_rename_with_progress(table_mapping)
 
     def direct_rename(self):
-        dest = self.choose_save_directory()
-        mapping = self.build_rename_mapping(dest)
-        if mapping is None:
-            return
-        reply = QMessageBox.question(
-            self, tr("confirm_rename"),
-            tr("confirm_rename_msg"),
-            QMessageBox.Yes | QMessageBox.No
-        )
-        if reply == QMessageBox.Yes:
-            table_mapping = []
-            for settings, orig, new in mapping:
-                new_name = os.path.basename(new)
-                for row in range(self.table_widget.rowCount()):
-                    item0 = self.table_widget.item(row, 1)
-                    if item0.data(Qt.UserRole) == orig:
-                        table_mapping.append((row, orig, new_name, new))
-                        break
-            self.execute_rename_with_progress(table_mapping)
+        self.rename_with_options(None)
 
     def direct_rename_selected(self):
-        dest = self.choose_save_directory()
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        self.rename_with_options(rows)
+
+    def rename_with_options(self, rows: list[int] | None):
+        dlg = RenameOptionsDialog(self)
+        if dlg.exec() != QDialog.Accepted:
+            return
+        dest = dlg.directory
+        if dest:
+            config_manager.set('default_save_directory', dest)
+        if rows is None:
+            rows = list(range(self.table_widget.rowCount()))
+        if dlg.compress:
+            self.compress_rows(rows)
         mapping = self.build_rename_mapping(dest, rows)
         if mapping is None:
             return
-        reply = QMessageBox.question(
-            self, tr("confirm_rename"),
-            tr("confirm_rename_msg"),
-            QMessageBox.Yes | QMessageBox.No
-        )
-        if reply == QMessageBox.Yes:
-            table_mapping = []
-            for settings, orig, new in mapping:
-                new_name = os.path.basename(new)
-                for row in rows:
-                    item0 = self.table_widget.item(row, 1)
-                    if item0.data(Qt.UserRole) == orig:
-                        table_mapping.append((row, orig, new_name, new))
-                        break
-            self.execute_rename_with_progress(table_mapping)
+        table_mapping = []
+        for settings, orig, new in mapping:
+            new_name = os.path.basename(new)
+            for row in rows:
+                item0 = self.table_widget.item(row, 1)
+                if item0.data(Qt.UserRole) == orig:
+                    table_mapping.append((row, orig, new_name, new))
+                    break
+        self.execute_rename_with_progress(table_mapping)
 
     def execute_rename_with_progress(self, table_mapping):
         total = len(table_mapping)
