@@ -3,7 +3,7 @@ import re
 from PySide6.QtWidgets import (
     QWidget, QSplitter, QHBoxLayout, QVBoxLayout, QGridLayout,
     QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
-    QApplication, QLabel, QLineEdit,
+    QApplication, QLabel,
     QProgressDialog, QDialog, QDialogButtonBox, QAbstractItemView,
     QHeaderView, QStyle, QTableWidget, QTableWidgetItem
 )
@@ -14,6 +14,7 @@ from .. import config_manager
 from ..utils.i18n import tr, set_language
 from .settings_dialog import SettingsDialog
 from .panels import ImageViewer, AspectRatioWidget, DragDropTableWidget, TagPanel
+from .project_number_input import ProjectNumberInput
 from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
 
@@ -152,11 +153,7 @@ class RenamerApp(QWidget):
 
         tb.addSeparator()
         self.lbl_project = QLabel(tr("project_number_label"))
-        self.input_project = QLineEdit()
-        self.input_project.setInputMask("C000000;_")
-        self.input_project.setText("C")
-        self.input_project.setMaximumWidth(120)
-        self.input_project.setPlaceholderText(tr("project_number_placeholder"))
+        self.input_project = ProjectNumberInput()
         tb.addWidget(self.lbl_project)
         tb.addWidget(self.input_project)
 
@@ -181,7 +178,6 @@ class RenamerApp(QWidget):
             action.setToolTip(tr(key))
         # update form labels
         self.lbl_project.setText(tr("project_number_label"))
-        self.input_project.setPlaceholderText(tr("project_number_placeholder"))
         if self.tag_panel.isVisible():
             self.btn_toggle_tags.setText(tr("hide_tags"))
         else:
