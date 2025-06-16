@@ -47,14 +47,12 @@ class TagPanel(QWidget):
             self.tags_info.items(), key=lambda kv: usage.get(kv[0], 0), reverse=True
         )
         columns = 4
-        row = col = 0
-        for code, desc in sorted_tags:
+        rows = (len(sorted_tags) + columns - 1) // columns
+        for idx, (code, desc) in enumerate(sorted_tags):
+            row = idx % rows
+            col = idx // rows
             cb = QCheckBox(f"{code}: {desc}")
             cb.setProperty("code", code)
             cb.stateChanged.connect(lambda state, c=code: self.tagToggled.emit(c, state))
             self.tag_layout.addWidget(cb, row, col)
             self.checkbox_map[code] = cb
-            col += 1
-            if col >= columns:
-                col = 0
-                row += 1
