@@ -23,6 +23,8 @@ class Application:
         logo = Path(__file__).resolve().parents[1] / "favicon.png"
         if logo.is_file():
             self.app.setWindowIcon(QIcon(str(logo)))
+        # create config files on first run
+        config_manager.ensure_files()
         self.state = StateManager(config_manager.config_dir)
         self.window = RenamerApp(state_manager=self.state)
         min_w = config_manager.get("window_min_width", 1200)
