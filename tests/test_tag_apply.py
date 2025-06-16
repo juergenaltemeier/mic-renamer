@@ -25,3 +25,27 @@ def test_checkbox_applies_tag(app):
     item0 = win.table_widget.item(0, 1)
     settings = item0.data(ROLE_SETTINGS)
     assert code in settings.tags
+
+
+def test_existing_tags_detected(app, monkeypatch):
+    tags = {"A": "Alpha", "B": "Beta"}
+    monkeypatch.setattr(
+        "mic_renamer.logic.tag_loader.load_tags",
+        lambda: tags,
+    )
+    monkeypatch.setattr(
+        "mic_renamer.ui.panels.file_table.load_tags",
+        lambda: tags,
+    )
+    win = RenamerApp()
+    win.table_widget.add_paths(["/tmp/image_A_B.jpg"])
+    win.table_widget.selectRow(0)
+    cell_text = win.table_widget.item(0, 2).text()
+    assert cell_text == "A,B"
+    item0 = win.table_widget.item(0, 1)
+    settings = item0.data(ROLE_SETTINGS)
+    assert settings.tags == {"A", "B"}
+    win.on_table_selection_changed()
+    assert win.tag_panel.checkbox_map["A"].checkState() == Qt.Checked
+    assert win.tag_panel.checkbox_map["B"].checkState() == Qt.Checked
+
