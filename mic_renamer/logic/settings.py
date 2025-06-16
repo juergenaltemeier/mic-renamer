@@ -2,6 +2,8 @@
 
 import os
 from dataclasses import dataclass, field
+from datetime import datetime
+import re
 
 
 class RenameConfig:
@@ -34,19 +36,37 @@ class ItemSettings:
     original_path: str
     tags: set[str] = field(default_factory=set)
     suffix: str = ""
+    date: str = ""
+
+    def _date_str(self, config: RenameConfig) -> str:
+        if self.date and re.fullmatch(r"\d{6}", self.date):
+            return self.date
+        return datetime.now().strftime(config.date_format)
+
+    def build_base_name(
+        self,
+        project: str,
+        ordered_tags: list[str],
+        config: RenameConfig,
+    ) -> str:
+        date_str = self._date_str(config)
+        parts = [project] + ordered_tags + [date_str]
+        base = config.separator.join(parts)
+        if self.suffix:
+            base += f"{config.separator}{self.suffix}"
+        return base
 
     def build_new_name(
         self,
         project: str,
         index: int,
-        date_str: str,
         ordered_tags: list[str],
         config: RenameConfig,
+        include_index: bool = True,
     ) -> str:
-        parts = [project] + ordered_tags + [date_str, f"{index:0{config.index_padding}d}"]
-        base = config.separator.join(parts)
-        if self.suffix:
-            base += f"{config.separator}{self.suffix}"
+        base = self.build_base_name(project, ordered_tags, config)
+        if include_index:
+            base += f"{config.separator}{index:0{config.index_padding}d}"
         ext = os.path.splitext(self.original_path)[1]
         return base + ext
 

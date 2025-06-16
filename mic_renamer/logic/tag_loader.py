@@ -12,8 +12,9 @@ CONFIG_TAGS_FILE = config_manager.get("tags_file")
 
 ENV_TAGS_FILE = "RENAMER_TAGS_FILE"
 
-def load_tags(file_path: str | None = None) -> dict:
-    """Load tag definitions from a JSON file."""
+
+def _load_raw(file_path: str | None = None) -> dict:
+    """Internal helper returning the raw tag dictionary."""
     if file_path is None:
         file_path = os.environ.get(ENV_TAGS_FILE) or CONFIG_TAGS_FILE or DEFAULT_TAGS_FILE
     path = Path(file_path)
@@ -38,6 +39,28 @@ def load_tags(file_path: str | None = None) -> dict:
     except Exception:
         pass
     return {}
+
+def load_tags(file_path: str | None = None, language: str | None = None) -> dict:
+    """Return tags for the requested language.
+
+    If the file contains translations for multiple languages the appropriate
+    entry is returned. When only a plain string is present, it is used for all
+    languages.
+    """
+    raw = _load_raw(file_path)
+    lang = language or config_manager.get("language", "en")
+    result = {}
+    for code, value in raw.items():
+        if isinstance(value, str):
+            result[code] = value
+        elif isinstance(value, dict):
+            result[code] = value.get(lang) or next(iter(value.values()), "")
+    return result
+
+
+def load_tags_multilang(file_path: str | None = None) -> dict:
+    """Return the raw tag dictionary with translations."""
+    return _load_raw(file_path)
 
 
 def restore_default_tags() -> None:
