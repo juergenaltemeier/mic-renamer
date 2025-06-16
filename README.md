@@ -24,3 +24,11 @@ configuration at startup. A default `tags.json` file containing available tag
 codes is copied to the configuration directory on first run if it does not
 already exist. The application also remembers the last used project number so it
 is restored on the next launch.
+
+Tag usage statistics are written to ``tag_usage.json`` in the same
+configuration directory. You can discover the full path programmatically:
+
+```python
+from mic_renamer.logic.tag_usage import get_usage_path
+print(get_usage_path())
+```

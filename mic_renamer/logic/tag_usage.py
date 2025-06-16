@@ -10,10 +10,16 @@ from ..utils.path_utils import get_config_dir
 
 
 def _get_usage_path() -> Path:
+    """Internal helper returning the resolved usage file path."""
     path = Path(config_manager.get("tag_usage_file", "tag_usage.json"))
     if not path.is_absolute():
         path = Path(get_config_dir()) / path
     return path
+
+
+def get_usage_path() -> Path:
+    """Return the absolute path to ``tag_usage.json``."""
+    return _get_usage_path()
 
 
 def load_counts() -> dict[str, int]:
