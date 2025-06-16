@@ -334,6 +334,8 @@ class RenamerApp(QWidget):
     def update_row_background(self, row: int, settings: ItemSettings):
         for col in range(5):
             item = self.table_widget.item(row, col)
+            if not item:
+                continue
             if settings and (settings.suffix or settings.tags):
                 item.setBackground(QColor('#335533'))
                 item.setForeground(QColor('#ffffff'))
