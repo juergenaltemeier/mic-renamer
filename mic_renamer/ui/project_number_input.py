@@ -34,7 +34,7 @@ class ProjectNumberInput(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(2)
         self._digits: list[DigitEdit] = []
-        self.prefix = QLabel("C")
+        self.prefix = QLabel(" C")
         layout.addWidget(self.prefix)
         self.setMaximumWidth(160)
         for i in range(6):
