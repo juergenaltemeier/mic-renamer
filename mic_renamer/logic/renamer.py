@@ -1,7 +1,7 @@
 # logic/renamer.py
 
 import os
-from datetime import datetime
+from collections import defaultdict
 from PySide6.QtWidgets import QMessageBox
 
 from .settings import ItemSettings, RenameConfig
@@ -14,25 +14,32 @@ class Renamer:
         self.config = config or RenameConfig()
 
     def build_mapping(self) -> list[tuple[ItemSettings, str, str]]:
-        date_str = datetime.now().strftime(self.config.date_format)
-        mapping = []
-        counter = self.config.start_index
+        """Build the rename mapping for all items."""
+        groups: dict[str, list[tuple[ItemSettings, list[str]]]] = defaultdict(list)
         for item in self.items:
-            orig_path = item.original_path
-            # sort tags to ensure deterministic naming order
             ordered_tags = sorted(item.tags)
-            new_basename = item.build_new_name(
-                self.project,
-                counter,
-                date_str,
-                ordered_tags,
-                self.config,
-            )
-            dirpath = os.path.dirname(orig_path)
-            candidate = os.path.join(dirpath, new_basename)
-            unique = ensure_unique_name(candidate, orig_path)
-            mapping.append((item, orig_path, unique))
-            counter += 1
+            base = item.build_base_name(self.project, ordered_tags, self.config)
+            groups[base].append((item, ordered_tags))
+
+        mapping = []
+        for base, items in groups.items():
+            use_index = len(items) > 1
+            counter = self.config.start_index
+            for item, ordered_tags in items:
+                new_basename = item.build_new_name(
+                    self.project,
+                    counter,
+                    ordered_tags,
+                    self.config,
+                    include_index=use_index,
+                )
+                if use_index:
+                    counter += 1
+                dirpath = os.path.dirname(item.original_path)
+                candidate = os.path.join(dirpath, new_basename)
+                unique = ensure_unique_name(candidate, item.original_path)
+                mapping.append((item, item.original_path, unique))
+
         return mapping
 
     def execute_rename(self, mapping: list[tuple[ItemSettings, str, str]], parent_widget):
