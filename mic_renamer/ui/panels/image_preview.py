@@ -14,7 +14,8 @@ class ImageViewer(QGraphicsView):
         self.setDragMode(QGraphicsView.ScrollHandDrag)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setRenderHint(QPainter.SmoothPixmapTransform)
+        self.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
+        self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self._zoom_pct = 100
         self._rotation = 0
         self.setFocusPolicy(Qt.StrongFocus)
@@ -40,6 +41,7 @@ class ImageViewer(QGraphicsView):
         self.current_pixmap = pix
         self.scene().clear()
         self.pixmap_item = self.scene().addPixmap(pix)
+        self.pixmap_item.setTransformationMode(Qt.SmoothTransformation)
         self.scene().setSceneRect(self.pixmap_item.boundingRect())
         self._rotation = 0
         self.zoom_fit()

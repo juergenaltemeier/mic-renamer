@@ -13,7 +13,12 @@ from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
 from .. import config_manager
 from ..utils.i18n import tr, set_language
 from .settings_dialog import SettingsDialog
-from .panels import ImageViewer, AspectRatioWidget, DragDropTableWidget, TagPanel
+from .panels import (
+    MediaViewer,
+    AspectRatioWidget,
+    DragDropTableWidget,
+    TagPanel,
+)
 from .project_number_input import ProjectNumberInput
 from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
@@ -73,7 +78,7 @@ class RenamerApp(QWidget):
         viewer_toolbar.addWidget(btn_rot_right)
         viewer_layout.addLayout(viewer_toolbar)
 
-        self.image_viewer = ImageViewer()
+        self.image_viewer = MediaViewer()
         ar_widget = AspectRatioWidget()
         ar_widget.setWidget(self.image_viewer)
         viewer_layout.addWidget(ar_widget, 5)
@@ -229,7 +234,7 @@ class RenamerApp(QWidget):
     def on_table_selection_changed(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
-            self.image_viewer.load_image("")
+            self.image_viewer.load_path("")
             self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
             self.table_widget.sync_check_column()
@@ -394,18 +399,12 @@ class RenamerApp(QWidget):
             self.on_table_selection_changed()
 
     def load_preview(self, path: str):
-        ext = os.path.splitext(path)[1].lower()
-        if ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
-            self.image_viewer.load_image(path)
-            # initial Fit, behält Rotation intern
-            self.image_viewer.zoom_fit()
-            self.zoom_slider.setValue(self.image_viewer._zoom_pct)
-        else:
-            self.image_viewer.load_image("")
-            self.zoom_slider.setValue(100)
+        self.image_viewer.load_path(path)
+        self.image_viewer.zoom_fit()
+        self.zoom_slider.setValue(self.image_viewer.zoom_pct)
 
     def on_zoom_slider_changed(self, value: int):
-        self.image_viewer._zoom_pct = value
+        self.image_viewer.zoom_pct = value
         self.image_viewer.apply_transformations()
 
     def goto_previous_item(self):
@@ -424,7 +423,7 @@ class RenamerApp(QWidget):
 
     def clear_all(self):
         self.table_widget.setRowCount(0)
-        self.image_viewer.load_image("")
+        self.image_viewer.load_path("")
         self.zoom_slider.setValue(100)
         for cb in self.tag_panel.checkbox_map.values():
             cb.setChecked(False)
@@ -435,7 +434,7 @@ class RenamerApp(QWidget):
         for row in rows:
             self.table_widget.removeRow(row)
         if self.table_widget.rowCount() == 0:
-            self.image_viewer.load_image("")
+            self.image_viewer.load_path("")
             self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
         else:
