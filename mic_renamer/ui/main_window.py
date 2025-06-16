@@ -105,7 +105,9 @@ class RenamerApp(QWidget):
         self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
         grid.addWidget(self.btn_toggle_tags, 1, 0, 1, 2, Qt.AlignLeft)
         grid.addWidget(self.tag_panel, 2, 0, 1, 2)
-        self.tag_panel.setVisible(False)
+        visible = config_manager.get("tag_panel_visible", False)
+        self.tag_panel.setVisible(visible)
+        self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
         
         # Initial deaktivieren
         self.set_item_controls_enabled(False)
@@ -115,8 +117,10 @@ class RenamerApp(QWidget):
 
     def toggle_tag_panel(self):
         visible = self.tag_panel.isVisible()
-        self.tag_panel.setVisible(not visible)
-        self.btn_toggle_tags.setText(tr("hide_tags") if not visible else tr("show_tags"))
+        new_visible = not visible
+        self.tag_panel.setVisible(new_visible)
+        self.btn_toggle_tags.setText(tr("hide_tags") if new_visible else tr("show_tags"))
+        config_manager.set("tag_panel_visible", new_visible)
 
     def rebuild_tag_checkboxes(self):
         self.tag_panel.rebuild()
@@ -280,9 +284,13 @@ class RenamerApp(QWidget):
                     settings.tags.discard(code)
             tags_str = ",".join(sorted(settings.tags))
             cell_tags = self.table_widget.item(row, 2)
-            cell_suffix = self.table_widget.item(row, 3)
+            cell_date = self.table_widget.item(row, 3)
+            cell_suffix = self.table_widget.item(row, 4)
             cell_tags.setText(tags_str)
             cell_tags.setToolTip(tags_str)
+            if cell_date:
+                cell_date.setText(settings.date)
+                cell_date.setToolTip(settings.date)
             cell_suffix.setText(settings.suffix)
             cell_suffix.setToolTip(settings.suffix)
             self.update_row_background(row, settings)
@@ -323,12 +331,17 @@ class RenamerApp(QWidget):
         self.table_widget.sync_check_column()
         QTimer.singleShot(0, self.on_table_selection_changed)
 
-    def update_row_background(self, row: int, settings: ItemSettings):
-        for col in range(4):
+    def update_row_background(self, row: int, settings: ItemSettings | None) -> None:
+        """Set table row background colors according to settings."""
+        if row < 0 or row >= self.table_widget.rowCount():
+            return
+        for col in range(5):
             item = self.table_widget.item(row, col)
+            if not item:
+                continue
             if settings and (settings.suffix or settings.tags):
-                item.setBackground(QColor('#335533'))
-                item.setForeground(QColor('#ffffff'))
+                item.setBackground(QColor("#335533"))
+                item.setForeground(QColor("#ffffff"))
             else:
                 item.setBackground(QColor(30, 30, 30))
                 item.setForeground(QColor(220, 220, 220))
@@ -338,7 +351,7 @@ class RenamerApp(QWidget):
             return
         row = item.row()
         col = item.column()
-        if col not in (2, 3):
+        if col not in (2, 3, 4):
             return
         item0 = self.table_widget.item(row, 1)
         if not item0:
@@ -361,6 +374,16 @@ class RenamerApp(QWidget):
                 self._ignore_table_changes = False
             item.setToolTip(text)
         elif col == 3:
+            text = item.text().strip()
+            if not re.fullmatch(r"\d{6}", text):
+                QMessageBox.warning(self, "Invalid Date", "Date must be YYMMDD")
+                self._ignore_table_changes = True
+                item.setText(settings.date)
+                self._ignore_table_changes = False
+            else:
+                settings.date = text
+                item.setToolTip(settings.date)
+        elif col == 4:
             settings.suffix = item.text().strip()
             item.setToolTip(settings.suffix)
         self.update_row_background(row, settings)
@@ -435,6 +458,9 @@ class RenamerApp(QWidget):
                 settings = ItemSettings(path)
                 item0.setData(ROLE_SETTINGS, settings)
             settings.original_path = path
+            cell_date = self.table_widget.item(row, 3)
+            if cell_date:
+                settings.date = cell_date.text().strip()
             items.append(settings)
         renamer = Renamer(project, items)
         mapping = renamer.build_mapping()

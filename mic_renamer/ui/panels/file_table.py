@@ -15,6 +15,7 @@ from pathlib import Path, PurePath
 from ...logic.settings import ItemSettings
 from ...logic.tag_loader import load_tags
 from ...logic.tag_service import extract_tags_from_name
+from ...utils.meta_utils import get_capture_date
 
 ROLE_SETTINGS = Qt.UserRole + 1
 
@@ -23,13 +24,14 @@ class DragDropTableWidget(QTableWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._updating_checks = False
-        self.setColumnCount(4)
-        self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Suffix"])
+        self.setColumnCount(5)
+        self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"])
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Interactive)
         header.setSectionResizeMode(2, QHeaderView.Interactive)
-        header.setSectionResizeMode(3, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QHeaderView.Stretch)
         header.setStretchLastSection(True)
         header.sectionDoubleClicked.connect(self.on_header_double_clicked)
         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
@@ -57,8 +59,8 @@ class DragDropTableWidget(QTableWidget):
         total = self.viewport().width() - header.sectionSize(0)
         if total <= 0:
             return
-        w = total // 3
-        for i in range(1, 4):
+        w = total // 4
+        for i in range(1, 5):
             self.setColumnWidth(i, w)
 
     def on_header_double_clicked(self, index: int):
@@ -122,17 +124,21 @@ class DragDropTableWidget(QTableWidget):
                 tags = extract_tags_from_name(path, tags_info.keys())
             except Exception:
                 tags = set()
-            settings = ItemSettings(path, tags=tags)
+            date = get_capture_date(path)
+            settings = ItemSettings(path, tags=tags, date=date)
             fname_item.setData(ROLE_SETTINGS, settings)
 
             tags_item = QTableWidgetItem(",".join(sorted(tags)))
+            date_item = QTableWidgetItem(date)
             suffix_item = QTableWidgetItem("")
             tags_item.setToolTip(",".join(sorted(tags)))
+            date_item.setToolTip(date)
             suffix_item.setToolTip("")
             self.setItem(row, 0, check_item)
             self.setItem(row, 1, fname_item)
             self.setItem(row, 2, tags_item)
-            self.setItem(row, 3, suffix_item)
+            self.setItem(row, 3, date_item)
+            self.setItem(row, 4, suffix_item)
         if self.rowCount() > 0 and not self.selectionModel().hasSelection():
             self.selectRow(0)
 
