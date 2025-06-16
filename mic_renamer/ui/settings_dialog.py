@@ -9,6 +9,7 @@ from ..utils.state_manager import StateManager
 
 from .. import config_manager
 from ..logic.tag_loader import load_tags
+from ..logic.tag_usage import reset_counts
 from ..utils.i18n import tr
 
 
@@ -72,6 +73,9 @@ class SettingsDialog(QDialog):
         btn_restore = QPushButton(tr("restore_defaults"))
         btns.addButton(btn_restore, QDialogButtonBox.ResetRole)
         btn_restore.clicked.connect(self.restore_defaults)
+        btn_reset_usage = QPushButton(tr("reset_tag_usage"))
+        btns.addButton(btn_reset_usage, QDialogButtonBox.ResetRole)
+        btn_reset_usage.clicked.connect(self.reset_usage)
         btns.accepted.connect(self.accept)
         btns.rejected.connect(self.reject)
         layout.addWidget(btns)
@@ -110,6 +114,10 @@ class SettingsDialog(QDialog):
         selected = [idx.row() for idx in self.tbl_tags.selectionModel().selectedRows()]
         for row in sorted(selected, reverse=True):
             self.tbl_tags.removeRow(row)
+
+    def reset_usage(self):
+        """Reset stored tag usage statistics."""
+        reset_counts()
 
     def restore_defaults(self):
         self.cfg = config_manager.restore_defaults()

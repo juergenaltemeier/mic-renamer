@@ -4,6 +4,7 @@ from PySide6.QtCore import Qt, Signal
 import logging
 
 from ...logic.tag_loader import load_tags
+from ...logic.tag_usage import load_counts
 from ...utils.i18n import tr
 
 
@@ -40,9 +41,13 @@ class TagPanel(QWidget):
         if not self.tags_info:
             self.tag_layout.addWidget(QLabel(tr("no_tags_configured")), 0, 0)
             return
+        usage = load_counts()
+        sorted_tags = sorted(
+            self.tags_info.items(), key=lambda kv: usage.get(kv[0], 0), reverse=True
+        )
         columns = 4
         row = col = 0
-        for code, desc in self.tags_info.items():
+        for code, desc in sorted_tags:
             cb = QCheckBox(f"{code}: {desc}")
             cb.setProperty("code", code)
             cb.stateChanged.connect(lambda state, c=code: self.tagToggled.emit(c, state))
