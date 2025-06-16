@@ -331,12 +331,17 @@ class RenamerApp(QWidget):
         self.table_widget.sync_check_column()
         QTimer.singleShot(0, self.on_table_selection_changed)
 
-    def update_row_background(self, row: int, settings: ItemSettings):
+    def update_row_background(self, row: int, settings: ItemSettings | None) -> None:
+        """Set table row background colors according to settings."""
+        if row < 0 or row >= self.table_widget.rowCount():
+            return
         for col in range(5):
             item = self.table_widget.item(row, col)
+            if not item:
+                continue
             if settings and (settings.suffix or settings.tags):
-                item.setBackground(QColor('#335533'))
-                item.setForeground(QColor('#ffffff'))
+                item.setBackground(QColor("#335533"))
+                item.setForeground(QColor("#ffffff"))
             else:
                 item.setBackground(QColor(30, 30, 30))
                 item.setForeground(QColor(220, 220, 220))
