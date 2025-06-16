@@ -24,14 +24,16 @@ class DragDropTableWidget(QTableWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._updating_checks = False
-        self.setColumnCount(5)
-        self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"])
+        self.setColumnCount(7)
+        self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix", "Reduction", "New Size"])
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Interactive)
         header.setSectionResizeMode(2, QHeaderView.Interactive)
         header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(4, QHeaderView.Stretch)
+        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(5, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(6, QHeaderView.Stretch)
         header.setStretchLastSection(True)
         header.sectionDoubleClicked.connect(self.on_header_double_clicked)
         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
@@ -59,8 +61,8 @@ class DragDropTableWidget(QTableWidget):
         total = self.viewport().width() - header.sectionSize(0)
         if total <= 0:
             return
-        w = total // 4
-        for i in range(1, 5):
+        w = total // 6
+        for i in range(1, 7):
             self.setColumnWidth(i, w)
 
     def on_header_double_clicked(self, index: int):
@@ -125,12 +127,15 @@ class DragDropTableWidget(QTableWidget):
             except Exception:
                 tags = set()
             date = get_capture_date(path)
-            settings = ItemSettings(path, tags=tags, date=date)
+            size_bytes = os.path.getsize(path)
+            settings = ItemSettings(path, tags=tags, date=date, size_bytes=size_bytes, compressed_bytes=size_bytes)
             fname_item.setData(ROLE_SETTINGS, settings)
 
             tags_item = QTableWidgetItem(",".join(sorted(tags)))
             date_item = QTableWidgetItem(date)
             suffix_item = QTableWidgetItem("")
+            reduce_item = QTableWidgetItem("0%")
+            size_item = QTableWidgetItem(f"{size_bytes // 1024}kB")
             tags_item.setToolTip(",".join(sorted(tags)))
             date_item.setToolTip(date)
             suffix_item.setToolTip("")
@@ -139,6 +144,8 @@ class DragDropTableWidget(QTableWidget):
             self.setItem(row, 2, tags_item)
             self.setItem(row, 3, date_item)
             self.setItem(row, 4, suffix_item)
+            self.setItem(row, 5, reduce_item)
+            self.setItem(row, 6, size_item)
         if self.rowCount() > 0 and not self.selectionModel().hasSelection():
             self.selectRow(0)
 

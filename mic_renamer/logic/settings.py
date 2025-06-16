@@ -37,6 +37,8 @@ class ItemSettings:
     tags: set[str] = field(default_factory=set)
     suffix: str = ""
     date: str = ""
+    size_bytes: int = 0
+    compressed_bytes: int = 0
 
     def _date_str(self, config: RenameConfig) -> str:
         if self.date and re.fullmatch(r"\d{6}", self.date):

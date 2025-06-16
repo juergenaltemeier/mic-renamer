@@ -33,6 +33,9 @@ class ConfigManager:
         defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
         # directory used when choosing an alternative save location
         defaults.setdefault("default_save_directory", str(get_config_dir()))
+        defaults.setdefault("compression_max_size_mb", 2)
+        defaults.setdefault("compression_quality", 95)
+        defaults.setdefault("compression_reduce_resolution", True)
         self._config = {**defaults, **data}
         return self._config
 
@@ -62,6 +65,9 @@ class ConfigManager:
         defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
         defaults.setdefault("default_save_directory", str(get_config_dir()))
+        defaults.setdefault("compression_max_size_mb", 2)
+        defaults.setdefault("compression_quality", 95)
+        defaults.setdefault("compression_reduce_resolution", True)
         self._config = defaults
         self.save(defaults)
         return defaults
