@@ -26,6 +26,7 @@ from ..logic.settings import ItemSettings
 from ..logic.image_compressor import ImageCompressor
 from ..logic.renamer import Renamer
 from ..logic.tag_usage import increment_tags
+from ..logic.undo_manager import UndoManager
 
 
 def gear_icon_fallback(size: int = 16) -> QIcon:
@@ -47,6 +48,7 @@ class RenamerApp(QWidget):
     def __init__(self, state_manager=None):
         super().__init__()
         self.state_manager = state_manager
+        self.undo_manager = UndoManager()
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
@@ -173,6 +175,11 @@ class RenamerApp(QWidget):
         act_convert.triggered.connect(self.convert_heic_selected)
         tb.addAction(act_convert)
 
+        act_undo = QAction(style.standardIcon(QStyle.SP_ArrowBack), tr("undo_rename"), self)
+        act_undo.setToolTip(tr("undo_rename"))
+        act_undo.triggered.connect(self.undo_rename)
+        tb.addAction(act_undo)
+
         act_clear = QAction(style.standardIcon(QStyle.SP_DialogResetButton), tr("clear_list"), self)
         act_clear.setToolTip(tr("clear_list"))
         act_clear.triggered.connect(self.clear_all)
@@ -210,7 +217,7 @@ class RenamerApp(QWidget):
         labels = [
             "add_files", "add_folder", "preview_rename",
             "rename_all", "rename_selected", "compress", "convert_heic",
-            "clear_list", "settings_title"
+            "undo_rename", "clear_list", "settings_title"
         ]
         for action, key in zip(actions, labels):
             action.setText(tr(key))
@@ -443,6 +450,19 @@ class RenamerApp(QWidget):
             cb.setChecked(False)
         self.set_item_controls_enabled(False)
 
+    def undo_rename(self):
+        if not self.undo_manager.has_history():
+            QMessageBox.information(self, tr("undo_nothing_title"), tr("undo_nothing_msg"))
+            return
+        undone = self.undo_manager.undo_all()
+        for row, orig in undone:
+            if 0 <= row < self.table_widget.rowCount():
+                item0 = self.table_widget.item(row, 1)
+                if item0:
+                    item0.setText(os.path.basename(orig))
+                    item0.setData(Qt.UserRole, orig)
+        QMessageBox.information(self, tr("done"), tr("undo_done"))
+
     def remove_selected_items(self):
         rows = sorted({idx.row() for idx in self.table_widget.selectionModel().selectedRows()}, reverse=True)
         for row in rows:
@@ -664,6 +684,7 @@ class RenamerApp(QWidget):
                     settings = item0.data(ROLE_SETTINGS)
                     if settings:
                         used_tags.extend(settings.tags)
+                    self.undo_manager.record(row, orig, new_path)
             except Exception as e:
                 QMessageBox.warning(
                     self,

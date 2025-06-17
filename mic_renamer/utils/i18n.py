@@ -64,6 +64,10 @@ TRANSLATIONS = {
         , 'renaming_files': 'Renaming files...'
         , 'abort': 'Abort'
         , 'no_tags_configured': 'No tags configured'
+        , 'undo_rename': 'Undo Rename'
+        , 'undo_nothing_title': 'Nothing to Undo'
+        , 'undo_nothing_msg': 'There are no renames to undo.'
+        , 'undo_done': 'Renames reverted.'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -124,6 +128,10 @@ TRANSLATIONS = {
         , 'renaming_files': 'Dateien werden umbenannt...'
         , 'abort': 'Abbrechen'
         , 'no_tags_configured': 'Keine Tags konfiguriert'
+        , 'undo_rename': 'Umbenennung rückgängig'
+        , 'undo_nothing_title': 'Nichts rückgängig'
+        , 'undo_nothing_msg': 'Keine Umbenennungen zum Rückgängigmachen.'
+        , 'undo_done': 'Umbenennungen zurückgesetzt.'
         , 'config_path_label': 'Konfigurationsordner'
         , 'default_save_dir_label': 'Standard-Speicherordner'
         , 'use_original_directory': 'Aktuellen Ordner verwenden?'
