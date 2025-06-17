@@ -29,7 +29,8 @@ class CompressionDialog(QDialog):
         self.viewer = MediaViewer()
         layout.addWidget(self.viewer)
 
-        self.table = QTableWidget(len(rows_and_paths), 4)
+        valid = [rp for rp in rows_and_paths if os.path.isfile(rp[1])]
+        self.table = QTableWidget(len(valid), 4)
         self.table.setHorizontalHeaderLabels([
             tr("file"),
             tr("old_size"),
@@ -55,19 +56,21 @@ class CompressionDialog(QDialog):
             max_height=cfg.get("compression_max_height", 0) or None,
         )
 
-        for idx, (row, path) in enumerate(rows_and_paths):
+        row_idx = 0
+        for row, path in valid:
             self.viewer.load_path(path)
             old_size = os.path.getsize(path)
             new_path, new_size, reduction = compressor.compress(path, convert_heic)
-            self.table.setItem(idx, 0, QTableWidgetItem(os.path.basename(new_path)))
-            self.table.setItem(idx, 1, QTableWidgetItem(f"{old_size // 1024} KB"))
-            self.table.setItem(idx, 2, QTableWidgetItem(f"{new_size // 1024} KB"))
-            self.table.setItem(idx, 3, QTableWidgetItem(f"{reduction}%"))
+            self.table.setItem(row_idx, 0, QTableWidgetItem(os.path.basename(new_path)))
+            self.table.setItem(row_idx, 1, QTableWidgetItem(f"{old_size // 1024} KB"))
+            self.table.setItem(row_idx, 2, QTableWidgetItem(f"{new_size // 1024} KB"))
+            self.table.setItem(row_idx, 3, QTableWidgetItem(f"{reduction}%"))
             self.results.append((row, new_path, old_size, new_size))
             self._paths.append(new_path)
+            row_idx += 1
         if self.table.rowCount() > 0:
             self.table.selectRow(0)
-            self.viewer.load_path(rows_and_paths[0][1])
+            self.viewer.load_path(valid[0][1])
 
         self.table.currentCellChanged.connect(self.on_row_changed)
 
