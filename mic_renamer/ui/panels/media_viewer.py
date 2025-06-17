@@ -81,7 +81,7 @@ class VideoPlayer(QWidget):
 class MediaViewer(QWidget):
     """Display either an image or a video depending on file type."""
 
-    IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".gif", ".bmp"}
+    IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".heic"}
     VIDEO_EXTS = {".mp4", ".avi", ".mov", ".mkv"}
 
     def __init__(self, parent: QWidget | None = None) -> None:
