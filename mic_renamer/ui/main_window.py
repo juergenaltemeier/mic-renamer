@@ -1,5 +1,6 @@
 import os
 import re
+from pathlib import Path
 from PySide6.QtWidgets import (
     QWidget, QSplitter, QHBoxLayout, QVBoxLayout, QGridLayout,
     QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
@@ -161,10 +162,16 @@ class RenamerApp(QWidget):
         act_rename_sel.triggered.connect(self.direct_rename_selected)
         tb.addAction(act_rename_sel)
 
+
         act_compress = QAction(style.standardIcon(QStyle.SP_ArrowDown), tr("compress"), self)
         act_compress.setToolTip(tr("compress"))
         act_compress.triggered.connect(self.compress_selected)
         tb.addAction(act_compress)
+
+        act_convert = QAction(style.standardIcon(QStyle.SP_DialogOpenButton), tr("convert_heic"), self)
+        act_convert.setToolTip(tr("convert_heic"))
+        act_convert.triggered.connect(self.convert_heic_selected)
+        tb.addAction(act_convert)
 
         act_clear = QAction(style.standardIcon(QStyle.SP_DialogResetButton), tr("clear_list"), self)
         act_clear.setToolTip(tr("clear_list"))
@@ -202,8 +209,8 @@ class RenamerApp(QWidget):
         actions = self.toolbar.actions()
         labels = [
             "add_files", "add_folder", "preview_rename",
-            "rename_all", "rename_selected", "compress", "clear_list",
-            "settings_title"
+            "rename_all", "rename_selected", "compress", "convert_heic",
+            "clear_list", "settings_title"
         ]
         for action, key in zip(actions, labels):
             action.setText(tr(key))
@@ -491,6 +498,41 @@ class RenamerApp(QWidget):
                 if st:
                     st.size_bytes = size_bytes
                     st.compressed_bytes = compressed_bytes
+
+    def convert_heic_selected(self):
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        if not rows:
+            return
+        from pillow_heif import register_heif_opener
+        from PIL import Image
+        register_heif_opener()
+        current = self.table_widget.currentRow()
+        for row in rows:
+            item0 = self.table_widget.item(row, 1)
+            if not item0:
+                continue
+            path = item0.data(Qt.UserRole)
+            if not path.lower().endswith('.heic'):
+                continue
+            dest_path = str(Path(path).with_suffix('.jpg'))
+            try:
+                img = Image.open(path)
+                img = img.convert('RGB')
+                img.save(dest_path, 'JPEG')
+                img.close()
+                os.remove(path)
+            except Exception as exc:
+                QMessageBox.warning(self, 'Conversion Failed', f'Failed to convert {path}:\n{exc}')
+                continue
+            item0.setData(Qt.UserRole, dest_path)
+            item0.setText(os.path.basename(dest_path))
+            size = os.path.getsize(dest_path)
+            st: ItemSettings = item0.data(ROLE_SETTINGS)
+            if st:
+                st.size_bytes = size
+                st.compressed_bytes = size
+            if row == current:
+                self.load_preview(dest_path)
 
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
