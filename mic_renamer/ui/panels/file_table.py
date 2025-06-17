@@ -15,6 +15,7 @@ from pathlib import Path, PurePath
 from ...logic.settings import ItemSettings
 from ...logic.tag_loader import load_tags
 from ...logic.tag_service import extract_tags_from_name
+from ...logic.heic_converter import convert_heic
 from ...utils.meta_utils import get_capture_date
 
 ROLE_SETTINGS = Qt.UserRole + 1
@@ -102,6 +103,7 @@ class DragDropTableWidget(QTableWidget):
         except Exception:
             tags_info = {}
         for path in paths:
+            path = convert_heic(path)
             duplicate = False
             for row in range(self.rowCount()):
                 item = self.item(row, 1)

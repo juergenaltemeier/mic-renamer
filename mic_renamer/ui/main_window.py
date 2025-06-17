@@ -503,36 +503,25 @@ class RenamerApp(QWidget):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
             return
-        from pillow_heif import register_heif_opener
-        from PIL import Image
-        register_heif_opener()
+        from ..logic.heic_converter import convert_heic
         current = self.table_widget.currentRow()
         for row in rows:
             item0 = self.table_widget.item(row, 1)
             if not item0:
                 continue
             path = item0.data(Qt.UserRole)
-            if not path.lower().endswith('.heic'):
+            new_path = convert_heic(path)
+            if new_path == path:
                 continue
-            dest_path = str(Path(path).with_suffix('.jpg'))
-            try:
-                img = Image.open(path)
-                img = img.convert('RGB')
-                img.save(dest_path, 'JPEG')
-                img.close()
-                os.remove(path)
-            except Exception as exc:
-                QMessageBox.warning(self, 'Conversion Failed', f'Failed to convert {path}:\n{exc}')
-                continue
-            item0.setData(Qt.UserRole, dest_path)
-            item0.setText(os.path.basename(dest_path))
-            size = os.path.getsize(dest_path)
+            item0.setData(Qt.UserRole, new_path)
+            item0.setText(os.path.basename(new_path))
+            size = os.path.getsize(new_path)
             st: ItemSettings = item0.data(ROLE_SETTINGS)
             if st:
                 st.size_bytes = size
                 st.compressed_bytes = size
             if row == current:
-                self.load_preview(dest_path)
+                self.load_preview(new_path)
 
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
