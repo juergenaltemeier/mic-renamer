@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QRadioButton,
-    QLineEdit, QPushButton, QFileDialog, QCheckBox, QDialogButtonBox
+    QLineEdit, QPushButton, QFileDialog, QDialogButtonBox
 )
 from PySide6.QtCore import Qt
 
@@ -30,10 +30,7 @@ class RenameOptionsDialog(QDialog):
         layout.addWidget(self.radio_custom)
         layout.addLayout(hl)
 
-        max_mb = config_manager.get("compression_max_size_mb", 2)
-        self.chk_compress = QCheckBox(tr("compress_large_files").format(size=max_mb))
-        self.chk_compress.setChecked(True)
-        layout.addWidget(self.chk_compress)
+
 
         btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         layout.addWidget(btns)
@@ -52,6 +49,3 @@ class RenameOptionsDialog(QDialog):
             return None
         return self.edit_dir.text().strip() or None
 
-    @property
-    def compress(self) -> bool:
-        return self.chk_compress.isChecked()
