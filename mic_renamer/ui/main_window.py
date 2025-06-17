@@ -448,33 +448,49 @@ class RenamerApp(QWidget):
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
             self.table_widget.selectRow(new_row)
 
-    def compress_rows(self, rows: list[int]):
-        cfg = config_manager.load()
-        compressor = ImageCompressor(
-            max_size_mb=cfg.get("compression_max_size_mb", 2),
-            quality=cfg.get("compression_quality", 95),
-            reduce_resolution=cfg.get("compression_reduce_resolution", True),
-        )
+    def compress_selected(self):
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        if not rows:
+            return
+        paths = []
+        videos = []
+        heic_paths = []
         for row in rows:
             item0 = self.table_widget.item(row, 1)
             if not item0:
                 continue
             path = item0.data(Qt.UserRole)
-            orig_size = os.path.getsize(path)
-            new_size, reduction = compressor.compress(path)
-            settings: ItemSettings = item0.data(ROLE_SETTINGS)
-            if settings:
-                settings.size_bytes = orig_size
-                settings.compressed_bytes = new_size
-            self.table_widget.item(row, 5).setText(f"{reduction}%")
-            self.table_widget.item(row, 6).setText(f"{new_size // 1024}kB")
-
-    def compress_selected(self):
-        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
-        if not rows:
+            ext = os.path.splitext(path)[1].lower()
+            if ext in MediaViewer.VIDEO_EXTS:
+                videos.append(path)
+                continue
+            if ext == ".heic":
+                heic_paths.append(path)
+            paths.append((row, path))
+        if videos:
+            QMessageBox.warning(self, tr("video_unsupported"), tr("video_unsupported_msg"))
+        if not paths:
             return
-        self.compress_rows(rows)
-        QMessageBox.information(self, tr("done"), tr("compression_done"))
+        convert_heic = False
+        if heic_paths:
+            reply = QMessageBox.question(
+                self,
+                tr("heic_convert_title"),
+                tr("heic_convert_msg"),
+                QMessageBox.Yes | QMessageBox.No,
+            )
+            convert_heic = reply == QMessageBox.Yes
+        from .compression_dialog import CompressionDialog
+        dlg = CompressionDialog(paths, convert_heic, parent=self)
+        if dlg.exec() == QDialog.Accepted:
+            for row, new_path, size_bytes, compressed_bytes in dlg.results:
+                item0 = self.table_widget.item(row, 1)
+                item0.setData(Qt.UserRole, new_path)
+                item0.setText(os.path.basename(new_path))
+                st: ItemSettings = item0.data(ROLE_SETTINGS)
+                if st:
+                    st.size_bytes = size_bytes
+                    st.compressed_bytes = compressed_bytes
 
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
@@ -576,8 +592,6 @@ class RenamerApp(QWidget):
             config_manager.set('default_save_directory', dest)
         if rows is None:
             rows = list(range(self.table_widget.rowCount()))
-        if dlg.compress:
-            self.compress_rows(rows)
         mapping = self.build_rename_mapping(dest, rows)
         if mapping is None:
             return
