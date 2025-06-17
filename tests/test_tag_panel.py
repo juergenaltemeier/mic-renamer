@@ -1,6 +1,8 @@
 import os
 import pytest
 from PySide6.QtWidgets import QApplication, QLabel, QCheckBox
+from PySide6.QtCore import Qt
+from PySide6.QtTest import QTest
 
 from mic_renamer.ui.panels.tag_panel import TagPanel
 
@@ -45,3 +47,17 @@ def test_rebuild_with_tags(monkeypatch, app):
         if isinstance(panel.tag_layout.itemAt(i).widget(), QCheckBox)
     ]
     assert len(checkboxes) == 2
+
+
+def test_enter_toggles_checkbox(monkeypatch, app):
+    monkeypatch.setattr(
+        "mic_renamer.ui.panels.tag_panel.load_tags",
+        lambda: {"E": "Echo"},
+    )
+    panel = TagPanel()
+    cb = next(iter(panel.checkbox_map.values()))
+    assert cb.checkState() == Qt.Unchecked
+    QTest.keyClick(cb, Qt.Key_Return)
+    assert cb.checkState() == Qt.Checked
+    QTest.keyClick(cb, Qt.Key_Return)
+    assert cb.checkState() == Qt.Unchecked
