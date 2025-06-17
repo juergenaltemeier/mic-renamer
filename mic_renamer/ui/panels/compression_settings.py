@@ -43,6 +43,16 @@ class CompressionSettingsPanel(QWidget):
         self.chk_resize_only.setChecked(cfg.get("compression_resize_only", False))
         layout.addRow(self.chk_resize_only)
 
+        self.spin_max_w = QSpinBox()
+        self.spin_max_w.setRange(0, 10000)
+        self.spin_max_w.setValue(int(cfg.get("compression_max_width", 0)))
+        layout.addRow(tr("max_width_label"), self.spin_max_w)
+
+        self.spin_max_h = QSpinBox()
+        self.spin_max_h.setRange(0, 10000)
+        self.spin_max_h.setValue(int(cfg.get("compression_max_height", 0)))
+        layout.addRow(tr("max_height_label"), self.spin_max_h)
+
         self.btn_reset = QPushButton(tr("restore_defaults"))
         layout.addRow(self.btn_reset)
         self.btn_reset.clicked.connect(self.restore_defaults)
@@ -52,6 +62,8 @@ class CompressionSettingsPanel(QWidget):
         self.cfg["compression_quality"] = self.spin_quality.value()
         self.cfg["compression_reduce_resolution"] = self.chk_reduce.isChecked()
         self.cfg["compression_resize_only"] = self.chk_resize_only.isChecked()
+        self.cfg["compression_max_width"] = self.spin_max_w.value()
+        self.cfg["compression_max_height"] = self.spin_max_h.value()
 
     def restore_defaults(self) -> None:
         defaults = config_manager.restore_defaults()
@@ -59,5 +71,7 @@ class CompressionSettingsPanel(QWidget):
         self.spin_quality.setValue(int(defaults.get("compression_quality", 95)))
         self.chk_reduce.setChecked(defaults.get("compression_reduce_resolution", True))
         self.chk_resize_only.setChecked(defaults.get("compression_resize_only", False))
+        self.spin_max_w.setValue(int(defaults.get("compression_max_width", 0)))
+        self.spin_max_h.setValue(int(defaults.get("compression_max_height", 0)))
         # reload since restore_defaults overwrote file
         self.cfg.update(config_manager.load())
