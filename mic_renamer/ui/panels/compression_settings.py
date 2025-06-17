@@ -8,9 +8,9 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QDoubleSpinBox,
     QSpinBox,
-    QCheckBox,
     QPushButton,
 )
+from ..components import EnterToggleCheckBox
 
 from ... import config_manager
 from ...utils.i18n import tr
@@ -35,11 +35,11 @@ class CompressionSettingsPanel(QWidget):
         self.spin_quality.setValue(int(cfg.get("compression_quality", 95)))
         layout.addRow(tr("quality_label"), self.spin_quality)
 
-        self.chk_reduce = QCheckBox(tr("reduce_resolution_label"))
+        self.chk_reduce = EnterToggleCheckBox(tr("reduce_resolution_label"))
         self.chk_reduce.setChecked(cfg.get("compression_reduce_resolution", True))
         layout.addRow(self.chk_reduce)
 
-        self.chk_resize_only = QCheckBox(tr("resize_only_label"))
+        self.chk_resize_only = EnterToggleCheckBox(tr("resize_only_label"))
         self.chk_resize_only.setChecked(cfg.get("compression_resize_only", False))
         layout.addRow(self.chk_resize_only)
 

@@ -1,5 +1,6 @@
 """Panel showing available tags as checkboxes."""
-from PySide6.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QLabel, QCheckBox
+from PySide6.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QLabel
+from ..components import EnterToggleCheckBox
 from PySide6.QtCore import Qt, Signal
 import logging
 
@@ -22,7 +23,7 @@ class TagPanel(QWidget):
         self.tag_layout = QGridLayout(self.checkbox_container)
         self.tag_layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.checkbox_container)
-        self.checkbox_map: dict[str, QCheckBox] = {}
+        self.checkbox_map: dict[str, EnterToggleCheckBox] = {}
         self.tags_info: dict[str, str] | None = tags_info
         self.rebuild()
 
@@ -51,7 +52,7 @@ class TagPanel(QWidget):
         for idx, (code, desc) in enumerate(sorted_tags):
             row = idx % rows
             col = idx // rows
-            cb = QCheckBox(f"{code}: {desc}")
+            cb = EnterToggleCheckBox(f"{code}: {desc}")
             cb.setProperty("code", code)
             cb.stateChanged.connect(lambda state, c=code: self.tagToggled.emit(c, state))
             self.tag_layout.addWidget(cb, row, col)

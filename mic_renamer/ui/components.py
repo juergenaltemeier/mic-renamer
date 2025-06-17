@@ -1,6 +1,6 @@
 # ui/components.py
 
-from PySide6.QtWidgets import QListWidget, QListWidgetItem
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QCheckBox
 from PySide6.QtCore import Qt
 import os
 
@@ -46,3 +46,14 @@ class DragDropListWidget(QListWidget):
             event.acceptProposedAction()
         else:
             super().dropEvent(event)
+
+
+class EnterToggleCheckBox(QCheckBox):
+    """QCheckBox that toggles when Return or Enter is pressed."""
+
+    def keyPressEvent(self, event) -> None:  # noqa: D401
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            self.toggle()
+            event.accept()
+        else:
+            super().keyPressEvent(event)
