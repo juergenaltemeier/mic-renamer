@@ -32,3 +32,15 @@ configuration directory. You can discover the full path programmatically:
 from mic_renamer.logic.tag_usage import get_usage_path
 print(get_usage_path())
 ```
+
+## Building a Standalone Executable
+
+You can bundle the application into a single executable using
+[PyInstaller](https://pyinstaller.org/):
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile -n mic-renamer mic_renamer/__main__.py
+```
+
+The resulting executable is written to the ``dist`` directory.
