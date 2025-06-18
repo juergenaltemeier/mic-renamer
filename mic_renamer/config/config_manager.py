@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from importlib import resources
 import yaml
 
 from ..utils.path_utils import get_config_dir
@@ -14,7 +15,8 @@ class ConfigManager:
         self.config_dir = get_config_dir()
         self.config_file = Path(self.config_dir) / "app_settings.yaml"
         self._config: dict | None = None
-        self.defaults_path = Path(__file__).with_name("defaults.yaml")
+        # load defaults via importlib.resources so PyInstaller bundles work
+        self.defaults_path = resources.files(__package__) / "defaults.yaml"
 
     def load(self) -> dict:
         """Load configuration from disk merging with defaults."""

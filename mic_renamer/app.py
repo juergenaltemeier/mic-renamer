@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import Qt
 import sys
-from pathlib import Path
+from importlib import resources
 
 from .ui.main_window import RenamerApp
 from .utils.state_manager import StateManager
@@ -20,7 +20,7 @@ class Application:
         except Exception:
             pass
         self.app = QApplication(sys.argv)
-        logo = Path(__file__).resolve().parents[1] / "favicon.png"
+        logo = resources.files("mic_renamer") / "favicon.png"
         if logo.is_file():
             self.app.setWindowIcon(QIcon(str(logo)))
         # create config files on first run
