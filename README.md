@@ -42,7 +42,9 @@ included in the build:
 
 ```bash
 pip install pyinstaller
-pyinstaller mic_renamer.spec
+
+pyinstaller --onefile mic_renamer.spec
+
 ```
 
 The resulting executable is written to the ``dist`` directory.
