@@ -1,12 +1,13 @@
 import json
 import os
 from pathlib import Path
+from importlib import resources
 
 from .. import config_manager
 from ..utils.path_utils import get_config_dir
 
 DEFAULT_TAGS_FILE = Path(get_config_dir()) / "tags.json"
-BUNDLED_TAGS_FILE = Path(__file__).resolve().parent.parent / "config" / "tags.json"
+BUNDLED_TAGS_FILE = resources.files("mic_renamer.config") / "tags.json"
 
 CONFIG_TAGS_FILE = config_manager.get("tags_file")
 
