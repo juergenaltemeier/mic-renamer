@@ -26,7 +26,10 @@ class ConfigManager:
                 data = yaml.safe_load(self.config_file.read_text()) or {}
             except Exception:
                 data = {}
-        defaults = yaml.safe_load(self.defaults_path.read_text())
+        if self.defaults_path.is_file():
+            defaults = yaml.safe_load(self.defaults_path.read_text()) or {}
+        else:
+            defaults = {}
         # ensure default path for the tags file in user config directory
         defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         # default path for tag usage statistics
@@ -51,7 +54,10 @@ class ConfigManager:
             self._config = cfg
         cfg = cfg or self._config
         if cfg is None:
-            cfg = yaml.safe_load(self.defaults_path.read_text())
+            if self.defaults_path.is_file():
+                cfg = yaml.safe_load(self.defaults_path.read_text()) or {}
+            else:
+                cfg = {}
         Path(self.config_dir).mkdir(parents=True, exist_ok=True)
         with open(self.config_file, "w", encoding="utf-8") as fh:
             yaml.safe_dump(cfg, fh)
@@ -67,7 +73,10 @@ class ConfigManager:
 
     def restore_defaults(self) -> dict:
         """Overwrite config file with bundled defaults."""
-        defaults = yaml.safe_load(self.defaults_path.read_text())
+        if self.defaults_path.is_file():
+            defaults = yaml.safe_load(self.defaults_path.read_text()) or {}
+        else:
+            defaults = {}
         defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
         defaults.setdefault("default_save_directory", str(get_config_dir()))

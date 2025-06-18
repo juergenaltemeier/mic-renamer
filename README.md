@@ -36,11 +36,12 @@ print(get_usage_path())
 ## Building a Standalone Executable
 
 You can bundle the application into a single executable using
-[PyInstaller](https://pyinstaller.org/):
+[PyInstaller](https://pyinstaller.org/). A ``mic_renamer.spec`` file is
+provided so all resources are packaged correctly:
 
 ```bash
 pip install pyinstaller
-pyinstaller --onefile -n mic-renamer mic_renamer/__main__.py
+pyinstaller --onefile mic_renamer.spec
 ```
 
 The resulting executable is written to the ``dist`` directory.
