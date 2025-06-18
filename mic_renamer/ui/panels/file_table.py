@@ -1,4 +1,5 @@
 """Table widget with drag and drop support."""
+
 import os
 from PySide6.QtWidgets import (
     QTableWidget,
@@ -7,10 +8,10 @@ from PySide6.QtWidgets import (
     QApplication,
     QAbstractItemView,
 )
-from PySide6.QtGui import QColor
-# Corrected import: QItemSelectionModel and QItemSelection come from QtCore, not QtWidgets
+from PySide6.QtGui import QPalette
+
+# QItemSelectionModel and QItemSelection are in QtCore, not QtWidgets
 from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
-from pathlib import PurePath
 from importlib import resources
 
 from ...logic.settings import ItemSettings
@@ -28,7 +29,9 @@ class DragDropTableWidget(QTableWidget):
         self._updating_checks = False
         self.mode = "normal"
         self.setColumnCount(5)
-        self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"])
+        self.setHorizontalHeaderLabels(
+            ["", "Filename", "Tags", "Date", "Suffix"]
+        )
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Interactive)
@@ -50,19 +53,26 @@ class DragDropTableWidget(QTableWidget):
         QTimer.singleShot(0, self.set_equal_column_widths)
 
         logo = resources.files("mic_renamer") / "favicon.png"
-        self.setStyleSheet(
-            f"QTableWidget::viewport{{background-image:url('{logo.as_posix()}');"
-            "background-repeat:no-repeat;background-position:center;}}"
+        style = (
+            "QTableWidget::viewport{"
+            f"background-image:url('{logo.as_posix()}');"
+            "background-repeat:no-repeat;"
+            "background-position:center;}"
         )
+        self.setStyleSheet(style)
 
     def set_mode(self, mode: str) -> None:
         """Switch table headers for the given mode."""
         self.mode = mode
         if mode == "position":
-            self.setHorizontalHeaderLabels(["", "Filename", "Pos", "Date", "Suffix"])
+            self.setHorizontalHeaderLabels(
+                ["", "Filename", "Pos", "Date", "Suffix"]
+            )
             self.setColumnHidden(3, True)
         else:
-            self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"])
+            self.setHorizontalHeaderLabels(
+                ["", "Filename", "Tags", "Date", "Suffix"]
+            )
             self.setColumnHidden(3, False)
         for row in range(self.rowCount()):
             item1 = self.item(row, 1)
@@ -161,8 +171,9 @@ class DragDropTableWidget(QTableWidget):
             check_item.setCheckState(Qt.Unchecked)
             fname_item = QTableWidgetItem(os.path.basename(path))
             fname_item.setData(Qt.UserRole, path)
-            fname_item.setBackground(QColor(30, 30, 30))
-            fname_item.setForeground(QColor(220, 220, 220))
+            palette = QApplication.palette()
+            fname_item.setBackground(palette.color(QPalette.Base))
+            fname_item.setForeground(palette.color(QPalette.Text))
 
             tags = set()
             try:
@@ -171,7 +182,13 @@ class DragDropTableWidget(QTableWidget):
                 tags = set()
             date = get_capture_date(path)
             size_bytes = os.path.getsize(path)
-            settings = ItemSettings(path, tags=tags, date=date, size_bytes=size_bytes, compressed_bytes=size_bytes)
+            settings = ItemSettings(
+                path,
+                tags=tags,
+                date=date,
+                size_bytes=size_bytes,
+                compressed_bytes=size_bytes,
+            )
             fname_item.setData(ROLE_SETTINGS, settings)
 
             tags_item = QTableWidgetItem(",".join(sorted(tags)))
@@ -217,9 +234,17 @@ class DragDropTableWidget(QTableWidget):
                 if item.checkState() == Qt.Checked
                 else QItemSelectionModel.Deselect
             )
-            self.selectionModel().select(selection, command | QItemSelectionModel.Rows)
+            self.selectionModel().select(
+                selection, command | QItemSelectionModel.Rows
+            )
         else:
             if item.checkState() == Qt.Checked:
-                self.selectionModel().select(index, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+                self.selectionModel().select(
+                    index,
+                    QItemSelectionModel.Select | QItemSelectionModel.Rows,
+                )
             else:
-                self.selectionModel().select(index, QItemSelectionModel.Deselect | QItemSelectionModel.Rows)
+                self.selectionModel().select(
+                    index,
+                    QItemSelectionModel.Deselect | QItemSelectionModel.Rows,
+                )
