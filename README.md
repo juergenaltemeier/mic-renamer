@@ -35,14 +35,17 @@ print(get_usage_path())
 
 ## Building a Standalone Executable
 
-You can bundle the application using [PyInstaller](https://pyinstaller.org/).
-The provided ``mic_renamer.spec`` builds an "onedir" distribution that includes
-the required ``defaults.yaml`` and ``tags.json`` data files. Do not pass
-``--onefile`` when using this spec file:
+
+You can bundle the application into a single executable using
+[PyInstaller](https://pyinstaller.org/). The provided ``mic_renamer.spec`` file
+ensures that required data files like ``defaults.yaml`` and ``tags.json`` are
+included in the build:
 
 ```bash
 pip install pyinstaller
-pyinstaller mic_renamer.spec
+
+pyinstaller --onefile mic_renamer.spec
+
 ```
 
 The resulting build directory is written to ``dist/mic-renamer``.
