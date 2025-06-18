@@ -10,7 +10,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QColor
 # Corrected import: QItemSelectionModel and QItemSelection come from QtCore, not QtWidgets
 from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
-from pathlib import Path, PurePath
+from pathlib import PurePath
+from importlib import resources
 
 from ...logic.settings import ItemSettings
 from ...logic.tag_loader import load_tags
@@ -47,7 +48,7 @@ class DragDropTableWidget(QTableWidget):
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
 
-        logo = Path(__file__).resolve().parents[2] / "favicon.png"
+        logo = resources.files("mic_renamer") / "favicon.png"
         self.setStyleSheet(
             f"QTableWidget::viewport{{background-image:url('{logo.as_posix()}');"
             "background-repeat:no-repeat;background-position:center;}}"
