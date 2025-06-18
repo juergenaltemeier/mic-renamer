@@ -14,9 +14,7 @@ a = Analysis(
     pathex=['.'],
     binaries=[],
     datas=[('mic_renamer/config/defaults.yaml', 'mic_renamer/config'),
-           ('mic_renamer/config/tags.json', 'mic_renamer/config'),
-           ('favicon.png', '.'),
-           ('favicon.ico', '.')],
+           ('mic_renamer/config/tags.json', 'mic_renamer/config')],
     hiddenimports=hiddenimports,
     hookspath=[],
     runtime_hooks=[],
@@ -38,7 +36,6 @@ exe = EXE(
     strip=False,
     upx=True,
     console=False,
-    icon='favicon.ico',
 )
 coll = COLLECT(
     exe,

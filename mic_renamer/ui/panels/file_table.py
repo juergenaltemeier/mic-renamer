@@ -53,13 +53,14 @@ class DragDropTableWidget(QTableWidget):
         QTimer.singleShot(0, self.set_equal_column_widths)
 
         logo = resources.files("mic_renamer") / "favicon.png"
-        style = (
-            "QTableWidget::viewport{"
-            f"background-image:url('{logo.as_posix()}');"
-            "background-repeat:no-repeat;"
-            "background-position:center;}"
-        )
-        self.setStyleSheet(style)
+        if logo.is_file():
+            style = (
+                "QTableWidget::viewport{"
+                f"background-image:url('{logo.as_posix()}');"
+                "background-repeat:no-repeat;"
+                "background-position:center;}"
+            )
+            self.setStyleSheet(style)
 
     def set_mode(self, mode: str) -> None:
         """Switch table headers for the given mode."""
