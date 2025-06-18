@@ -89,7 +89,7 @@
  [],
  False,
  False,
- 1750244522,
+ 1750246428,
  [('runw.exe',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\runw.exe',

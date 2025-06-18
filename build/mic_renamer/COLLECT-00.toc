@@ -7,10 +7,6 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\opengl32sw.dll',
    'BINARY'),
-  ('PySide6\\plugins\\tls\\qcertonlybackend.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\tls\\qcertonlybackend.dll',
-   'BINARY'),
   ('PySide6\\plugins\\tls\\qschannelbackend.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\tls\\qschannelbackend.dll',
@@ -18,6 +14,10 @@
   ('PySide6\\plugins\\tls\\qopensslbackend.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\tls\\qopensslbackend.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\tls\\qcertonlybackend.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\tls\\qcertonlybackend.dll',
    'BINARY'),
   ('PySide6\\plugins\\networkinformation\\qnetworklistmanager.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -31,45 +31,45 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\multimedia\\ffmpegmediaplugin.dll',
    'BINARY'),
-  ('PySide6\\plugins\\imageformats\\qwbmp.dll',
+  ('PySide6\\plugins\\imageformats\\qsvg.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qwbmp.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\imageformats\\qicns.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qicns.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\imageformats\\qpdf.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qpdf.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\imageformats\\qico.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qico.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\imageformats\\qtiff.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qtiff.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\platforms\\qdirect2d.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qdirect2d.dll',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qsvg.dll',
    'BINARY'),
   ('PySide6\\plugins\\imageformats\\qgif.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qgif.dll',
    'BINARY'),
-  ('PySide6\\plugins\\generic\\qtuiotouchplugin.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\generic\\qtuiotouchplugin.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\imageformats\\qsvg.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qsvg.dll',
-   'BINARY'),
   ('PySide6\\plugins\\platforms\\qminimal.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qminimal.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\platforms\\qwindows.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qwindows.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\imageformats\\qpdf.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qpdf.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\imageformats\\qtiff.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qtiff.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\platforms\\qoffscreen.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qoffscreen.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\imageformats\\qwbmp.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qwbmp.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\imageformats\\qwebp.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qwebp.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\imageformats\\qicns.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qicns.dll',
    'BINARY'),
   ('PySide6\\plugins\\imageformats\\qtga.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -79,25 +79,25 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qjpeg.dll',
    'BINARY'),
+  ('PySide6\\plugins\\platforminputcontexts\\qtvirtualkeyboardplugin.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforminputcontexts\\qtvirtualkeyboardplugin.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\platforms\\qdirect2d.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qdirect2d.dll',
+   'BINARY'),
+  ('PySide6\\plugins\\generic\\qtuiotouchplugin.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\generic\\qtuiotouchplugin.dll',
+   'BINARY'),
   ('PySide6\\plugins\\iconengines\\qsvgicon.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\iconengines\\qsvgicon.dll',
    'BINARY'),
-  ('PySide6\\plugins\\platforms\\qwindows.dll',
+  ('PySide6\\plugins\\imageformats\\qico.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qwindows.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\platforms\\qoffscreen.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qoffscreen.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\imageformats\\qwebp.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qwebp.dll',
-   'BINARY'),
-  ('PySide6\\plugins\\platforminputcontexts\\qtvirtualkeyboardplugin.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\platforminputcontexts\\qtvirtualkeyboardplugin.dll',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qico.dll',
    'BINARY'),
   ('PySide6\\plugins\\styles\\qmodernwindowsstyle.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -177,83 +177,70 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\QtWidgets.pyd',
    'EXTENSION'),
-  ('api-ms-win-crt-stdio-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-stdio-l1-1-0.dll',
-   'BINARY'),
   ('api-ms-win-crt-conio-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-conio-l1-1-0.dll',
    'BINARY'),
+  ('VCRUNTIME140.dll', 'C:\\Python313\\VCRUNTIME140.dll', 'BINARY'),
   ('api-ms-win-crt-runtime-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-runtime-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-convert-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-convert-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-locale-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-locale-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-process-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-process-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-environment-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-environment-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-string-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-string-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-math-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-math-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-heap-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-heap-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-crt-time-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-time-l1-1-0.dll',
    'BINARY'),
-  ('VCRUNTIME140.dll', 'C:\\Python313\\VCRUNTIME140.dll', 'BINARY'),
   ('api-ms-win-crt-filesystem-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-filesystem-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-environment-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-environment-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-locale-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-locale-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-math-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-math-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-process-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-process-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-stdio-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-stdio-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-heap-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-heap-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-convert-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-convert-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-string-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-string-l1-1-0.dll',
+   'BINARY'),
+  ('PySide6\\Qt6Core.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Core.dll',
+   'BINARY'),
+  ('shiboken6\\MSVCP140.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\shiboken6\\MSVCP140.dll',
    'BINARY'),
   ('PySide6\\Qt6Network.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Network.dll',
    'BINARY'),
   ('VCRUNTIME140_1.dll', 'C:\\Python313\\VCRUNTIME140_1.dll', 'BINARY'),
-  ('shiboken6\\MSVCP140.dll',
+  ('PySide6\\Qt6Multimedia.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\shiboken6\\MSVCP140.dll',
-   'BINARY'),
-  ('PySide6\\Qt6Core.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Core.dll',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Multimedia.dll',
    'BINARY'),
   ('PySide6\\Qt6Gui.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Gui.dll',
    'BINARY'),
-  ('PySide6\\Qt6Multimedia.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Multimedia.dll',
-   'BINARY'),
-  ('api-ms-win-core-heap-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-heap-l1-1-0.dll',
-   'BINARY'),
-  ('PySide6\\avcodec-61.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\avcodec-61.dll',
-   'BINARY'),
-  ('api-ms-win-core-rtlsupport-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-rtlsupport-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-sysinfo-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-sysinfo-l1-1-0.dll',
-   'BINARY'),
-  ('PySide6\\swresample-5.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\swresample-5.dll',
-   'BINARY'),
   ('api-ms-win-core-synch-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-synch-l1-1-0.dll',
+   'BINARY'),
+  ('PySide6\\avformat-61.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\avformat-61.dll',
    'BINARY'),
   ('PySide6\\swscale-8.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -262,34 +249,51 @@
   ('api-ms-win-core-synch-l1-2-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-synch-l1-2-0.dll',
    'BINARY'),
+  ('PySide6\\avcodec-61.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\avcodec-61.dll',
+   'BINARY'),
+  ('api-ms-win-core-interlocked-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-interlocked-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-localization-l1-2-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-localization-l1-2-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-heap-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-heap-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-sysinfo-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-sysinfo-l1-1-0.dll',
+   'BINARY'),
   ('api-ms-win-core-processthreads-l1-1-1.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-processthreads-l1-1-1.dll',
+   'BINARY'),
+  ('api-ms-win-core-rtlsupport-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-rtlsupport-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-errorhandling-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-errorhandling-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-interlocked-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-interlocked-l1-1-0.dll',
+  ('PySide6\\swresample-5.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\swresample-5.dll',
+   'BINARY'),
+  ('api-ms-win-core-profile-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-profile-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-debug-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-debug-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-processthreads-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-processthreads-l1-1-0.dll',
    'BINARY'),
   ('PySide6\\avutil-59.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\avutil-59.dll',
    'BINARY'),
-  ('PySide6\\avformat-61.dll',
+  ('PySide6\\Qt6Svg.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\avformat-61.dll',
-   'BINARY'),
-  ('api-ms-win-core-profile-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-profile-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-localization-l1-2-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-localization-l1-2-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-processthreads-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-processthreads-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-debug-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-debug-l1-1-0.dll',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Svg.dll',
    'BINARY'),
   ('PySide6\\Qt6Pdf.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -297,10 +301,6 @@
    'BINARY'),
   ('api-ms-win-crt-utility-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-crt-utility-l1-1-0.dll',
-   'BINARY'),
-  ('PySide6\\Qt6Svg.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Svg.dll',
    'BINARY'),
   ('PySide6\\Qt6VirtualKeyboard.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -321,26 +321,26 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\VCRUNTIME140.dll',
    'BINARY'),
+  ('shiboken6\\shiboken6.abi3.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\shiboken6\\shiboken6.abi3.dll',
+   'BINARY'),
+  ('python3.dll', 'C:\\Python313\\python3.dll', 'BINARY'),
   ('PySide6\\Qt6MultimediaWidgets.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6MultimediaWidgets.dll',
-   'BINARY'),
-  ('python3.dll', 'C:\\Python313\\python3.dll', 'BINARY'),
-  ('PySide6\\pyside6.abi3.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\pyside6.abi3.dll',
    'BINARY'),
   ('PySide6\\VCRUNTIME140_1.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\VCRUNTIME140_1.dll',
    'BINARY'),
+  ('PySide6\\pyside6.abi3.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\pyside6.abi3.dll',
+   'BINARY'),
   ('PySide6\\MSVCP140.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\MSVCP140.dll',
-   'BINARY'),
-  ('shiboken6\\shiboken6.abi3.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\shiboken6\\shiboken6.abi3.dll',
    'BINARY'),
   ('shiboken6\\VCRUNTIME140.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -367,38 +367,32 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6Qml.dll',
    'BINARY'),
+  ('libgcc_s_seh-1-29750d5dfca628b04f27e72a4f1e8af0.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libgcc_s_seh-1-29750d5dfca628b04f27e72a4f1e8af0.dll',
+   'BINARY'),
   ('libde265-0-e5950ad35a6c4c4e1cb07673a62db546.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libde265-0-e5950ad35a6c4c4e1cb07673a62db546.dll',
-   'BINARY'),
-  ('libaom-93659f31027d44fd40b0eed3e8daaa27.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libaom-93659f31027d44fd40b0eed3e8daaa27.dll',
    'BINARY'),
   ('libstdc++-6-b76f930effaaa776f3d67021ad7bd0a5.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libstdc++-6-b76f930effaaa776f3d67021ad7bd0a5.dll',
    'BINARY'),
-  ('libgcc_s_seh-1-29750d5dfca628b04f27e72a4f1e8af0.dll',
+  ('libx265-215-ab762db946bede6436a90fe3c1e56855.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libgcc_s_seh-1-29750d5dfca628b04f27e72a4f1e8af0.dll',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libx265-215-ab762db946bede6436a90fe3c1e56855.dll',
    'BINARY'),
   ('libwinpthread-1-92d71135db5bba8fb55e7522cbe94959.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libwinpthread-1-92d71135db5bba8fb55e7522cbe94959.dll',
    'BINARY'),
-  ('libx265-215-ab762db946bede6436a90fe3c1e56855.dll',
+  ('libaom-93659f31027d44fd40b0eed3e8daaa27.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libx265-215-ab762db946bede6436a90fe3c1e56855.dll',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\libaom-93659f31027d44fd40b0eed3e8daaa27.dll',
    'BINARY'),
-  ('api-ms-win-core-file-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-file-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-datetime-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-datetime-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-processenvironment-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-processenvironment-l1-1-0.dll',
+  ('api-ms-win-core-handle-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-handle-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-memory-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-memory-l1-1-0.dll',
@@ -406,37 +400,43 @@
   ('api-ms-win-core-timezone-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-timezone-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-namedpipe-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-namedpipe-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-libraryloader-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-libraryloader-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-file-l2-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-file-l2-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-handle-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-handle-l1-1-0.dll',
+  ('api-ms-win-core-processenvironment-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-processenvironment-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-console-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-console-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-string-l1-1-0.dll',
-   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-string-l1-1-0.dll',
+  ('api-ms-win-core-file-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-file-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-file-l1-2-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-file-l1-2-0.dll',
    'BINARY'),
+  ('api-ms-win-core-file-l2-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-file-l2-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-libraryloader-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-libraryloader-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-datetime-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-datetime-l1-1-0.dll',
+   'BINARY'),
   ('api-ms-win-core-util-l1-1-0.dll',
    'C:\\Win32App\\indel\\lib64\\api-ms-win-core-util-l1-1-0.dll',
    'BINARY'),
-  ('PySide6\\Qt6QmlMeta.dll',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6QmlMeta.dll',
+  ('api-ms-win-core-namedpipe-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-namedpipe-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-string-l1-1-0.dll',
+   'C:\\Win32App\\indel\\lib64\\api-ms-win-core-string-l1-1-0.dll',
    'BINARY'),
   ('PySide6\\Qt6QmlModels.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6QmlModels.dll',
+   'BINARY'),
+  ('PySide6\\Qt6QmlMeta.dll',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\Qt6QmlMeta.dll',
    'BINARY'),
   ('PySide6\\Qt6OpenGL.dll',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -458,194 +458,490 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\mic_renamer\\config\\tags.json',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\RECORD',
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\METADATA',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\RECORD',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\METADATA',
    'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\top_level.txt',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\top_level.txt',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\LICENSE',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\LICENSE',
-   'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\WHEEL',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\WHEEL',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\REQUESTED',
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\LICENSE',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\REQUESTED',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\LICENSE',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\METADATA',
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\RECORD',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\METADATA',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\RECORD',
    'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\INSTALLER',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\REQUESTED',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\REQUESTED',
    'DATA'),
   ('setuptools\\_vendor\\jaraco\\text\\Lorem ipsum.txt',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\setuptools\\_vendor\\jaraco\\text\\Lorem '
    'ipsum.txt',
    'DATA'),
-  ('PySide6\\translations\\qtmultimedia_nn.qm',
+  ('PySide6\\translations\\qtmultimedia_ja.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_nn.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_fr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_fr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_it.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_it.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_fi.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_fi.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_cs.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_cs.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_en.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_en.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ja.qm',
    'DATA'),
   ('PySide6\\translations\\qtmultimedia_pl.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_pl.qm',
    'DATA'),
+  ('PySide6\\translations\\qtmultimedia_pt_BR.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_pt_BR.qm',
+   'DATA'),
   ('PySide6\\translations\\qtmultimedia_uk.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_uk.qm',
    'DATA'),
-  ('PySide6\\translations\\qtmultimedia_de.qm',
+  ('PySide6\\translations\\qtmultimedia_nn.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_de.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_ca.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ca.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_zh_TW.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_zh_TW.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_sk.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_sk.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_hu.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_hu.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_zh_CN.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_zh_CN.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_tr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_tr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_da.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_da.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_ka.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ka.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_ru.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ru.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_ar.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ar.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtmultimedia_bg.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_bg.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_nn.qm',
    'DATA'),
   ('PySide6\\translations\\qtmultimedia_es.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_es.qm',
    'DATA'),
-  ('PySide6\\translations\\qtmultimedia_pt_BR.qm',
+  ('PySide6\\translations\\qtmultimedia_fi.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_pt_BR.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_fi.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_ka.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ka.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_bg.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_bg.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_tr.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_tr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_ru.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ru.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_zh_CN.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_zh_CN.qm',
    'DATA'),
   ('PySide6\\translations\\qtmultimedia_nl.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_nl.qm',
    'DATA'),
+  ('PySide6\\translations\\qtmultimedia_it.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_it.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_da.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_da.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_de.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_de.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_zh_TW.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_zh_TW.qm',
+   'DATA'),
   ('PySide6\\translations\\qtmultimedia_hr.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_hr.qm',
    'DATA'),
-  ('PySide6\\translations\\qtmultimedia_ja.qm',
+  ('PySide6\\translations\\qtmultimedia_en.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ja.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_en.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_cs.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_cs.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_sk.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_sk.qm',
    'DATA'),
   ('PySide6\\translations\\qtmultimedia_ko.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ko.qm',
    'DATA'),
+  ('PySide6\\translations\\qtmultimedia_ar.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ar.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_ca.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_ca.qm',
+   'DATA'),
   ('PySide6\\translations\\qtmultimedia_fa.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_fa.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_help_zh_CN.qm',
+  ('PySide6\\translations\\qtmultimedia_fr.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_zh_CN.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_fr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtmultimedia_hu.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtmultimedia_hu.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_es.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_es.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_zh_CN.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_zh_CN.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_ca.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ca.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_nn.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_nn.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_ja.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ja.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_tr.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_tr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_de.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_de.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_lv.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_lv.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_zh_CN.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_zh_CN.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_ko.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ko.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_it.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_it.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_da.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_da.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_uk.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_uk.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_fa.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_fa.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_zh_TW.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_zh_TW.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_uk.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_uk.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_tr.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_tr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_cs.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_cs.qm',
    'DATA'),
   ('PySide6\\translations\\qt_help_fr.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_fr.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_sv.qm',
+  ('PySide6\\translations\\qtbase_ru.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_sv.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ru.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_pt_PT.qm',
+  ('PySide6\\translations\\qt_pt_BR.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_pt_PT.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_pt_BR.qm',
    'DATA'),
-  ('PySide6\\translations\\qtbase_ca.qm',
+  ('PySide6\\translations\\qt_help_en.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ca.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_en.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_fi.qm',
+  ('PySide6\\translations\\qtbase_pl.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_fi.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_pl.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_nn.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_nn.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_uk.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_uk.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_fa.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_fa.qm',
    'DATA'),
   ('PySide6\\translations\\qt_gl.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_gl.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_help_sk.qm',
+  ('PySide6\\translations\\qtbase_da.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_sk.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_da.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_help_cs.qm',
+  ('PySide6\\translations\\qtbase_hu.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_cs.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_hu.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_sk.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_sk.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_pl.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_pl.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_it.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_it.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_pt_BR.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_pt_BR.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_ru.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ru.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_gl.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_gl.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_he.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_he.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_ko.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ko.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_fi.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_fi.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_gd.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_gd.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_lt.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_lt.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_lv.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_lv.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_nl.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_nl.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_ar.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ar.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_en.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_en.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_nl.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_nl.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_ar.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ar.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_ca.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ca.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_ar.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ar.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_ja.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ja.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_gd.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_gd.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_nl.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_nl.qm',
    'DATA'),
   ('PySide6\\translations\\qt_help_bg.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_bg.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_help_da.qm',
+  ('PySide6\\translations\\qt_bg.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_da.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_bg.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_help_ja.qm',
+  ('PySide6\\translations\\qt_sk.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ja.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_sk.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_de.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_de.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_pt_BR.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_pt_BR.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_es.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_es.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_cs.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_cs.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_hu.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_hu.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_ru.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ru.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_hr.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_hr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_hu.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_hu.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_ka.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ka.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_fr.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_fr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_ko.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ko.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_es.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_es.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_ca.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ca.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_tr.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_tr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_zh_TW.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_zh_TW.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_sl.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_sl.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_fr.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_fr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_ja.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ja.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_de.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_de.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_hr.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_hr.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_zh_CN.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_zh_CN.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_it.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_it.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_ka.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ka.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_sv.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_sv.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_nn.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_nn.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_fi.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_fi.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_pt_PT.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_pt_PT.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_sk.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_sk.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_pl.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_pl.qm',
+   'DATA'),
+  ('PySide6\\translations\\qtbase_ka.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ka.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_en.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_en.qm',
+   'DATA'),
+  ('PySide6\\translations\\qt_help_zh_TW.qm',
+   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_zh_TW.qm',
    'DATA'),
   ('PySide6\\translations\\qtbase_he.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -655,317 +951,21 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_hr.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_help_zh_TW.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_zh_TW.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_uk.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_uk.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_tr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_tr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_pl.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_pl.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_ar.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ar.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_zh_CN.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_zh_CN.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_ru.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ru.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_it.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_it.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_de.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_de.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_sk.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_sk.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_bg.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_bg.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_pt_BR.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_pt_BR.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_ar.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ar.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_lt.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_lt.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_pl.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_pl.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_en.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_en.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_ru.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ru.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_fi.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_fi.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_da.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_da.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_de.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_de.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_fa.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_fa.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_ka.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ka.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_it.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_it.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_cs.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_cs.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_pt_BR.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_pt_BR.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_uk.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_uk.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_hu.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_hu.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_cs.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_cs.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_it.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_it.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_pl.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_pl.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_gl.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_gl.qm',
-   'DATA'),
   ('PySide6\\translations\\qt_sl.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_sl.qm',
    'DATA'),
-  ('PySide6\\translations\\qt_zh_TW.qm',
+  ('PySide6\\translations\\qt_help_da.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_zh_TW.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_da.qm',
    'DATA'),
-  ('PySide6\\translations\\qtbase_uk.qm',
+  ('PySide6\\translations\\qt_help_cs.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_uk.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_hr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_hr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_ko.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ko.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_hu.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_hu.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_gd.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_gd.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_nl.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_nl.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_ca.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ca.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_he.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_he.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_ca.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ca.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_sk.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_sk.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_en.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_en.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_ru.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ru.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_ka.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ka.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_zh_CN.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_zh_CN.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_fr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_fr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_ko.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ko.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_ja.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ja.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_lv.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_lv.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_de.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_de.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_pt_BR.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_pt_BR.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_nl.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_nl.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_nl.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_nl.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_ar.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ar.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_ko.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_ko.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_ja.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_ja.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_hu.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_hu.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_tr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_tr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_es.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_es.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_tr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_tr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_gd.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_gd.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_fa.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_fa.qm',
+   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_cs.qm',
    'DATA'),
   ('PySide6\\translations\\qtbase_bg.qm',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_bg.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_sl.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_sl.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_nn.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_nn.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_lv.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_lv.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_nn.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_nn.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_es.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_es.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_en.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_en.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_hr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_hr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_zh_TW.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_zh_TW.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_es.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_es.qm',
-   'DATA'),
-  ('PySide6\\translations\\qtbase_nn.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qtbase_nn.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_fr.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_fr.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_help_ka.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_help_ka.qm',
-   'DATA'),
-  ('PySide6\\translations\\qt_da.qm',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PySide6\\translations\\qt_da.qm',
    'DATA'),
   ('base_library.zip',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
