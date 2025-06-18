@@ -26,6 +26,7 @@ class DragDropTableWidget(QTableWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._updating_checks = False
+        self.mode = "normal"
         self.setColumnCount(5)
         self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"])
         header = self.horizontalHeader()
@@ -53,6 +54,46 @@ class DragDropTableWidget(QTableWidget):
             f"QTableWidget::viewport{{background-image:url('{logo.as_posix()}');"
             "background-repeat:no-repeat;background-position:center;}}"
         )
+
+    def set_mode(self, mode: str) -> None:
+        """Switch table headers for the given mode."""
+        self.mode = mode
+        if mode == "position":
+            self.setHorizontalHeaderLabels(["", "Filename", "Pos", "Date", "Suffix"])
+            self.setColumnHidden(3, True)
+        else:
+            self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"])
+            self.setColumnHidden(3, False)
+        for row in range(self.rowCount()):
+            item1 = self.item(row, 1)
+            if not item1:
+                continue
+            settings: ItemSettings = item1.data(ROLE_SETTINGS)
+            if not settings:
+                continue
+            if mode == "position":
+                pos_item = self.item(row, 2)
+                if pos_item:
+                    pos_item.setText(settings.position)
+                    pos_item.setToolTip(settings.position)
+                suf_item = self.item(row, 4)
+                if suf_item:
+                    suf_item.setText(settings.suffix)
+                    suf_item.setToolTip(settings.suffix)
+            else:
+                tags_item = self.item(row, 2)
+                if tags_item:
+                    text = ",".join(sorted(settings.tags))
+                    tags_item.setText(text)
+                    tags_item.setToolTip(text)
+                date_item = self.item(row, 3)
+                if date_item:
+                    date_item.setText(settings.date)
+                    date_item.setToolTip(settings.date)
+                suf_item = self.item(row, 4)
+                if suf_item:
+                    suf_item.setText(settings.suffix)
+                    suf_item.setToolTip(settings.suffix)
 
     def set_equal_column_widths(self):
         if self._initial_columns:

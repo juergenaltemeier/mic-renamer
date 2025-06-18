@@ -86,11 +86,6 @@ class ImageViewer(QGraphicsView):
             self.rotate(self._rotation)
         factor = self._zoom_pct / 100.0
         self.scale(factor, factor)
-        try:
-            self.horizontalScrollBar().setValue(0)
-            self.verticalScrollBar().setValue(0)
-        except Exception:
-            pass
 
     def zoom_fit(self):
         if not self.pixmap_item:
