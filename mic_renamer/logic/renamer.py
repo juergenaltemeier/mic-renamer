@@ -24,7 +24,7 @@ class Renamer:
             for item in self.items:
                 base = f"{self.project}_pos{item.position}"
                 if item.suffix:
-                    base += f"-{item.suffix}"
+                    base += f"{item.suffix}"
                 ext = os.path.splitext(item.original_path)[1]
                 new_basename = base + ext
                 dirpath = self.dest_dir or os.path.dirname(item.original_path)
