@@ -3,6 +3,38 @@ from __future__ import annotations
 
 from pathlib import Path
 from importlib import resources
+<<<<<<< HEAD
+
+# Fallback defaults used when the bundled YAML file is missing. This ensures
+# PyInstaller builds still work even if the data file was not included.
+DEFAULTS_YAML = """
+accepted_extensions:
+  - .jpg
+  - .jpeg
+  - .png
+  - .gif
+  - .bmp
+  - .heic
+  - .mp4
+  - .avi
+  - .mov
+  - .mkv
+  - .heic
+language: en
+tags_file: tags.json
+tag_usage_file: tag_usage.json
+last_project_number: ""
+tag_panel_visible: false
+default_save_directory: ""
+compression_max_size_kb: 2048
+compression_quality: 95
+compression_reduce_resolution: true
+compression_resize_only: false
+compression_max_width: 0
+compression_max_height: 0
+"""
+=======
+>>>>>>> main
 import yaml
 
 from ..utils.path_utils import get_config_dir
@@ -28,7 +60,11 @@ class ConfigManager:
                 data = yaml.safe_load(self.config_file.read_text()) or {}
             except Exception:
                 data = {}
-        defaults = yaml.safe_load(self.defaults_path.read_text())
+        try:
+            defaults_text = self.defaults_path.read_text()
+        except FileNotFoundError:
+            defaults_text = DEFAULTS_YAML
+        defaults = yaml.safe_load(defaults_text)
         # ensure default path for the tags file in user config directory
         defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         # default path for tag usage statistics
@@ -53,7 +89,11 @@ class ConfigManager:
             self._config = cfg
         cfg = cfg or self._config
         if cfg is None:
-            cfg = yaml.safe_load(self.defaults_path.read_text())
+            try:
+                cfg_text = self.defaults_path.read_text()
+            except FileNotFoundError:
+                cfg_text = DEFAULTS_YAML
+            cfg = yaml.safe_load(cfg_text)
         Path(self.config_dir).mkdir(parents=True, exist_ok=True)
         with open(self.config_file, "w", encoding="utf-8") as fh:
             yaml.safe_dump(cfg, fh)
@@ -69,7 +109,11 @@ class ConfigManager:
 
     def restore_defaults(self) -> dict:
         """Overwrite config file with bundled defaults."""
-        defaults = yaml.safe_load(self.defaults_path.read_text())
+        try:
+            defaults_text = self.defaults_path.read_text()
+        except FileNotFoundError:
+            defaults_text = DEFAULTS_YAML
+        defaults = yaml.safe_load(defaults_text)
         defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
         defaults.setdefault("default_save_directory", str(get_config_dir()))
