@@ -44,7 +44,9 @@ included in the build:
 ```bash
 pip install pyinstaller
 
-pyinstaller --onefile mic_renamer.spec
+pyinstaller --onefile mic_renamer.spec    
+or
+pyinstaller mic_renamer.spec 
 
 ```
 

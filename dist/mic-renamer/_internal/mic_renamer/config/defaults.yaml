@@ -1,0 +1,24 @@
+accepted_extensions:
+  - .jpg
+  - .jpeg
+  - .png
+  - .gif
+  - .bmp
+  - .heic
+  - .mp4
+  - .avi
+  - .mov
+  - .mkv
+  - .heic
+language: en
+tags_file: tags.json
+tag_usage_file: tag_usage.json
+last_project_number: ""
+tag_panel_visible: false
+default_save_directory: ""
+compression_max_size_kb: 2048
+compression_quality: 95
+compression_reduce_resolution: true
+compression_resize_only: false
+compression_max_width: 0
+compression_max_height: 0
