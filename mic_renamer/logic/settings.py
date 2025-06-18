@@ -37,6 +37,7 @@ class ItemSettings:
     tags: set[str] = field(default_factory=set)
     suffix: str = ""
     date: str = ""
+    position: str = ""
     size_bytes: int = 0
     compressed_bytes: int = 0
 

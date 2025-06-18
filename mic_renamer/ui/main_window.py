@@ -4,7 +4,7 @@ from pathlib import Path
 from PySide6.QtWidgets import (
     QWidget, QSplitter, QHBoxLayout, QVBoxLayout, QGridLayout,
     QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
-    QApplication, QLabel,
+    QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox, QAbstractItemView,
     QHeaderView, QStyle, QTableWidget, QTableWidgetItem
 )
@@ -43,12 +43,15 @@ def gear_icon_fallback(size: int = 16) -> QIcon:
 
 
 ROLE_SETTINGS = Qt.UserRole + 1
+MODE_NORMAL = "normal"
+MODE_POSITION = "position"
 
 class RenamerApp(QWidget):
     def __init__(self, state_manager=None):
         super().__init__()
         self.state_manager = state_manager
         self.undo_manager = UndoManager()
+        self.rename_mode = MODE_NORMAL
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
@@ -192,6 +195,12 @@ class RenamerApp(QWidget):
         tb.addAction(act_settings)
 
         tb.addSeparator()
+        self.combo_mode = QComboBox()
+        self.combo_mode.addItem(tr("mode_normal"), MODE_NORMAL)
+        self.combo_mode.addItem(tr("mode_position"), MODE_POSITION)
+        self.combo_mode.currentIndexChanged.connect(self.on_mode_changed)
+        tb.addWidget(self.combo_mode)
+
         self.lbl_project = QLabel(tr("project_number_label"))
         self.input_project = ProjectNumberInput()
         self.input_project.setText(config_manager.get("last_project_number", ""))
@@ -230,6 +239,15 @@ class RenamerApp(QWidget):
             self.btn_toggle_tags.setText(tr("show_tags"))
         self.btn_remove_selected.setText(tr("remove_selected"))
         self.btn_remove_selected.setToolTip(tr("remove_selected"))
+        self.combo_mode.setItemText(0, tr("mode_normal"))
+        self.combo_mode.setItemText(1, tr("mode_position"))
+
+    def on_mode_changed(self, index: int) -> None:
+        mode = self.combo_mode.itemData(index)
+        if mode is None:
+            mode = MODE_NORMAL
+        self.rename_mode = mode
+        self.table_widget.set_mode(mode)
 
     def add_files_dialog(self):
         exts = " ".join(f"*{e}" for e in ItemSettings.ACCEPT_EXTENSIONS)
@@ -274,28 +292,29 @@ class RenamerApp(QWidget):
         first = settings_list[0]
 
 
-        intersect = set(settings_list[0].tags)
-        union = set(settings_list[0].tags)
-        for st in settings_list[1:]:
-            intersect &= st.tags
-            union |= st.tags
-        for code, cb in self.tag_panel.checkbox_map.items():
-            desc = self.tag_panel.tags_info.get(code, "")
-            cb.blockSignals(True)
-            if code in intersect:
-                cb.setTristate(False)
-                cb.setCheckState(Qt.Checked)
-                cb.setText(f"{code}: {desc}")
-            elif code in union:
-                cb.setTristate(True)
-                cb.setCheckState(Qt.PartiallyChecked)
-                cb.setText(f"[~] {code}: {desc}")
-            else:
-                cb.setTristate(False)
-                cb.setCheckState(Qt.Unchecked)
-                cb.setText(f"{code}: {desc}")
-            cb.blockSignals(False)
-
+        if self.rename_mode == MODE_NORMAL:
+            intersect = set(settings_list[0].tags)
+            union = set(settings_list[0].tags)
+            for st in settings_list[1:]:
+                intersect &= st.tags
+                union |= st.tags
+            for code, cb in self.tag_panel.checkbox_map.items():
+                desc = self.tag_panel.tags_info.get(code, "")
+                cb.blockSignals(True)
+                if code in intersect:
+                    cb.setTristate(False)
+                    cb.setCheckState(Qt.Checked)
+                    cb.setText(f"{code}: {desc}")
+                elif code in union:
+                    cb.setTristate(True)
+                    cb.setCheckState(Qt.PartiallyChecked)
+                    cb.setText(f"[~] {code}: {desc}")
+                else:
+                    cb.setTristate(False)
+                    cb.setCheckState(Qt.Unchecked)
+                    cb.setText(f"{code}: {desc}")
+                cb.blockSignals(False)
+        
         self.load_preview(first.original_path)
         self.table_widget.sync_check_column()
 
@@ -309,22 +328,32 @@ class RenamerApp(QWidget):
             settings: ItemSettings = item0.data(ROLE_SETTINGS)
             if settings is None:
                 continue
-            for code, state in checkbox_states.items():
-                if state == Qt.Checked:
-                    settings.tags.add(code)
-                elif state == Qt.Unchecked:
-                    settings.tags.discard(code)
-            tags_str = ",".join(sorted(settings.tags))
-            cell_tags = self.table_widget.item(row, 2)
-            cell_date = self.table_widget.item(row, 3)
-            cell_suffix = self.table_widget.item(row, 4)
-            cell_tags.setText(tags_str)
-            cell_tags.setToolTip(tags_str)
-            if cell_date:
-                cell_date.setText(settings.date)
-                cell_date.setToolTip(settings.date)
-            cell_suffix.setText(settings.suffix)
-            cell_suffix.setToolTip(settings.suffix)
+            if self.rename_mode == MODE_NORMAL:
+                for code, state in checkbox_states.items():
+                    if state == Qt.Checked:
+                        settings.tags.add(code)
+                    elif state == Qt.Unchecked:
+                        settings.tags.discard(code)
+                tags_str = ",".join(sorted(settings.tags))
+                cell_tags = self.table_widget.item(row, 2)
+                cell_date = self.table_widget.item(row, 3)
+                cell_suffix = self.table_widget.item(row, 4)
+                cell_tags.setText(tags_str)
+                cell_tags.setToolTip(tags_str)
+                if cell_date:
+                    cell_date.setText(settings.date)
+                    cell_date.setToolTip(settings.date)
+                cell_suffix.setText(settings.suffix)
+                cell_suffix.setToolTip(settings.suffix)
+            else:
+                cell_pos = self.table_widget.item(row, 2)
+                cell_suffix = self.table_widget.item(row, 4)
+                settings.position = cell_pos.text().strip() if cell_pos else ""
+                settings.suffix = cell_suffix.text().strip() if cell_suffix else ""
+                if cell_pos:
+                    cell_pos.setToolTip(settings.position)
+                if cell_suffix:
+                    cell_suffix.setToolTip(settings.suffix)
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
 
@@ -335,6 +364,8 @@ class RenamerApp(QWidget):
         ``int`` rather than ``Qt.CheckState``. Convert it to ensure robust
         comparisons.
         """
+        if self.rename_mode != MODE_NORMAL:
+            return
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
             return
@@ -368,7 +399,11 @@ class RenamerApp(QWidget):
             item = self.table_widget.item(row, col)
             if not item:
                 continue
-            if settings and (settings.suffix or settings.tags):
+            has_info = settings and (
+                settings.suffix or
+                (settings.tags if self.rename_mode == MODE_NORMAL else settings.position)
+            )
+            if has_info:
                 item.setBackground(QColor('#335533'))
                 item.setForeground(QColor('#ffffff'))
             else:
@@ -380,7 +415,8 @@ class RenamerApp(QWidget):
             return
         row = item.row()
         col = item.column()
-        if col not in (2, 3, 4):
+        valid_cols = (2, 3, 4) if self.rename_mode == MODE_NORMAL else (2, 4)
+        if col not in valid_cols:
             return
         item0 = self.table_widget.item(row, 1)
         if not item0:
@@ -388,12 +424,12 @@ class RenamerApp(QWidget):
         settings: ItemSettings = item0.data(ROLE_SETTINGS)
         if settings is None:
             return
-        if col == 2:
+        if self.rename_mode == MODE_NORMAL and col == 2:
             raw_tags = {t.strip() for t in item.text().split(',') if t.strip()}
             valid_tags = {t for t in raw_tags if t in self.tag_panel.tags_info}
             invalid = raw_tags - valid_tags
             if invalid:
-                QMessageBox.warning(self, "Invalid Tags", 
+                QMessageBox.warning(self, "Invalid Tags",
                                     "Invalid tags: " + ", ".join(sorted(invalid)))
             settings.tags = valid_tags
             text = ",".join(sorted(valid_tags))
@@ -402,7 +438,7 @@ class RenamerApp(QWidget):
                 item.setText(text)
                 self._ignore_table_changes = False
             item.setToolTip(text)
-        elif col == 3:
+        elif self.rename_mode == MODE_NORMAL and col == 3:
             text = item.text().strip()
             if not re.fullmatch(r"\d{6}", text):
                 QMessageBox.warning(self, "Invalid Date", "Date must be YYMMDD")
@@ -412,6 +448,9 @@ class RenamerApp(QWidget):
             else:
                 settings.date = text
                 item.setToolTip(settings.date)
+        elif col == 2:
+            settings.position = item.text().strip()
+            item.setToolTip(settings.position)
         elif col == 4:
             settings.suffix = item.text().strip()
             item.setToolTip(settings.suffix)
@@ -566,11 +605,16 @@ class RenamerApp(QWidget):
                 settings = ItemSettings(path)
                 item0.setData(ROLE_SETTINGS, settings)
             settings.original_path = path
-            cell_date = self.table_widget.item(row, 3)
-            if cell_date:
-                settings.date = cell_date.text().strip()
+            if self.rename_mode == MODE_NORMAL:
+                cell_date = self.table_widget.item(row, 3)
+                if cell_date:
+                    settings.date = cell_date.text().strip()
+            else:
+                cell_pos = self.table_widget.item(row, 2)
+                if cell_pos:
+                    settings.position = cell_pos.text().strip()
             items.append(settings)
-        renamer = Renamer(project, items, dest_dir=dest_dir)
+        renamer = Renamer(project, items, dest_dir=dest_dir, mode=self.rename_mode)
         mapping = renamer.build_mapping()
         return mapping
 
@@ -682,7 +726,7 @@ class RenamerApp(QWidget):
                     item0.setText(os.path.basename(new_path))
                     item0.setData(Qt.UserRole, new_path)
                     settings = item0.data(ROLE_SETTINGS)
-                    if settings:
+                    if settings and self.rename_mode == MODE_NORMAL:
                         used_tags.extend(settings.tags)
                     self.undo_manager.record(row, orig, new_path)
             except Exception as e:
@@ -702,7 +746,7 @@ class RenamerApp(QWidget):
             )
         else:
             QMessageBox.information(self, tr("done"), tr("rename_done"))
-            if used_tags:
+            if used_tags and self.rename_mode == MODE_NORMAL:
                 increment_tags(used_tags)
                 self.tag_panel.rebuild()
 
