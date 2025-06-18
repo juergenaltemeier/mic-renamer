@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 from importlib import resources
+<<<<<<< HEAD
 
 # Fallback tags used when the bundled JSON file cannot be located. This is
 # primarily for cases where PyInstaller is executed without including the data
@@ -44,6 +45,8 @@ BUNDLED_TAGS_JSON = """{
   \"VU\": {\"en\": \"Vacuum unit\", \"de\": \"Vacuum unit\"},
   \"WIRE\": {\"en\": \"wiring and pneumatic\", \"de\": \"wiring and pneumatic\"}
 }"""
+=======
+>>>>>>> main
 
 from .. import config_manager
 from ..utils.path_utils import get_config_dir

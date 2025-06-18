@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from importlib import resources
+<<<<<<< HEAD
 
 # Fallback defaults used when the bundled YAML file is missing. This ensures
 # PyInstaller builds still work even if the data file was not included.
@@ -32,6 +33,8 @@ compression_resize_only: false
 compression_max_width: 0
 compression_max_height: 0
 """
+=======
+>>>>>>> main
 import yaml
 
 from ..utils.path_utils import get_config_dir
