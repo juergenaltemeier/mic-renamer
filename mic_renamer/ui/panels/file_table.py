@@ -39,7 +39,6 @@ class DragDropTableWidget(QTableWidget):
         header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
         header.setStretchLastSection(True)
-        header.setStretchLastSection(True)
         header.sectionDoubleClicked.connect(self.on_header_double_clicked)
         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setAcceptDrops(True)
