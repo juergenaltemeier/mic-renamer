@@ -22,11 +22,14 @@ class Application:
         self.app = QApplication(sys.argv)
         logo = resources.files("mic_renamer") / "favicon.png"
         if logo.is_file():
-            self.app.setWindowIcon(QIcon(str(logo)))
+            icon = QIcon(str(logo))
+            self.app.setWindowIcon(icon)
         # create config files on first run
         config_manager.ensure_files()
         self.state = StateManager(config_manager.config_dir)
         self.window = RenamerApp(state_manager=self.state)
+        if logo.is_file():
+            self.window.setWindowIcon(icon)
         min_w = config_manager.get("window_min_width", 1200)
         min_h = config_manager.get("window_min_height", 800)
         self.window.setMinimumSize(min_w, min_h)
