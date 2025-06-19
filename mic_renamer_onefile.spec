@@ -5,6 +5,9 @@ block_cipher = None
 
 
 from PyInstaller.utils.hooks import collect_submodules
+import os
+
+icon_file = 'favicon.ico' if os.path.exists('favicon.ico') else None
 
 hiddenimports = collect_submodules('mic_renamer')
 
@@ -39,4 +42,5 @@ exe = EXE(
     upx=False,
     console=False,
     runtime_tmpdir=None,
+    icon=icon_file,
 )
