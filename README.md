@@ -74,7 +74,3 @@ pyinstaller --icon favicon.ico mic_renamer.spec
 ```
 
 Alternatively, pass ``--icon`` when invoking PyInstaller directly.
-
-Some antivirus tools flag UPX-compressed executables. If this occurs, disable
-compression by passing ``--noupx`` or editing the spec files to set
-``upx=False``.
