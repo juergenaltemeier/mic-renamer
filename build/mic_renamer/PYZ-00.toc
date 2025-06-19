@@ -1,5 +1,4 @@
-('C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
- 'AG\\Desktop\\mic-renamer\\build\\mic_renamer\\PYZ-00.pyz',
+('D:\\mic-renamer\\build\\mic_renamer\\PYZ-00.pyz',
  [('PIL',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PIL\\__init__.py',
@@ -625,133 +624,97 @@
   ('json.scanner', 'C:\\Python313\\Lib\\json\\scanner.py', 'PYMODULE'),
   ('logging', 'C:\\Python313\\Lib\\logging\\__init__.py', 'PYMODULE'),
   ('lzma', 'C:\\Python313\\Lib\\lzma.py', 'PYMODULE'),
-  ('mic_renamer',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\__init__.py',
-   'PYMODULE'),
-  ('mic_renamer.app',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\app.py',
-   'PYMODULE'),
+  ('mic_renamer', 'D:\\mic-renamer\\mic_renamer\\__init__.py', 'PYMODULE'),
+  ('mic_renamer.app', 'D:\\mic-renamer\\mic_renamer\\app.py', 'PYMODULE'),
   ('mic_renamer.config',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\config\\__init__.py',
+   'D:\\mic-renamer\\mic_renamer\\config\\__init__.py',
    'PYMODULE'),
   ('mic_renamer.config.config_manager',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\config\\config_manager.py',
+   'D:\\mic-renamer\\mic_renamer\\config\\config_manager.py',
    'PYMODULE'),
   ('mic_renamer.logic',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\__init__.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\__init__.py',
    'PYMODULE'),
   ('mic_renamer.logic.heic_converter',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\heic_converter.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\heic_converter.py',
    'PYMODULE'),
   ('mic_renamer.logic.image_compressor',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\image_compressor.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\image_compressor.py',
    'PYMODULE'),
   ('mic_renamer.logic.renamer',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\renamer.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\renamer.py',
    'PYMODULE'),
   ('mic_renamer.logic.settings',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\settings.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\settings.py',
    'PYMODULE'),
   ('mic_renamer.logic.tag_loader',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\tag_loader.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\tag_loader.py',
    'PYMODULE'),
   ('mic_renamer.logic.tag_service',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\tag_service.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\tag_service.py',
    'PYMODULE'),
   ('mic_renamer.logic.tag_usage',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\tag_usage.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\tag_usage.py',
    'PYMODULE'),
   ('mic_renamer.logic.undo_manager',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\logic\\undo_manager.py',
+   'D:\\mic-renamer\\mic_renamer\\logic\\undo_manager.py',
    'PYMODULE'),
   ('mic_renamer.ui',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\__init__.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\__init__.py',
    'PYMODULE'),
   ('mic_renamer.ui.components',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\components.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\components.py',
    'PYMODULE'),
   ('mic_renamer.ui.compression_dialog',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\compression_dialog.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\compression_dialog.py',
    'PYMODULE'),
   ('mic_renamer.ui.main_window',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\main_window.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\main_window.py',
    'PYMODULE'),
   ('mic_renamer.ui.panels',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\panels\\__init__.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\panels\\__init__.py',
    'PYMODULE'),
   ('mic_renamer.ui.panels.compression_settings',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\panels\\compression_settings.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\panels\\compression_settings.py',
    'PYMODULE'),
   ('mic_renamer.ui.panels.file_table',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\panels\\file_table.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\panels\\file_table.py',
    'PYMODULE'),
   ('mic_renamer.ui.panels.image_preview',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\panels\\image_preview.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\panels\\image_preview.py',
    'PYMODULE'),
   ('mic_renamer.ui.panels.media_viewer',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\panels\\media_viewer.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\panels\\media_viewer.py',
    'PYMODULE'),
   ('mic_renamer.ui.panels.tag_panel',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\panels\\tag_panel.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\panels\\tag_panel.py',
    'PYMODULE'),
   ('mic_renamer.ui.project_number_input',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\project_number_input.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\project_number_input.py',
    'PYMODULE'),
   ('mic_renamer.ui.rename_options_dialog',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\rename_options_dialog.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\rename_options_dialog.py',
    'PYMODULE'),
   ('mic_renamer.ui.settings_dialog',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\ui\\settings_dialog.py',
+   'D:\\mic-renamer\\mic_renamer\\ui\\settings_dialog.py',
    'PYMODULE'),
   ('mic_renamer.utils',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\utils\\__init__.py',
+   'D:\\mic-renamer\\mic_renamer\\utils\\__init__.py',
    'PYMODULE'),
   ('mic_renamer.utils.file_utils',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\utils\\file_utils.py',
+   'D:\\mic-renamer\\mic_renamer\\utils\\file_utils.py',
    'PYMODULE'),
   ('mic_renamer.utils.i18n',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\utils\\i18n.py',
+   'D:\\mic-renamer\\mic_renamer\\utils\\i18n.py',
    'PYMODULE'),
   ('mic_renamer.utils.meta_utils',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\utils\\meta_utils.py',
+   'D:\\mic-renamer\\mic_renamer\\utils\\meta_utils.py',
    'PYMODULE'),
   ('mic_renamer.utils.path_utils',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\utils\\path_utils.py',
+   'D:\\mic-renamer\\mic_renamer\\utils\\path_utils.py',
    'PYMODULE'),
   ('mic_renamer.utils.state_manager',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\utils\\state_manager.py',
+   'D:\\mic-renamer\\mic_renamer\\utils\\state_manager.py',
    'PYMODULE'),
   ('mimetypes', 'C:\\Python313\\Lib\\mimetypes.py', 'PYMODULE'),
   ('multiprocessing',

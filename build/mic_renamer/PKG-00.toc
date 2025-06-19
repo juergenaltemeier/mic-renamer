@@ -1,5 +1,4 @@
-('C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
- 'AG\\Desktop\\mic-renamer\\build\\mic_renamer\\mic-renamer.pkg',
+('D:\\mic-renamer\\build\\mic_renamer\\mic-renamer.pkg',
  {'BINARY': True,
   'DATA': True,
   'EXECUTABLE': True,
@@ -10,29 +9,21 @@
   'SPLASH': True,
   'SYMLINK': False},
  [('pyi-contents-directory _internal', '', 'OPTION'),
-  ('PYZ-00.pyz',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\build\\mic_renamer\\PYZ-00.pyz',
-   'PYZ'),
+  ('PYZ-00.pyz', 'D:\\mic-renamer\\build\\mic_renamer\\PYZ-00.pyz', 'PYZ'),
   ('struct',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\build\\mic_renamer\\localpycs\\struct.pyc',
+   'D:\\mic-renamer\\build\\mic_renamer\\localpycs\\struct.pyc',
    'PYMODULE'),
   ('pyimod01_archive',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\build\\mic_renamer\\localpycs\\pyimod01_archive.pyc',
+   'D:\\mic-renamer\\build\\mic_renamer\\localpycs\\pyimod01_archive.pyc',
    'PYMODULE'),
   ('pyimod02_importers',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\build\\mic_renamer\\localpycs\\pyimod02_importers.pyc',
+   'D:\\mic-renamer\\build\\mic_renamer\\localpycs\\pyimod02_importers.pyc',
    'PYMODULE'),
   ('pyimod03_ctypes',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\build\\mic_renamer\\localpycs\\pyimod03_ctypes.pyc',
+   'D:\\mic-renamer\\build\\mic_renamer\\localpycs\\pyimod03_ctypes.pyc',
    'PYMODULE'),
   ('pyimod04_pywin32',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\build\\mic_renamer\\localpycs\\pyimod04_pywin32.pyc',
+   'D:\\mic-renamer\\build\\mic_renamer\\localpycs\\pyimod04_pywin32.pyc',
    'PYMODULE'),
   ('pyiboot01_bootstrap',
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
@@ -58,10 +49,7 @@
    'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
    'AG\\Desktop\\mic-renamer\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pyside6.py',
    'PYSOURCE'),
-  ('__main__',
-   'C:\\Users\\Jürgen Altemeier\\OneDrive - Micavac '
-   'AG\\Desktop\\mic-renamer\\mic_renamer\\__main__.py',
-   'PYSOURCE')],
+  ('__main__', 'D:\\mic-renamer\\mic_renamer\\__main__.py', 'PYSOURCE')],
  'python313.dll',
  True,
  False,
