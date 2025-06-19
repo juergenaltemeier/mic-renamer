@@ -39,7 +39,6 @@ class DragDropTableWidget(QTableWidget):
         header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
         header.setStretchLastSection(True)
-        header.setStretchLastSection(True)
         header.sectionDoubleClicked.connect(self.on_header_double_clicked)
         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setAcceptDrops(True)
@@ -53,13 +52,14 @@ class DragDropTableWidget(QTableWidget):
         QTimer.singleShot(0, self.set_equal_column_widths)
 
         logo = resources.files("mic_renamer") / "favicon.png"
-        style = (
-            "QTableWidget::viewport{"
-            f"background-image:url('{logo.as_posix()}');"
-            "background-repeat:no-repeat;"
-            "background-position:center;}"
-        )
-        self.setStyleSheet(style)
+        if logo.is_file():
+            style = (
+                "QTableWidget::viewport{"
+                f"background-image:url('{logo.as_posix()}');"
+                "background-repeat:no-repeat;"
+                "background-position:center;}"
+            )
+            self.setStyleSheet(style)
 
     def set_mode(self, mode: str) -> None:
         """Switch table headers for the given mode."""
