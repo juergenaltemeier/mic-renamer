@@ -63,14 +63,32 @@ pyinstaller mic_renamer_onefile.spec
 
 ### Custom Executable Icon
 
-The repository only bundles ``favicon.png``. To give the generated executable a
-custom icon, first convert this image to ``favicon.ico`` and include it in the
-build. The provided spec files already reference ``favicon.ico``:
+To give the application and generated executable a custom icon, create your own
+``favicon.png`` and place it inside the ``mic_renamer`` package directory.
+Optionally create a matching ``favicon.ico`` next to the spec file. You can
+convert any PNG image to ICO using Pillow:
 
 ```bash
 from PIL import Image
-Image.open("favicon.png").save("favicon.ico")
+Image.open("my_icon.png").save("favicon.png")
+Image.open("my_icon.png").save("favicon.ico")
+```
+
+After placing the icons, run the build using the provided spec file:
+
+```bash
 pyinstaller mic_renamer.spec
 ```
 
-You can also pass ``--icon favicon.ico`` when invoking PyInstaller directly.
+To specify the icon via command-line options instead, invoke PyInstaller
+directly on the entry module:
+
+```bash
+pyinstaller --icon favicon.ico mic_renamer/__main__.py
+```
+
+Alternatively, pass ``--icon`` when invoking PyInstaller directly.
+
+Some antivirus tools flag UPX-compressed executables. If this occurs, disable
+compression by passing ``--noupx`` or editing the spec files to set
+``upx=False``.
