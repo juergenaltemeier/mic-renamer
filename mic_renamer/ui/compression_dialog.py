@@ -7,7 +7,6 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QDialogButtonBox,
 )
-from PySide6.QtCore import Qt
 import os
 
 from ..logic.image_compressor import ImageCompressor

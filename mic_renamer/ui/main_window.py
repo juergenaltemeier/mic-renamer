@@ -1,15 +1,14 @@
 import os
 import re
-from pathlib import Path
 from PySide6.QtWidgets import (
-    QWidget, QSplitter, QHBoxLayout, QVBoxLayout, QGridLayout,
+    QWidget, QHBoxLayout, QVBoxLayout, QGridLayout,
     QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
     QApplication, QLabel, QComboBox,
-    QProgressDialog, QDialog, QDialogButtonBox, QAbstractItemView,
-    QHeaderView, QStyle, QTableWidget, QTableWidgetItem
+    QProgressDialog, QDialog, QDialogButtonBox,
+    QStyle, QTableWidget, QTableWidgetItem
 )
 from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPainter, QFont
-from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
+from PySide6.QtCore import Qt, QTimer
 
 from .. import config_manager
 from ..utils.i18n import tr, set_language
@@ -23,7 +22,6 @@ from .panels import (
 from .rename_options_dialog import RenameOptionsDialog
 from .project_number_input import ProjectNumberInput
 from ..logic.settings import ItemSettings
-from ..logic.image_compressor import ImageCompressor
 from ..logic.renamer import Renamer
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager

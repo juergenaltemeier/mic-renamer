@@ -14,16 +14,16 @@ def get_capture_date(path: str | Path, date_format: str = "%y%m%d") -> str:
     """
     file_path = Path(path)
     try:
-        img = Image.open(file_path)
-        exif = img._getexif() or {}
-        tag_map = {ExifTags.TAGS.get(k): v for k, v in exif.items()}
-        dt = tag_map.get("DateTimeOriginal") or tag_map.get("DateTime")
-        if dt:
-            try:
-                dt_obj = datetime.strptime(str(dt), "%Y:%m:%d %H:%M:%S")
-                return dt_obj.strftime(date_format)
-            except Exception:
-                pass
+        with Image.open(file_path) as img:
+            exif = img._getexif() or {}
+            tag_map = {ExifTags.TAGS.get(k): v for k, v in exif.items()}
+            dt = tag_map.get("DateTimeOriginal") or tag_map.get("DateTime")
+            if dt:
+                try:
+                    dt_obj = datetime.strptime(str(dt), "%Y:%m:%d %H:%M:%S")
+                    return dt_obj.strftime(date_format)
+                except Exception:
+                    pass
     except Exception:
         pass
     try:
