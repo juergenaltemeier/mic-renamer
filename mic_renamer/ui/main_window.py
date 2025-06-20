@@ -1,7 +1,7 @@
 import os
 import re
 from PySide6.QtWidgets import (
-    QWidget, QHBoxLayout, QVBoxLayout, QGridLayout,
+    QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
     QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
     QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox,
@@ -48,8 +48,8 @@ class RenamerApp(QWidget):
 
         # no separate selected file display
 
-        grid = QGridLayout()
-        main_layout.addLayout(grid)
+        splitter = QSplitter(Qt.Horizontal)
+        main_layout.addWidget(splitter)
 
         viewer_widget = QWidget()
         viewer_layout = QVBoxLayout(viewer_widget)
@@ -90,20 +90,24 @@ class RenamerApp(QWidget):
         self._ignore_table_changes = False
         self.table_widget.itemChanged.connect(self.on_table_item_changed)
 
-        grid.addWidget(viewer_widget, 0, 0)
-        grid.addWidget(self.table_widget, 0, 1)
+        splitter.addWidget(viewer_widget)
+        splitter.addWidget(self.table_widget)
 
         self.btn_remove_selected = QPushButton()
         self.btn_remove_selected.clicked.connect(self.remove_selected_items)
-        grid.addWidget(self.btn_remove_selected, 1, 1, Qt.AlignRight)
 
         # Tag container spanning both columns with manual toggle
         self.tag_panel = TagPanel()
         self.tag_panel.tagToggled.connect(self.on_tag_toggled)
         self.btn_toggle_tags = QPushButton()
         self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
-        grid.addWidget(self.btn_toggle_tags, 1, 0, 1, 2, Qt.AlignLeft)
-        grid.addWidget(self.tag_panel, 2, 0, 1, 2)
+
+        btn_layout = QHBoxLayout()
+        btn_layout.addWidget(self.btn_toggle_tags)
+        btn_layout.addStretch()
+        btn_layout.addWidget(self.btn_remove_selected)
+        main_layout.addLayout(btn_layout)
+        main_layout.addWidget(self.tag_panel)
         visible = config_manager.get("tag_panel_visible", False)
         self.tag_panel.setVisible(visible)
         self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
