@@ -32,6 +32,24 @@ from mic_renamer.logic.tag_usage import get_usage_path
 print(get_usage_path())
 ```
 
+## Running Tests
+
+The unit tests depend on **PySide6** and system OpenGL libraries. On many
+Linux distributions the latter are provided by ``libegl1``. Without these
+packages the test suite will fail to initialize the Qt platform plugin.
+
+Install PySide6 in your virtual environment and ensure the system OpenGL
+libraries are available:
+
+```bash
+pip install PySide6
+# on Debian/Ubuntu
+sudo apt-get install libegl1
+```
+
+Headless environments may require additional setup, such as a virtual display
+server (Xvfb) or GPU drivers, to run the tests successfully.
+
 ## Building a Standalone Executable
 
 The repository contains three spec files for [PyInstaller](https://pyinstaller.org/):
