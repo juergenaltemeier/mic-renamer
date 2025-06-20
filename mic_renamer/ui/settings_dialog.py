@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QDialogButtonBox, QComboBox, QTableWidget, QTableWidgetItem,
-    QPushButton, QTabWidget, QWidget
+    QPushButton, QTabWidget, QWidget, QCheckBox
 )
 
 from ..utils.state_manager import StateManager
@@ -67,6 +67,12 @@ class SettingsDialog(QDialog):
         hl.addWidget(self.combo_lang)
         gen_layout.addLayout(hl)
 
+        self.chk_toolbar_text = QCheckBox(tr("use_text_menu"))
+        self.chk_toolbar_text.setChecked(
+            self.cfg.get("toolbar_style", "icons") == "text"
+        )
+        gen_layout.addWidget(self.chk_toolbar_text)
+
         gen_layout.addWidget(QLabel(tr("tags_label")))
         tags = load_tags(language=current_lang)
         self.tbl_tags = QTableWidget(len(tags), 2)
@@ -122,6 +128,9 @@ class SettingsDialog(QDialog):
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
         self.cfg['default_save_directory'] = self.edit_save_dir.text().strip()
+        style = 'text' if self.chk_toolbar_text.isChecked() else 'icons'
+        self.cfg['toolbar_style'] = style
+        config_manager.set('toolbar_style', style)
         self.compression_panel.update_cfg()
         config_manager.save(self.cfg)
         # save tags for selected language
@@ -160,6 +169,9 @@ class SettingsDialog(QDialog):
         restore_default_tags()
         self.edit_ext.setText(", ".join(self.cfg.get("accepted_extensions", [])))
         self.edit_save_dir.setText(self.cfg.get('default_save_directory', ''))
+        self.chk_toolbar_text.setChecked(
+            self.cfg.get("toolbar_style", "icons") == "text"
+        )
         lang = self.cfg.get("language", "en")
         idx = self.combo_lang.findText(lang)
         if idx >= 0:

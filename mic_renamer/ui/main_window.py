@@ -130,6 +130,11 @@ class RenamerApp(QWidget):
 
     def setup_toolbar(self):
         tb = self.toolbar
+        style = config_manager.get("toolbar_style", "icons")
+        if style == "text":
+            tb.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        else:
+            tb.setToolButtonStyle(Qt.ToolButtonIconOnly)
         self.toolbar_actions = []
 
         act_add_files = QAction(resource_icon("file-plus.svg"), tr("add_files"), self)
@@ -220,6 +225,11 @@ class RenamerApp(QWidget):
             set_language(cfg.get("language", "en"))
             self.update_translations()
             self.rebuild_tag_checkboxes()
+            style = cfg.get("toolbar_style", "icons")
+            if style == "text":
+                self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            else:
+                self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
     def save_last_project_number(self, text: str) -> None:
         config_manager.set("last_project_number", text.strip())
