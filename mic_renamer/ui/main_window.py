@@ -48,8 +48,9 @@ class RenamerApp(QWidget):
 
         # no separate selected file display
 
-        splitter = QSplitter(Qt.Horizontal)
-        main_layout.addWidget(splitter)
+        # main splitter between preview and table
+        self.splitter = QSplitter(Qt.Horizontal)
+        main_layout.addWidget(self.splitter)
 
         viewer_widget = QWidget()
         viewer_layout = QVBoxLayout(viewer_widget)
@@ -90,8 +91,13 @@ class RenamerApp(QWidget):
         self._ignore_table_changes = False
         self.table_widget.itemChanged.connect(self.on_table_item_changed)
 
-        splitter.addWidget(viewer_widget)
-        splitter.addWidget(self.table_widget)
+        self.splitter.addWidget(viewer_widget)
+        self.splitter.addWidget(self.table_widget)
+
+        if self.state_manager:
+            sizes = self.state_manager.get("splitter_sizes")
+            if sizes:
+                self.splitter.setSizes(sizes)
 
         # Tag container spanning both columns with manual toggle
         self.tag_panel = TagPanel()
@@ -113,6 +119,11 @@ class RenamerApp(QWidget):
         self.table_widget.itemSelectionChanged.connect(self.on_table_selection_changed)
 
         self.update_translations()
+
+    def set_splitter_sizes(self, sizes: list[int] | None) -> None:
+        """Set the splitter sizes if a valid list is provided."""
+        if sizes:
+            self.splitter.setSizes(sizes)
 
     def toggle_tag_panel(self):
         visible = self.tag_panel.isVisible()
@@ -768,6 +779,7 @@ class RenamerApp(QWidget):
         if self.state_manager:
             self.state_manager.set("width", self.width())
             self.state_manager.set("height", self.height())
+            self.state_manager.set("splitter_sizes", self.splitter.sizes())
             self.state_manager.save()
         super().closeEvent(event)
 
