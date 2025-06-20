@@ -5,7 +5,8 @@ from PySide6.QtWidgets import (
     QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
     QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox,
-    QStyle, QTableWidget, QTableWidgetItem
+    QStyle, QTableWidget, QTableWidgetItem,
+    QMenu, QToolButton,
 )
 from PySide6.QtGui import QColor, QAction, QIcon
 from PySide6.QtCore import Qt, QTimer
