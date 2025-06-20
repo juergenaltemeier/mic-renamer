@@ -2,10 +2,9 @@
 from __future__ import annotations
 
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QLabel, QRadioButton,
+    QDialog, QVBoxLayout, QHBoxLayout, QRadioButton,
     QLineEdit, QPushButton, QFileDialog, QDialogButtonBox
 )
-from PySide6.QtCore import Qt
 
 from .. import config_manager
 from ..utils.i18n import tr

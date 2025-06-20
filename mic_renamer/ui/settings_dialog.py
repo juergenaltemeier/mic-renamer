@@ -3,7 +3,6 @@ from PySide6.QtWidgets import (
     QDialogButtonBox, QComboBox, QTableWidget, QTableWidgetItem,
     QPushButton, QTabWidget, QWidget
 )
-from PySide6.QtCore import Qt
 
 from ..utils.state_manager import StateManager
 

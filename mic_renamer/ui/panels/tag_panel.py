@@ -1,7 +1,7 @@
 """Panel showing available tags as checkboxes."""
 from PySide6.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QLabel
 from ..components import EnterToggleCheckBox
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Signal
 import logging
 
 from ...logic.tag_loader import load_tags

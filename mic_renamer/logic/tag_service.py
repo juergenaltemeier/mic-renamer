@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 import re
-from typing import Iterable, Set
+from typing import Iterable
 
 
 def extract_tags_from_name(name: str, valid_tags: Iterable[str]) -> set[str]:
