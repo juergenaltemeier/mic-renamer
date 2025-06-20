@@ -74,6 +74,10 @@ TRANSLATIONS = {
         , 'mode_position': 'Pos Mode Andi'
         , 'status_selected': '{current} of {total} selected'
         , 'status_loading': 'Loading...'
+        , 'invalid_tags_title': 'Invalid Tags'
+        , 'invalid_tags_msg': 'Invalid tags: {tags}'
+        , 'invalid_date_title': 'Invalid Date'
+        , 'invalid_date_msg': 'Date must be YYMMDD'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -148,6 +152,10 @@ TRANSLATIONS = {
         , 'mode_position': 'Pos Modus Andi'
         , 'status_selected': '{current} von {total} ausgewählt'
         , 'status_loading': 'Laden...'
+        , 'invalid_tags_title': 'Ungültige Tags'
+        , 'invalid_tags_msg': 'Ungültige Tags: {tags}'
+        , 'invalid_date_title': 'Ungültiges Datum'
+        , 'invalid_date_msg': 'Datum muss JJMMTT sein'
     }
 }
 
