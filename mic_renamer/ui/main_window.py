@@ -137,6 +137,8 @@ class RenamerApp(QWidget):
         act_add_folder.triggered.connect(self.add_folder_dialog)
         tb.addAction(act_add_folder)
 
+        tb.addSeparator()
+
         act_preview = QAction(resource_icon("eye.svg"), tr("preview_rename"), self)
         act_preview.setToolTip(tr("preview_rename"))
         act_preview.triggered.connect(self.preview_rename)
@@ -151,6 +153,7 @@ class RenamerApp(QWidget):
         act_rename_sel.setToolTip(tr("rename_selected"))
         act_rename_sel.triggered.connect(self.direct_rename_selected)
         tb.addAction(act_rename_sel)
+        tb.addSeparator()
 
 
         act_compress = QAction(resource_icon("arrow-down-circle.svg"), tr("compress"), self)
@@ -162,6 +165,7 @@ class RenamerApp(QWidget):
         act_convert.setToolTip(tr("convert_heic"))
         act_convert.triggered.connect(self.convert_heic_selected)
         tb.addAction(act_convert)
+        tb.addSeparator()
 
         act_undo = QAction(resource_icon("rotate-ccw.svg"), tr("undo_rename"), self)
         act_undo.setToolTip(tr("undo_rename"))
@@ -172,6 +176,7 @@ class RenamerApp(QWidget):
         act_clear.setToolTip(tr("clear_list"))
         act_clear.triggered.connect(self.clear_all)
         tb.addAction(act_clear)
+        tb.addSeparator()
 
         act_settings = QAction(resource_icon("settings.svg"), tr("settings_title"), self)
         act_settings.setToolTip(tr("settings_title"))

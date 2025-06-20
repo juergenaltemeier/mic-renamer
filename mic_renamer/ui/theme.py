@@ -8,22 +8,26 @@ from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtWidgets import QApplication, QStyle
 from PySide6.QtCore import Qt
 
+# guessed brand colors from micavac.com
+BRAND_PRIMARY = QColor("#009ee0")
+BRAND_SECONDARY = QColor("#ff6600")
+
 
 def create_dark_palette() -> QPalette:
     """Return a dark ``QPalette`` used across the application."""
     palette = QPalette()
     palette.setColor(QPalette.Window, QColor(53, 53, 53))
     palette.setColor(QPalette.WindowText, Qt.white)
-    palette.setColor(QPalette.Base, QColor(35, 35, 35))
-    palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-    palette.setColor(QPalette.ToolTipBase, Qt.white)
+    palette.setColor(QPalette.Base, QColor(45, 45, 45))
+    palette.setColor(QPalette.AlternateBase, QColor(60, 60, 60))
+    palette.setColor(QPalette.ToolTipBase, QColor(60, 60, 60))
     palette.setColor(QPalette.ToolTipText, Qt.white)
     palette.setColor(QPalette.Text, Qt.white)
     palette.setColor(QPalette.Button, QColor(53, 53, 53))
     palette.setColor(QPalette.ButtonText, Qt.white)
     palette.setColor(QPalette.BrightText, Qt.red)
-    palette.setColor(QPalette.Link, QColor(42, 130, 218))
-    palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+    palette.setColor(QPalette.Link, BRAND_PRIMARY)
+    palette.setColor(QPalette.Highlight, BRAND_PRIMARY)
     palette.setColor(QPalette.HighlightedText, Qt.black)
     return palette
 
