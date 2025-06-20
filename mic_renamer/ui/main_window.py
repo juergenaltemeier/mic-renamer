@@ -144,83 +144,102 @@ class RenamerApp(QWidget):
     def setup_toolbar(self):
         tb = self.toolbar
         style = config_manager.get("toolbar_style", "icons")
-        if style == "text":
-            tb.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        else:
-            tb.setToolButtonStyle(Qt.ToolButtonIconOnly)
         self.toolbar_actions = []
+        self.toolbar_action_icons = []
 
-        act_add_files = QAction(resource_icon("file-plus.svg"), tr("add_files"), self)
+        icon_add_files = resource_icon("file-plus.svg")
+        act_add_files = QAction(icon_add_files, tr("add_files"), self)
         act_add_files.setToolTip(tr("add_files"))
         act_add_files.triggered.connect(self.add_files_dialog)
         tb.addAction(act_add_files)
         self.toolbar_actions.append(act_add_files)
+        self.toolbar_action_icons.append(icon_add_files)
 
-        act_add_folder = QAction(resource_icon("folder-plus.svg"), tr("add_folder"), self)
+        icon_add_folder = resource_icon("folder-plus.svg")
+        act_add_folder = QAction(icon_add_folder, tr("add_folder"), self)
         act_add_folder.setToolTip(tr("add_folder"))
         act_add_folder.triggered.connect(self.add_folder_dialog)
         tb.addAction(act_add_folder)
         self.toolbar_actions.append(act_add_folder)
+        self.toolbar_action_icons.append(icon_add_folder)
 
         tb.addSeparator()
 
-        act_preview = QAction(resource_icon("eye.svg"), tr("preview_rename"), self)
+        icon_preview = resource_icon("eye.svg")
+        act_preview = QAction(icon_preview, tr("preview_rename"), self)
         act_preview.setToolTip(tr("preview_rename"))
         act_preview.triggered.connect(self.preview_rename)
         tb.addAction(act_preview)
         self.toolbar_actions.append(act_preview)
+        self.toolbar_action_icons.append(icon_preview)
 
-        act_rename = QAction(resource_icon("check-circle.svg"), tr("rename_all"), self)
+        icon_rename = resource_icon("check-circle.svg")
+        act_rename = QAction(icon_rename, tr("rename_all"), self)
         act_rename.setToolTip(tr("rename_all"))
         act_rename.triggered.connect(self.direct_rename)
         tb.addAction(act_rename)
         self.toolbar_actions.append(act_rename)
+        self.toolbar_action_icons.append(icon_rename)
 
-        act_rename_sel = QAction(resource_icon("check-square.svg"), tr("rename_selected"), self)
+        icon_rename_sel = resource_icon("check-square.svg")
+        act_rename_sel = QAction(icon_rename_sel, tr("rename_selected"), self)
         act_rename_sel.setToolTip(tr("rename_selected"))
         act_rename_sel.triggered.connect(self.direct_rename_selected)
         tb.addAction(act_rename_sel)
         self.toolbar_actions.append(act_rename_sel)
+        self.toolbar_action_icons.append(icon_rename_sel)
         tb.addSeparator()
 
 
-        act_compress = QAction(resource_icon("arrow-down-circle.svg"), tr("compress"), self)
+        icon_compress = resource_icon("arrow-down-circle.svg")
+        act_compress = QAction(icon_compress, tr("compress"), self)
         act_compress.setToolTip(tr("compress"))
         act_compress.triggered.connect(self.compress_selected)
         tb.addAction(act_compress)
         self.toolbar_actions.append(act_compress)
+        self.toolbar_action_icons.append(icon_compress)
 
-        act_convert = QAction(resource_icon("image.svg"), tr("convert_heic"), self)
+        icon_convert = resource_icon("image.svg")
+        act_convert = QAction(icon_convert, tr("convert_heic"), self)
         act_convert.setToolTip(tr("convert_heic"))
         act_convert.triggered.connect(self.convert_heic_selected)
         tb.addAction(act_convert)
         self.toolbar_actions.append(act_convert)
+        self.toolbar_action_icons.append(icon_convert)
         tb.addSeparator()
 
-        act_undo = QAction(resource_icon("rotate-ccw.svg"), tr("undo_rename"), self)
+        icon_undo = resource_icon("rotate-ccw.svg")
+        act_undo = QAction(icon_undo, tr("undo_rename"), self)
         act_undo.setToolTip(tr("undo_rename"))
         act_undo.triggered.connect(self.undo_rename)
         tb.addAction(act_undo)
         self.toolbar_actions.append(act_undo)
+        self.toolbar_action_icons.append(icon_undo)
 
-        act_remove_sel = QAction(resource_icon("trash-2.svg"), tr("remove_selected"), self)
+        icon_remove_sel = resource_icon("trash-2.svg")
+        act_remove_sel = QAction(icon_remove_sel, tr("remove_selected"), self)
         act_remove_sel.setToolTip(tr("remove_selected"))
         act_remove_sel.triggered.connect(self.remove_selected_items)
         tb.addAction(act_remove_sel)
         self.toolbar_actions.append(act_remove_sel)
+        self.toolbar_action_icons.append(icon_remove_sel)
 
-        act_clear = QAction(resource_icon("trash-2.svg"), tr("clear_list"), self)
+        icon_clear = resource_icon("trash-2.svg")
+        act_clear = QAction(icon_clear, tr("clear_list"), self)
         act_clear.setToolTip(tr("clear_list"))
         act_clear.triggered.connect(self.clear_all)
         tb.addAction(act_clear)
         self.toolbar_actions.append(act_clear)
+        self.toolbar_action_icons.append(icon_clear)
         tb.addSeparator()
 
-        act_settings = QAction(resource_icon("settings.svg"), tr("settings_title"), self)
+        icon_settings = resource_icon("settings.svg")
+        act_settings = QAction(icon_settings, tr("settings_title"), self)
         act_settings.setToolTip(tr("settings_title"))
         act_settings.triggered.connect(self.open_settings)
         tb.addAction(act_settings)
         self.toolbar_actions.append(act_settings)
+        self.toolbar_action_icons.append(icon_settings)
 
         tb.addSeparator()
         self.combo_mode = QComboBox()
@@ -236,6 +255,8 @@ class RenamerApp(QWidget):
         tb.addWidget(self.lbl_project)
         tb.addWidget(self.input_project)
 
+        self.apply_toolbar_style(style)
+
 
     def open_settings(self):
         dlg = SettingsDialog(self, state_manager=self.state_manager)
@@ -245,10 +266,7 @@ class RenamerApp(QWidget):
             self.update_translations()
             self.rebuild_tag_checkboxes()
             style = cfg.get("toolbar_style", "icons")
-            if style == "text":
-                self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            else:
-                self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.apply_toolbar_style(style)
 
     def save_last_project_number(self, text: str) -> None:
         config_manager.set("last_project_number", text.strip())
@@ -273,6 +291,16 @@ class RenamerApp(QWidget):
         self.combo_mode.setItemText(0, tr("mode_normal"))
         self.combo_mode.setItemText(1, tr("mode_position"))
         self.update_status()
+
+    def apply_toolbar_style(self, style: str) -> None:
+        if style == "text":
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextOnly)
+            for action in self.toolbar_actions:
+                action.setIcon(QIcon())
+        else:
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            for action, icon in zip(self.toolbar_actions, self.toolbar_action_icons):
+                action.setIcon(icon)
 
     def on_mode_changed(self, index: int) -> None:
         mode = self.combo_mode.itemData(index)
