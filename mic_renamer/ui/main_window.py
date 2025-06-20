@@ -477,8 +477,31 @@ class RenamerApp(QWidget):
             settings.position = item.text().strip()
             item.setToolTip(settings.position)
         elif col == 4:
-            settings.suffix = item.text().strip()
+            new_suffix = item.text().strip()
+            settings.suffix = new_suffix
             item.setToolTip(settings.suffix)
+            rows = getattr(self.table_widget, "_selection_before_edit", [])
+            for r in rows:
+                if r == row:
+                    continue
+                cell = self.table_widget.item(r, 4)
+                if not cell or cell.text().strip():
+                    continue
+                other_item0 = self.table_widget.item(r, 1)
+                other_settings: ItemSettings | None = (
+                    other_item0.data(ROLE_SETTINGS) if other_item0 else None
+                )
+                if other_settings is None:
+                    continue
+                self._ignore_table_changes = True
+                try:
+                    cell.setText(new_suffix)
+                finally:
+                    self._ignore_table_changes = False
+                cell.setToolTip(new_suffix)
+                other_settings.suffix = new_suffix
+                self.update_row_background(r, other_settings)
+            self.table_widget._selection_before_edit = []
         self.update_row_background(row, settings)
         if row in {idx.row() for idx in self.table_widget.selectionModel().selectedRows()}:
             self.on_table_selection_changed()
