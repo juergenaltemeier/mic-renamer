@@ -57,7 +57,7 @@ TRANSLATIONS = {
         'remove_selected': 'Remove Selected',
         'config_path_label': 'Configuration folder',
         'default_save_dir_label': 'Default save directory',
-        'use_text_menu': 'Show text labels in toolbar',
+        'use_text_menu': 'Text-only toolbar',
         'use_original_directory': 'Use current folder?',
         'use_original_directory_msg': 'Save renamed files in their current folder?',
         'current_name': 'Current Name'
@@ -139,7 +139,7 @@ TRANSLATIONS = {
         , 'undo_done': 'Umbenennungen zurückgesetzt.'
         , 'config_path_label': 'Konfigurationsordner'
         , 'default_save_dir_label': 'Standard-Speicherordner'
-        , 'use_text_menu': 'Text in der Werkzeugleiste anzeigen'
+        , 'use_text_menu': 'Nur Text in der Werkzeugleiste'
         , 'use_original_directory': 'Aktuellen Ordner verwenden?'
         , 'use_original_directory_msg': 'Umbenannte Dateien im aktuellen Ordner speichern?'
         , 'mode_normal': 'Normal'
