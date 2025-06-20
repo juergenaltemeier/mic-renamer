@@ -71,6 +71,8 @@ TRANSLATIONS = {
         , 'undo_done': 'Renames reverted.'
         , 'mode_normal': 'Normal'
         , 'mode_position': 'Pos Mode Andi'
+        , 'status_selected': '{current} of {total} selected'
+        , 'status_loading': 'Loading...'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -142,6 +144,8 @@ TRANSLATIONS = {
         , 'use_original_directory_msg': 'Umbenannte Dateien im aktuellen Ordner speichern?'
         , 'mode_normal': 'Normal'
         , 'mode_position': 'Pos Modus Andi'
+        , 'status_selected': '{current} von {total} ausgewählt'
+        , 'status_loading': 'Laden...'
     }
 }
 
