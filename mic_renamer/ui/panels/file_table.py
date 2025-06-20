@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QPalette
 
 # QItemSelectionModel and QItemSelection are in QtCore, not QtWidgets
-from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection
+from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection, QEvent
 from importlib import resources
 
 from ...logic.settings import ItemSettings
@@ -44,6 +44,7 @@ class DragDropTableWidget(QTableWidget):
         self.setAcceptDrops(True)
         self.setSelectionBehavior(QTableWidget.SelectRows)
         self.setSelectionMode(QTableWidget.ExtendedSelection)
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(24)
         self.itemSelectionChanged.connect(self.sync_check_column)
@@ -51,6 +52,9 @@ class DragDropTableWidget(QTableWidget):
         self._selection_before_edit: list[int] = []
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
+
+        # allow intercepting clicks for single-click editing
+        self.viewport().installEventFilter(self)
 
         logo = resources.files("mic_renamer") / "favicon.png"
         if logo.is_file():
@@ -117,6 +121,36 @@ class DragDropTableWidget(QTableWidget):
         w = total // 4
         for i in range(1, 5):
             self.setColumnWidth(i, w)
+
+    # ------------------------------------------------------------------
+    # Event filter to enable single-click editing without losing
+    # the current multi-row selection.
+    # ------------------------------------------------------------------
+    def eventFilter(self, source, event):
+        if source is self.viewport() and event.type() == QEvent.MouseButtonPress:
+            index = self.indexAt(event.pos())
+            if index.isValid():
+                col = index.column()
+                edit_cols = [2, 4]
+                if col in edit_cols:
+                    rows = [idx.row() for idx in self.selectionModel().selectedRows()]
+                    if len(rows) > 1 and index.row() in rows:
+                        self._selection_before_edit = rows
+                        QTimer.singleShot(0, lambda r=rows: self._restore_selection(r))
+                    else:
+                        self._selection_before_edit = rows
+                    QTimer.singleShot(0, lambda idx=index: self.edit(idx))
+        return super().eventFilter(source, event)
+
+    def _restore_selection(self, rows: list[int]):
+        if not rows:
+            return
+        sm = self.selectionModel()
+        sm.clearSelection()
+        for r in rows:
+            idx = self.model().index(r, 0)
+            sm.select(idx, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+        self.sync_check_column()
 
     def on_header_double_clicked(self, index: int):
         header = self.horizontalHeader()
