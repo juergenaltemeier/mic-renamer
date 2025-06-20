@@ -121,6 +121,7 @@ class RenamerApp(QWidget):
         self.set_item_controls_enabled(False)
         self.table_widget.itemSelectionChanged.connect(self.on_table_selection_changed)
 
+        self.status_message = ""
         self.update_translations()
         self.status_message = ""
         self.update_status()
