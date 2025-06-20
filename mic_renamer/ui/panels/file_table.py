@@ -48,6 +48,7 @@ class DragDropTableWidget(QTableWidget):
         self.verticalHeader().setDefaultSectionSize(24)
         self.itemSelectionChanged.connect(self.sync_check_column)
         self.itemChanged.connect(self.handle_item_changed)
+        self._selection_before_edit: list[int] = []
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
 
@@ -248,3 +249,11 @@ class DragDropTableWidget(QTableWidget):
                     index,
                     QItemSelectionModel.Deselect | QItemSelectionModel.Rows,
                 )
+
+    def mousePressEvent(self, event):
+        index = self.indexAt(event.pos())
+        if index.isValid() and index.column() == 4:
+            self._selection_before_edit = [
+                idx.row() for idx in self.selectionModel().selectedRows()
+            ]
+        super().mousePressEvent(event)
