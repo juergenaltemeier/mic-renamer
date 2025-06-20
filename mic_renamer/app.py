@@ -6,6 +6,7 @@ import sys
 from importlib import resources
 
 from .ui.main_window import RenamerApp
+from .ui.theme import apply_dark_theme
 from .utils.state_manager import StateManager
 from . import config_manager
 
@@ -20,6 +21,7 @@ class Application:
         except Exception:
             pass
         self.app = QApplication(sys.argv)
+        apply_dark_theme(self.app)
         logo = resources.files("mic_renamer") / "favicon.png"
         if logo.is_file():
             icon = QIcon(str(logo))
