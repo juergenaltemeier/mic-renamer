@@ -252,8 +252,11 @@ class DragDropTableWidget(QTableWidget):
 
     def mousePressEvent(self, event):
         index = self.indexAt(event.pos())
-        if index.isValid() and index.column() == 4:
-            self._selection_before_edit = [
-                idx.row() for idx in self.selectionModel().selectedRows()
-            ]
+        if index.isValid():
+            if index.column() == 4 or (
+                index.column() == 2 and self.mode == "normal"
+            ):
+                self._selection_before_edit = [
+                    idx.row() for idx in self.selectionModel().selectedRows()
+                ]
         super().mousePressEvent(event)

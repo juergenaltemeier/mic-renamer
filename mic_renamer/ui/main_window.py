@@ -463,6 +463,28 @@ class RenamerApp(QWidget):
                 item.setText(text)
                 self._ignore_table_changes = False
             item.setToolTip(text)
+            rows = getattr(self.table_widget, "_selection_before_edit", [])
+            for r in rows:
+                if r == row:
+                    continue
+                cell = self.table_widget.item(r, 2)
+                if not cell or cell.text().strip():
+                    continue
+                other_item0 = self.table_widget.item(r, 1)
+                other_settings: ItemSettings | None = (
+                    other_item0.data(ROLE_SETTINGS) if other_item0 else None
+                )
+                if other_settings is None:
+                    continue
+                self._ignore_table_changes = True
+                try:
+                    cell.setText(text)
+                finally:
+                    self._ignore_table_changes = False
+                cell.setToolTip(text)
+                other_settings.tags = set(valid_tags)
+                self.update_row_background(r, other_settings)
+            self.table_widget._selection_before_edit = []
         elif self.rename_mode == MODE_NORMAL and col == 3:
             text = item.text().strip()
             if not re.fullmatch(r"\d{6}", text):
