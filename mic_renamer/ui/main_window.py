@@ -93,9 +93,6 @@ class RenamerApp(QWidget):
         splitter.addWidget(viewer_widget)
         splitter.addWidget(self.table_widget)
 
-        self.btn_remove_selected = QPushButton()
-        self.btn_remove_selected.clicked.connect(self.remove_selected_items)
-
         # Tag container spanning both columns with manual toggle
         self.tag_panel = TagPanel()
         self.tag_panel.tagToggled.connect(self.on_tag_toggled)
@@ -105,7 +102,6 @@ class RenamerApp(QWidget):
         btn_layout = QHBoxLayout()
         btn_layout.addWidget(self.btn_toggle_tags)
         btn_layout.addStretch()
-        btn_layout.addWidget(self.btn_remove_selected)
         main_layout.addLayout(btn_layout)
         main_layout.addWidget(self.tag_panel)
         visible = config_manager.get("tag_panel_visible", False)
@@ -190,6 +186,12 @@ class RenamerApp(QWidget):
         tb.addAction(act_undo)
         self.toolbar_actions.append(act_undo)
 
+        act_remove_sel = QAction(resource_icon("trash-2.svg"), tr("remove_selected"), self)
+        act_remove_sel.setToolTip(tr("remove_selected"))
+        act_remove_sel.triggered.connect(self.remove_selected_items)
+        tb.addAction(act_remove_sel)
+        self.toolbar_actions.append(act_remove_sel)
+
         act_clear = QAction(resource_icon("trash-2.svg"), tr("clear_list"), self)
         act_clear.setToolTip(tr("clear_list"))
         act_clear.triggered.connect(self.clear_all)
@@ -240,7 +242,7 @@ class RenamerApp(QWidget):
         labels = [
             "add_files", "add_folder", "preview_rename",
             "rename_all", "rename_selected", "compress", "convert_heic",
-            "undo_rename", "clear_list", "settings_title"
+            "undo_rename", "remove_selected", "clear_list", "settings_title"
         ]
         for action, key in zip(actions, labels):
             action.setText(tr(key))
@@ -251,8 +253,6 @@ class RenamerApp(QWidget):
             self.btn_toggle_tags.setText(tr("hide_tags"))
         else:
             self.btn_toggle_tags.setText(tr("show_tags"))
-        self.btn_remove_selected.setText(tr("remove_selected"))
-        self.btn_remove_selected.setToolTip(tr("remove_selected"))
         self.combo_mode.setItemText(0, tr("mode_normal"))
         self.combo_mode.setItemText(1, tr("mode_position"))
 
