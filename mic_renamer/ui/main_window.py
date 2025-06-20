@@ -90,6 +90,7 @@ class RenamerApp(QWidget):
         self.table_widget = DragDropTableWidget()
         self._ignore_table_changes = False
         self.table_widget.itemChanged.connect(self.on_table_item_changed)
+        self.table_widget.pathsAdded.connect(lambda _: self.update_status())
 
         self.splitter.addWidget(viewer_widget)
         self.splitter.addWidget(self.table_widget)
@@ -110,6 +111,8 @@ class RenamerApp(QWidget):
         btn_layout.addStretch()
         main_layout.addLayout(btn_layout)
         main_layout.addWidget(self.tag_panel)
+        self.lbl_status = QLabel()
+        main_layout.addWidget(self.lbl_status)
         visible = config_manager.get("tag_panel_visible", False)
         self.tag_panel.setVisible(visible)
         self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
@@ -119,6 +122,8 @@ class RenamerApp(QWidget):
         self.table_widget.itemSelectionChanged.connect(self.on_table_selection_changed)
 
         self.update_translations()
+        self.status_message = ""
+        self.update_status()
 
     def set_splitter_sizes(self, sizes: list[int] | None) -> None:
         """Set the splitter sizes if a valid list is provided."""
@@ -266,6 +271,7 @@ class RenamerApp(QWidget):
             self.btn_toggle_tags.setText(tr("show_tags"))
         self.combo_mode.setItemText(0, tr("mode_normal"))
         self.combo_mode.setItemText(1, tr("mode_position"))
+        self.update_status()
 
     def on_mode_changed(self, index: int) -> None:
         mode = self.combo_mode.itemData(index)
@@ -281,11 +287,14 @@ class RenamerApp(QWidget):
             self, tr("add_files"), "",
             filter_str
         )
+        self.set_status_message(tr("status_loading"))
         self.table_widget.add_paths(files)
+        self.set_status_message(None)
 
     def add_folder_dialog(self):
         folder = QFileDialog.getExistingDirectory(self, tr("add_folder"))
         if folder:
+            self.set_status_message(tr("status_loading"))
             entries = os.listdir(folder)
             paths = [
                 os.path.join(folder, name)
@@ -294,6 +303,7 @@ class RenamerApp(QWidget):
                    os.path.splitext(name)[1].lower() in ItemSettings.ACCEPT_EXTENSIONS
             ]
             self.table_widget.add_paths(paths)
+            self.set_status_message(None)
 
     def on_table_selection_changed(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
@@ -302,6 +312,7 @@ class RenamerApp(QWidget):
             self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
             self.table_widget.sync_check_column()
+            self.update_status()
             return
 
         self.set_item_controls_enabled(True)
@@ -342,6 +353,7 @@ class RenamerApp(QWidget):
         
         self.load_preview(first.original_path)
         self.table_widget.sync_check_column()
+        self.update_status()
 
     def save_current_item_settings(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
@@ -558,6 +570,7 @@ class RenamerApp(QWidget):
         for cb in self.tag_panel.checkbox_map.values():
             cb.setChecked(False)
         self.set_item_controls_enabled(False)
+        self.update_status()
 
     def undo_rename(self):
         if not self.undo_manager.has_history():
@@ -583,6 +596,7 @@ class RenamerApp(QWidget):
         else:
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
             self.table_widget.selectRow(new_row)
+        self.update_status()
 
     def compress_selected(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
@@ -771,6 +785,7 @@ class RenamerApp(QWidget):
         self.execute_rename_with_progress(table_mapping)
 
     def execute_rename_with_progress(self, table_mapping):
+        self.set_status_message(tr("renaming_files"))
         total = len(table_mapping)
         progress = QProgressDialog(
             tr("renaming_files"),
@@ -819,6 +834,21 @@ class RenamerApp(QWidget):
             if used_tags and self.rename_mode == MODE_NORMAL:
                 increment_tags(used_tags)
                 self.tag_panel.rebuild()
+        self.set_status_message(None)
+
+    def set_status_message(self, message: str | None) -> None:
+        """Display an additional message in the status bar."""
+        self.status_message = message or ""
+        self.update_status()
+
+    def update_status(self) -> None:
+        """Refresh the selection count and optional message."""
+        selected = len(self.table_widget.selectionModel().selectedRows())
+        total = self.table_widget.rowCount()
+        text = tr("status_selected").format(current=selected, total=total)
+        if self.status_message:
+            text = f"{text} - {self.status_message}"
+        self.lbl_status.setText(text)
 
     def closeEvent(self, event):
         if self.state_manager:

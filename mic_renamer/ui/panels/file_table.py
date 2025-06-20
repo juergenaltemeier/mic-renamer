@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QPalette
 
 # QItemSelectionModel and QItemSelection are in QtCore, not QtWidgets
-from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection, QEvent
+from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection, QEvent, Signal
 from importlib import resources
 
 from ...logic.settings import ItemSettings
@@ -24,6 +24,9 @@ ROLE_SETTINGS = Qt.UserRole + 1
 
 
 class DragDropTableWidget(QTableWidget):
+    """Table widget supporting drag-and-drop and multi-select."""
+
+    pathsAdded = Signal(int)
     def __init__(self, parent=None):
         super().__init__(parent)
         self._updating_checks = False
@@ -189,6 +192,7 @@ class DragDropTableWidget(QTableWidget):
             tags_info = load_tags()
         except Exception:
             tags_info = {}
+        added = 0
         for path in paths:
             path = convert_heic(path)
             duplicate = False
@@ -237,8 +241,11 @@ class DragDropTableWidget(QTableWidget):
             self.setItem(row, 2, tags_item)
             self.setItem(row, 3, date_item)
             self.setItem(row, 4, suffix_item)
+            added += 1
         if self.rowCount() > 0 and not self.selectionModel().hasSelection():
             self.selectRow(0)
+        if added:
+            self.pathsAdded.emit(added)
 
     def sync_check_column(self):
         selected = {idx.row() for idx in self.selectionModel().selectedRows()}
