@@ -521,8 +521,11 @@ class RenamerApp(QWidget):
             valid_tags = {t for t in raw_tags if t in self.tag_panel.tags_info}
             invalid = raw_tags - valid_tags
             if invalid:
-                QMessageBox.warning(self, "Invalid Tags",
-                                    "Invalid tags: " + ", ".join(sorted(invalid)))
+                QMessageBox.warning(
+                    self,
+                    tr("invalid_tags_title"),
+                    tr("invalid_tags_msg").format(tags=", ".join(sorted(invalid)))
+                )
             settings.tags = valid_tags
             text = ",".join(sorted(valid_tags))
             if text != item.text():
@@ -555,7 +558,11 @@ class RenamerApp(QWidget):
         elif self.rename_mode == MODE_NORMAL and col == 3:
             text = item.text().strip()
             if not re.fullmatch(r"\d{6}", text):
-                QMessageBox.warning(self, "Invalid Date", "Date must be YYMMDD")
+                QMessageBox.warning(
+                    self,
+                    tr("invalid_date_title"),
+                    tr("invalid_date_msg"),
+                )
                 self._ignore_table_changes = True
                 item.setText(settings.date)
                 self._ignore_table_changes = False
@@ -791,7 +798,10 @@ class RenamerApp(QWidget):
         dlg.setWindowTitle(tr("preview_rename"))
         dlg_layout = QVBoxLayout(dlg)
         tbl = QTableWidget(len(table_mapping), 2, dlg)
-        tbl.setHorizontalHeaderLabels(["Current Name", "Proposed New Name"])
+        tbl.setHorizontalHeaderLabels([
+            tr("current_name"),
+            tr("proposed_new_name"),
+        ])
         tbl.verticalHeader().setVisible(False)
         tbl.setEditTriggers(QTableWidget.NoEditTriggers)
         tbl.setSelectionMode(QTableWidget.NoSelection)

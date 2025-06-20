@@ -4,6 +4,8 @@ import os
 from collections import defaultdict
 from PySide6.QtWidgets import QMessageBox
 
+from ..utils.i18n import tr
+
 from .settings import ItemSettings, RenameConfig
 from ..utils.file_utils import ensure_unique_name
 from .tag_usage import increment_tags
@@ -73,7 +75,7 @@ class Renamer:
             except Exception as e:
                 QMessageBox.warning(
                     parent_widget,
-                    "Rename Failed",
+                    tr("rename_failed"),
                     f"Fehler beim Umbenennen:\n{orig}\n→ {new}\nError: {e}"
                 )
         if used_tags and self.mode == "normal":
