@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox,
     QStyle, QTableWidget, QTableWidgetItem,
-    QMenu, QToolButton,
+    QMenu, QToolButton, QSizePolicy,
 )
 from PySide6.QtGui import QColor, QAction, QIcon
 from PySide6.QtCore import Qt, QTimer
@@ -113,6 +113,10 @@ class RenamerApp(QWidget):
         main_layout.addLayout(btn_layout)
         main_layout.addWidget(self.tag_panel)
         self.lbl_status = QLabel()
+        self.lbl_status.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.lbl_status.setMaximumHeight(
+            self.lbl_status.fontMetrics().height() + 4
+        )
         main_layout.addWidget(self.lbl_status)
         visible = config_manager.get("tag_panel_visible", False)
         self.tag_panel.setVisible(visible)
