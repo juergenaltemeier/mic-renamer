@@ -7,12 +7,13 @@ from PySide6.QtWidgets import (
     QProgressDialog, QDialog, QDialogButtonBox,
     QStyle, QTableWidget, QTableWidgetItem
 )
-from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPainter, QFont
+from PySide6.QtGui import QColor, QAction, QIcon
 from PySide6.QtCore import Qt, QTimer
 
 from .. import config_manager
 from ..utils.i18n import tr, set_language
 from .settings_dialog import SettingsDialog
+from .theme import resource_icon
 from .panels import (
     MediaViewer,
     AspectRatioWidget,
@@ -25,19 +26,6 @@ from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
-
-
-def gear_icon_fallback(size: int = 16) -> QIcon:
-    """Create a simple gear icon using the Unicode gear symbol."""
-    pix = QPixmap(size, size)
-    pix.fill(Qt.transparent)
-    p = QPainter(pix)
-    font = QFont()
-    font.setPointSize(int(size * 0.8))
-    p.setFont(font)
-    p.drawText(pix.rect(), Qt.AlignCenter, "\u2699")
-    p.end()
-    return QIcon(pix)
 
 
 ROLE_SETTINGS = Qt.UserRole + 1
@@ -137,57 +125,55 @@ class RenamerApp(QWidget):
         self.tag_panel.rebuild()
 
     def setup_toolbar(self):
-        style = QApplication.style()
         tb = self.toolbar
 
-        act_add_files = QAction(style.standardIcon(QStyle.SP_FileIcon), tr("add_files"), self)
+        act_add_files = QAction(resource_icon("file-plus.svg"), tr("add_files"), self)
         act_add_files.setToolTip(tr("add_files"))
         act_add_files.triggered.connect(self.add_files_dialog)
         tb.addAction(act_add_files)
 
-        act_add_folder = QAction(style.standardIcon(QStyle.SP_DirOpenIcon), tr("add_folder"), self)
+        act_add_folder = QAction(resource_icon("folder-plus.svg"), tr("add_folder"), self)
         act_add_folder.setToolTip(tr("add_folder"))
         act_add_folder.triggered.connect(self.add_folder_dialog)
         tb.addAction(act_add_folder)
 
-        act_preview = QAction(style.standardIcon(QStyle.SP_FileDialogDetailedView), tr("preview_rename"), self)
+        act_preview = QAction(resource_icon("eye.svg"), tr("preview_rename"), self)
         act_preview.setToolTip(tr("preview_rename"))
         act_preview.triggered.connect(self.preview_rename)
         tb.addAction(act_preview)
 
-        act_rename = QAction(style.standardIcon(QStyle.SP_DialogApplyButton), tr("rename_all"), self)
+        act_rename = QAction(resource_icon("check-circle.svg"), tr("rename_all"), self)
         act_rename.setToolTip(tr("rename_all"))
         act_rename.triggered.connect(self.direct_rename)
         tb.addAction(act_rename)
 
-        act_rename_sel = QAction(style.standardIcon(QStyle.SP_DialogYesButton), tr("rename_selected"), self)
+        act_rename_sel = QAction(resource_icon("check-square.svg"), tr("rename_selected"), self)
         act_rename_sel.setToolTip(tr("rename_selected"))
         act_rename_sel.triggered.connect(self.direct_rename_selected)
         tb.addAction(act_rename_sel)
 
 
-        act_compress = QAction(style.standardIcon(QStyle.SP_ArrowDown), tr("compress"), self)
+        act_compress = QAction(resource_icon("arrow-down-circle.svg"), tr("compress"), self)
         act_compress.setToolTip(tr("compress"))
         act_compress.triggered.connect(self.compress_selected)
         tb.addAction(act_compress)
 
-        act_convert = QAction(style.standardIcon(QStyle.SP_DialogOpenButton), tr("convert_heic"), self)
+        act_convert = QAction(resource_icon("image.svg"), tr("convert_heic"), self)
         act_convert.setToolTip(tr("convert_heic"))
         act_convert.triggered.connect(self.convert_heic_selected)
         tb.addAction(act_convert)
 
-        act_undo = QAction(style.standardIcon(QStyle.SP_ArrowBack), tr("undo_rename"), self)
+        act_undo = QAction(resource_icon("rotate-ccw.svg"), tr("undo_rename"), self)
         act_undo.setToolTip(tr("undo_rename"))
         act_undo.triggered.connect(self.undo_rename)
         tb.addAction(act_undo)
 
-        act_clear = QAction(style.standardIcon(QStyle.SP_DialogResetButton), tr("clear_list"), self)
+        act_clear = QAction(resource_icon("trash-2.svg"), tr("clear_list"), self)
         act_clear.setToolTip(tr("clear_list"))
         act_clear.triggered.connect(self.clear_all)
         tb.addAction(act_clear)
 
-        gear_icon = QIcon.fromTheme("preferences-system", gear_icon_fallback())
-        act_settings = QAction(gear_icon, tr("settings_title"), self)
+        act_settings = QAction(resource_icon("settings.svg"), tr("settings_title"), self)
         act_settings.setToolTip(tr("settings_title"))
         act_settings.triggered.connect(self.open_settings)
         tb.addAction(act_settings)
