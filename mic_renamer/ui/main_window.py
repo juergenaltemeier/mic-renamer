@@ -147,11 +147,11 @@ class RenamerApp(QWidget):
         self.toolbar_actions = []
         self.toolbar_action_icons = []
 
+        # actions collected in the "Add" menu
         icon_add_files = resource_icon("file-plus.svg")
         act_add_files = QAction(icon_add_files, tr("add_files"), self)
         act_add_files.setToolTip(tr("add_files"))
         act_add_files.triggered.connect(self.add_files_dialog)
-        tb.addAction(act_add_files)
         self.toolbar_actions.append(act_add_files)
         self.toolbar_action_icons.append(icon_add_files)
 
@@ -159,9 +159,22 @@ class RenamerApp(QWidget):
         act_add_folder = QAction(icon_add_folder, tr("add_folder"), self)
         act_add_folder.setToolTip(tr("add_folder"))
         act_add_folder.triggered.connect(self.add_folder_dialog)
-        tb.addAction(act_add_folder)
         self.toolbar_actions.append(act_add_folder)
         self.toolbar_action_icons.append(icon_add_folder)
+
+        # create drop-down menu button for adding items
+        self.menu_add = QMenu(tr("add_menu"), self)
+        self.menu_add.addAction(act_add_files)
+        self.menu_add.addAction(act_add_folder)
+
+        self.icon_add_menu = resource_icon("file-plus.svg")
+        self.btn_add_menu = QToolButton()
+        self.btn_add_menu.setMenu(self.menu_add)
+        self.btn_add_menu.setIcon(self.icon_add_menu)
+        self.btn_add_menu.setText(tr("add_menu"))
+        self.btn_add_menu.setToolTip(tr("add_menu"))
+        self.btn_add_menu.setPopupMode(QToolButton.InstantPopup)
+        tb.addWidget(self.btn_add_menu)
 
         tb.addSeparator()
 
@@ -282,6 +295,12 @@ class RenamerApp(QWidget):
         for action, key in zip(actions, labels):
             action.setText(tr(key))
             action.setToolTip(tr(key))
+        # update add menu title and button
+        if hasattr(self, "menu_add"):
+            self.menu_add.setTitle(tr("add_menu"))
+        if hasattr(self, "btn_add_menu"):
+            self.btn_add_menu.setText(tr("add_menu"))
+            self.btn_add_menu.setToolTip(tr("add_menu"))
         # update form labels
         self.lbl_project.setText(tr("project_number_label"))
         if self.tag_panel.isVisible():
@@ -297,10 +316,16 @@ class RenamerApp(QWidget):
             self.toolbar.setToolButtonStyle(Qt.ToolButtonTextOnly)
             for action in self.toolbar_actions:
                 action.setIcon(QIcon())
+            if hasattr(self, "btn_add_menu"):
+                self.btn_add_menu.setIcon(QIcon())
+                self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
         else:
             self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
             for action, icon in zip(self.toolbar_actions, self.toolbar_action_icons):
                 action.setIcon(icon)
+            if hasattr(self, "btn_add_menu"):
+                self.btn_add_menu.setIcon(self.icon_add_menu)
+                self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
     def on_mode_changed(self, index: int) -> None:
         mode = self.combo_mode.itemData(index)
