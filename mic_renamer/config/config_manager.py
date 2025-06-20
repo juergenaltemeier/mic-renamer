@@ -24,6 +24,7 @@ tags_file: tags.json
 tag_usage_file: tag_usage.json
 last_project_number: ""
 tag_panel_visible: false
+toolbar_style: icons
 default_save_directory: ""
 compression_max_size_kb: 2048
 compression_quality: 95
@@ -77,6 +78,7 @@ class ConfigManager:
         defaults.setdefault("compression_resize_only", False)
         defaults.setdefault("compression_max_width", 0)
         defaults.setdefault("compression_max_height", 0)
+        defaults.setdefault("toolbar_style", "icons")
         self._config = {**defaults, **data}
         return self._config
 
@@ -120,6 +122,7 @@ class ConfigManager:
         defaults.setdefault("compression_resize_only", False)
         defaults.setdefault("compression_max_width", 0)
         defaults.setdefault("compression_max_height", 0)
+        defaults.setdefault("toolbar_style", "icons")
         self._config = defaults
         self.save(defaults)
         return defaults

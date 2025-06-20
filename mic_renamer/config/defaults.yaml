@@ -14,6 +14,7 @@ tags_file: tags.json
 tag_usage_file: tag_usage.json
 last_project_number: ""
 tag_panel_visible: false
+toolbar_style: icons
 default_save_directory: ""
 compression_max_size_kb: 2048
 compression_quality: 95
