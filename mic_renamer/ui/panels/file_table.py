@@ -330,6 +330,7 @@ class DragDropTableWidget(QTableWidget):
         index = self.currentIndex()
         edit_cols = {2, 4}
 
+
         if index.isValid() and index.column() in edit_cols:
             if event.key() in (Qt.Key_Return, Qt.Key_Enter):
                 row = index.row()
@@ -352,5 +353,4 @@ class DragDropTableWidget(QTableWidget):
                 if editor and editor is not self:
                     QApplication.sendEvent(editor, event)
                 return
-
         super().keyPressEvent(event)
