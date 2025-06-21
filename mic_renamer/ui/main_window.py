@@ -244,6 +244,13 @@ class RenamerApp(QWidget):
         self.toolbar_actions.append(act_remove_sel)
         self.toolbar_action_icons.append(icon_remove_sel)
 
+        act_clear_suffix = QAction(icon_remove_sel, tr("clear_suffix"), self)
+        act_clear_suffix.setToolTip(tr("clear_suffix"))
+        act_clear_suffix.triggered.connect(self.clear_selected_suffixes)
+        tb.addAction(act_clear_suffix)
+        self.toolbar_actions.append(act_clear_suffix)
+        self.toolbar_action_icons.append(icon_remove_sel)
+
         icon_clear = resource_icon("trash-2.svg")
         act_clear = QAction(icon_clear, tr("clear_list"), self)
         act_clear.setToolTip(tr("clear_list"))
@@ -298,7 +305,8 @@ class RenamerApp(QWidget):
         labels = [
             "add_files", "add_folder", "preview_rename",
             "rename_all", "rename_selected", "compress", "convert_heic",
-            "undo_rename", "remove_selected", "clear_list", "settings_title"
+            "undo_rename", "remove_selected", "clear_suffix",
+            "clear_list", "settings_title"
         ]
         for action, key in zip(actions, labels):
             action.setText(tr(key))
@@ -671,6 +679,29 @@ class RenamerApp(QWidget):
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
             self.table_widget.selectRow(new_row)
         self.update_status()
+
+    def clear_selected_suffixes(self):
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        for row in rows:
+            item0 = self.table_widget.item(row, 1)
+            if not item0:
+                continue
+            settings: ItemSettings = item0.data(ROLE_SETTINGS)
+            if settings is None:
+                settings = ItemSettings(item0.data(Qt.UserRole))
+                item0.setData(ROLE_SETTINGS, settings)
+            settings.suffix = ""
+            cell = self.table_widget.item(row, 4)
+            if cell:
+                self._ignore_table_changes = True
+                try:
+                    cell.setText("")
+                finally:
+                    self._ignore_table_changes = False
+                cell.setToolTip("")
+            self.update_row_background(row, settings)
+        self.table_widget.sync_check_column()
+        self.on_table_selection_changed()
 
     def compress_selected(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
