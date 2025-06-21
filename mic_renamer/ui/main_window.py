@@ -44,8 +44,11 @@ class RenamerApp(QWidget):
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(2)
 
         self.toolbar = WrapToolBar()
+        self.toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.setup_toolbar()
         main_layout.addWidget(self.toolbar)
 
@@ -53,7 +56,7 @@ class RenamerApp(QWidget):
 
         # main splitter between preview and table
         self.splitter = QSplitter(Qt.Horizontal)
-        main_layout.addWidget(self.splitter)
+        main_layout.addWidget(self.splitter, 1)
 
         viewer_widget = QWidget()
         viewer_layout = QVBoxLayout(viewer_widget)
