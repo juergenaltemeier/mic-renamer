@@ -56,6 +56,7 @@ TRANSLATIONS = {
         'restore_defaults': 'Restore Defaults',
         'reset_tag_usage': 'Reset Tag Usage',
         'remove_selected': 'Remove Selected',
+        'clear_suffix': 'Clear Suffix',
         'config_path_label': 'Configuration folder',
         'default_save_dir_label': 'Default save directory',
         'use_text_menu': 'Text-only toolbar',
@@ -133,6 +134,7 @@ TRANSLATIONS = {
         'restore_defaults': 'Standardeinstellungen wiederherstellen',
         'reset_tag_usage': 'Tag-Nutzung zurücksetzen',
         'remove_selected': 'Auswahl entfernen',
+        'clear_suffix': 'Suffix entfernen',
         'show_tags': 'Tags anzeigen',
         'hide_tags': 'Tags ausblenden'
         , 'current_name': 'Aktueller Name'
