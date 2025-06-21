@@ -16,7 +16,7 @@ from importlib import resources
 
 from ...logic.settings import ItemSettings
 from ...logic.tag_loader import load_tags
-from ...logic.tag_service import extract_tags_from_name
+from ...logic.tag_service import extract_tags_from_name, extract_suffix_from_name
 from ...logic.heic_converter import convert_heic
 from ...utils.meta_utils import get_capture_date
 
@@ -235,11 +235,17 @@ class DragDropTableWidget(QTableWidget):
                 tags = extract_tags_from_name(path, tags_info.keys())
             except Exception:
                 tags = set()
+            suffix = ""
+            try:
+                suffix = extract_suffix_from_name(path, tags_info.keys())
+            except Exception:
+                suffix = ""
             date = get_capture_date(path)
             size_bytes = os.path.getsize(path)
             settings = ItemSettings(
                 path,
                 tags=tags,
+                suffix=suffix,
                 date=date,
                 size_bytes=size_bytes,
                 compressed_bytes=size_bytes,
@@ -248,10 +254,10 @@ class DragDropTableWidget(QTableWidget):
 
             tags_item = QTableWidgetItem(",".join(sorted(tags)))
             date_item = QTableWidgetItem(date)
-            suffix_item = QTableWidgetItem("")
+            suffix_item = QTableWidgetItem(suffix)
             tags_item.setToolTip(",".join(sorted(tags)))
             date_item.setToolTip(date)
-            suffix_item.setToolTip("")
+            suffix_item.setToolTip(suffix)
             self.setItem(row, 0, check_item)
             self.setItem(row, 1, fname_item)
             self.setItem(row, 2, tags_item)
