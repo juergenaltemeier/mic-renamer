@@ -43,6 +43,8 @@ class DragDropTableWidget(QTableWidget):
         header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
         header.setStretchLastSection(True)
         header.sectionDoubleClicked.connect(self.on_header_double_clicked)
+        self.setSortingEnabled(True)
+        self.sortByColumn(1, Qt.AscendingOrder)
         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setAcceptDrops(True)
         self.setSelectionBehavior(QTableWidget.SelectRows)
@@ -245,6 +247,7 @@ class DragDropTableWidget(QTableWidget):
         if self.rowCount() > 0 and not self.selectionModel().hasSelection():
             self.selectRow(0)
         if added:
+            self.sortByColumn(1, Qt.AscendingOrder)
             self.pathsAdded.emit(added)
 
     def sync_check_column(self):
