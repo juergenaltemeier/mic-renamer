@@ -18,10 +18,12 @@ class TagPanel(QWidget):
         super().__init__(parent)
         self._log = logging.getLogger(__name__)
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel(tr("select_tags_label")))
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(2)
         self.checkbox_container = QWidget()
         self.tag_layout = QGridLayout(self.checkbox_container)
         self.tag_layout.setContentsMargins(0, 0, 0, 0)
+        self.tag_layout.setSpacing(2)
         layout.addWidget(self.checkbox_container)
         self.checkbox_map: dict[str, EnterToggleCheckBox] = {}
         self.tags_info: dict[str, str] | None = tags_info
@@ -47,7 +49,7 @@ class TagPanel(QWidget):
         sorted_tags = sorted(
             self.tags_info.items(), key=lambda kv: usage.get(kv[0], 0), reverse=True
         )
-        columns = 4
+        columns = 5
         rows = (len(sorted_tags) + columns - 1) // columns
         for idx, (code, desc) in enumerate(sorted_tags):
             row = idx % rows
