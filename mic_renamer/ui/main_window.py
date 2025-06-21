@@ -196,21 +196,6 @@ class RenamerApp(QWidget):
         self.toolbar_actions.append(act_preview)
         self.toolbar_action_icons.append(icon_preview)
 
-        icon_rename = resource_icon("check-circle.svg")
-        act_rename = QAction(icon_rename, tr("rename_all"), self)
-        act_rename.setToolTip(tr("rename_all"))
-        act_rename.triggered.connect(self.direct_rename)
-        tb.addAction(act_rename)
-        self.toolbar_actions.append(act_rename)
-        self.toolbar_action_icons.append(icon_rename)
-
-        icon_rename_sel = resource_icon("check-square.svg")
-        act_rename_sel = QAction(icon_rename_sel, tr("rename_selected"), self)
-        act_rename_sel.setToolTip(tr("rename_selected"))
-        act_rename_sel.triggered.connect(self.direct_rename_selected)
-        tb.addAction(act_rename_sel)
-        self.toolbar_actions.append(act_rename_sel)
-        self.toolbar_action_icons.append(icon_rename_sel)
         tb.addSeparator()
 
 
@@ -307,7 +292,7 @@ class RenamerApp(QWidget):
         actions = self.toolbar_actions
         labels = [
             "add_files", "add_folder", "preview_rename",
-            "rename_all", "rename_selected", "compress", "convert_heic",
+            "compress", "convert_heic",
             "undo_rename", "remove_selected", "clear_suffix",
             "clear_list", "settings_title"
         ]
@@ -867,12 +852,18 @@ class RenamerApp(QWidget):
         tbl.resizeRowsToContents()
         tbl.setMinimumWidth(600)
         dlg_layout.addWidget(tbl)
-        btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, parent=dlg)
+
+        btns = QDialogButtonBox(parent=dlg)
+        btn_all = btns.addButton(tr("rename_all"), QDialogButtonBox.AcceptRole)
+        btn_sel = btns.addButton(tr("rename_selected"), QDialogButtonBox.AcceptRole)
+        btn_cancel = btns.addButton(QDialogButtonBox.Cancel)
         dlg_layout.addWidget(btns)
-        btns.accepted.connect(dlg.accept)
-        btns.rejected.connect(dlg.reject)
-        if dlg.exec() == QDialog.Accepted:
-            self.execute_rename_with_progress(table_mapping)
+
+        btn_cancel.clicked.connect(dlg.reject)
+        btn_all.clicked.connect(lambda: (dlg.accept(), self.direct_rename()))
+        btn_sel.clicked.connect(lambda: (dlg.accept(), self.direct_rename_selected()))
+
+        dlg.exec()
 
     def direct_rename(self):
         self.rename_with_options(None)
