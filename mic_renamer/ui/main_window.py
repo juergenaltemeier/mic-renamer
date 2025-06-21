@@ -222,7 +222,7 @@ class RenamerApp(QWidget):
         icon_convert = resource_icon("image.svg")
         act_convert = QAction(icon_convert, tr("convert_heic"), self)
         act_convert.setToolTip(tr("convert_heic"))
-        act_convert.triggered.connect(self.convert_heic_selected)
+        act_convert.triggered.connect(self.convert_selected_to_jpeg)
         tb.addAction(act_convert)
         self.toolbar_actions.append(act_convert)
         self.toolbar_action_icons.append(icon_convert)
@@ -754,29 +754,51 @@ class RenamerApp(QWidget):
                     st.size_bytes = size_bytes
                     st.compressed_bytes = compressed_bytes
 
-    def convert_heic_selected(self):
+    def convert_selected_to_jpeg(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
             return
-        from ..logic.heic_converter import convert_heic
+        from ..logic.heic_converter import convert_to_jpeg
+        total = len(rows)
+        progress = QProgressDialog(
+            "Converting to JPEG...",
+            tr("abort"),
+            0,
+            total,
+            self,
+        )
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(200)
+        progress.setValue(0)
         current = self.table_widget.currentRow()
+        converted = 0
+        done = 0
         for row in rows:
+            if progress.wasCanceled():
+                break
             item0 = self.table_widget.item(row, 1)
-            if not item0:
-                continue
-            path = item0.data(Qt.UserRole)
-            new_path = convert_heic(path)
-            if new_path == path:
-                continue
-            item0.setData(Qt.UserRole, new_path)
-            item0.setText(os.path.basename(new_path))
-            size = os.path.getsize(new_path)
-            st: ItemSettings = item0.data(ROLE_SETTINGS)
-            if st:
-                st.size_bytes = size
-                st.compressed_bytes = size
-            if row == current:
-                self.load_preview(new_path)
+            if item0:
+                path = item0.data(Qt.UserRole)
+                new_path = convert_to_jpeg(path)
+                if new_path != path:
+                    item0.setData(Qt.UserRole, new_path)
+                    item0.setText(os.path.basename(new_path))
+                    size = os.path.getsize(new_path)
+                    st: ItemSettings = item0.data(ROLE_SETTINGS)
+                    if st:
+                        st.size_bytes = size
+                        st.compressed_bytes = size
+                    if row == current:
+                        self.load_preview(new_path)
+                    converted += 1
+            done += 1
+            progress.setValue(done)
+        progress.close()
+        QMessageBox.information(
+            self,
+            tr("done"),
+            f"Converted {converted} of {total} images to JPEG."
+        )
 
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
