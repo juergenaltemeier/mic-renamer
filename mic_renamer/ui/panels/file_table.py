@@ -326,25 +326,21 @@ class DragDropTableWidget(QTableWidget):
         super().mousePressEvent(event)
 
     def keyPressEvent(self, event):  # noqa: D401
-        """Start editing on keypress and handle Enter navigation."""
+        """Start editing via keyboard and move to the next row on Enter."""
         index = self.currentIndex()
-        edit_cols = {4}
-        if self.mode == "normal":
-            edit_cols.update({2, 3})
-        else:
-            edit_cols.add(2)
+        edit_cols = {2, 4}
+
 
         if index.isValid() and index.column() in edit_cols:
             if event.key() in (Qt.Key_Return, Qt.Key_Enter):
                 row = index.row()
                 col = index.column()
                 super().keyPressEvent(event)
-                new_row = self.currentRow()
-                if new_row == row and row < self.rowCount() - 1:
-                    new_row = row + 1
-                    self.setCurrentCell(new_row, col)
-                self.selectRow(new_row)
+                if row < self.rowCount() - 1:
+                    self.setCurrentCell(row + 1, col)
+                    self.selectRow(row + 1)
                 return
+
             if self.state() != QAbstractItemView.EditingState and event.text():
                 rows = [idx.row() for idx in self.selectionModel().selectedRows()]
                 if len(rows) > 1 and index.row() in rows:
