@@ -25,6 +25,7 @@ from .rename_options_dialog import RenameOptionsDialog
 from .project_number_input import ProjectNumberInput
 from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
+from ..logic.image_compressor import ImageCompressor
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
 from .wrap_toolbar import WrapToolBar
@@ -914,6 +915,8 @@ class RenamerApp(QWidget):
         if dlg.exec() != QDialog.Accepted:
             return
         dest = dlg.directory
+        compress = dlg.compress_after
+        config_manager.set('compress_after_rename', compress)
         if dest:
             config_manager.set('default_save_directory', dest)
         if rows is None:
@@ -929,9 +932,9 @@ class RenamerApp(QWidget):
                 if item0.data(Qt.UserRole) == orig:
                     table_mapping.append((row, orig, new_name, new))
                     break
-        self.execute_rename_with_progress(table_mapping)
+        self.execute_rename_with_progress(table_mapping, compress=compress)
 
-    def execute_rename_with_progress(self, table_mapping):
+    def execute_rename_with_progress(self, table_mapping, compress: bool = False):
         self.set_status_message(tr("renaming_files"))
         total = len(table_mapping)
         progress = QProgressDialog(
@@ -945,6 +948,18 @@ class RenamerApp(QWidget):
         progress.setMinimumDuration(200)
         progress.setValue(0)
         done = 0
+        if compress:
+            cfg = config_manager.load()
+            compressor = ImageCompressor(
+                max_size_kb=cfg.get("compression_max_size_kb", 2048),
+                quality=cfg.get("compression_quality", 95),
+                reduce_resolution=cfg.get("compression_reduce_resolution", True),
+                resize_only=cfg.get("compression_resize_only", False),
+                max_width=cfg.get("compression_max_width", 0) or None,
+                max_height=cfg.get("compression_max_height", 0) or None,
+            )
+        else:
+            compressor = None
         used_tags = []
         for row, orig, new_name, new_path in table_mapping:
             if progress.wasCanceled():
@@ -961,6 +976,16 @@ class RenamerApp(QWidget):
                     if settings and self.rename_mode == MODE_NORMAL:
                         used_tags.extend(settings.tags)
                     self.undo_manager.record(row, orig, new_path)
+                    if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
+                        old_size = os.path.getsize(new_path)
+                        new_path2, new_size, _ = compressor.compress(new_path)
+                        if new_path2 != new_path:
+                            item0.setText(os.path.basename(new_path2))
+                            item0.setData(Qt.UserRole, new_path2)
+                            new_path = new_path2
+                        if settings:
+                            settings.size_bytes = old_size
+                            settings.compressed_bytes = new_size
             except Exception as e:
                 QMessageBox.warning(
                     self,
