@@ -339,9 +339,11 @@ class DragDropTableWidget(QTableWidget):
                 row = index.row()
                 col = index.column()
                 super().keyPressEvent(event)
-                if row < self.rowCount() - 1:
-                    self.setCurrentCell(row + 1, col)
-                    self.selectRow(row + 1)
+                new_row = self.currentRow()
+                if new_row == row and row < self.rowCount() - 1:
+                    new_row = row + 1
+                    self.setCurrentCell(new_row, col)
+                self.selectRow(new_row)
                 return
             if self.state() != QAbstractItemView.EditingState and event.text():
                 rows = [idx.row() for idx in self.selectionModel().selectedRows()]
