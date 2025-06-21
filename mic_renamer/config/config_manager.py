@@ -69,6 +69,7 @@ class ConfigManager:
         defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
         # directory used when choosing an alternative save location
         defaults.setdefault("default_save_directory", str(get_config_dir()))
+        defaults.setdefault("default_import_directory", "")
         # migrate legacy setting name
         if "compression_max_size_mb" in data and "compression_max_size_kb" not in data:
             data["compression_max_size_kb"] = float(data.pop("compression_max_size_mb")) * 1024
@@ -116,6 +117,7 @@ class ConfigManager:
         defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
         defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
         defaults.setdefault("default_save_directory", str(get_config_dir()))
+        defaults.setdefault("default_import_directory", "")
         defaults.setdefault("compression_max_size_kb", 2048)
         defaults.setdefault("compression_quality", 95)
         defaults.setdefault("compression_reduce_resolution", True)

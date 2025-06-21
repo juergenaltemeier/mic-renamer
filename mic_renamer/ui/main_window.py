@@ -367,7 +367,11 @@ class RenamerApp(QWidget):
         self.set_status_message(None)
 
     def add_folder_dialog(self):
-        folder = QFileDialog.getExistingDirectory(self, tr("add_folder"))
+        folder = QFileDialog.getExistingDirectory(
+            self,
+            tr("add_folder"),
+            config_manager.get('default_import_directory', '')
+        )
         if folder:
             self.set_status_message(tr("status_loading"))
             entries = os.listdir(folder)
