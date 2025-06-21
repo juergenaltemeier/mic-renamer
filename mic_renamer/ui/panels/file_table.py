@@ -75,9 +75,14 @@ class DragDropTableWidget(QTableWidget):
         """Switch table headers for the given mode."""
         self.mode = mode
         if mode == "position":
-            self.setHorizontalHeaderLabels(
-                ["", "Filename", "Pos", "Date", "Suffix"]
-            )
+            self.setHorizontalHeaderLabels([
+                "", "Filename", "Pos", "Date", "Suffix"
+            ])
+            self.setColumnHidden(3, True)
+        elif mode == "pa_mat":
+            self.setHorizontalHeaderLabels([
+                "", "Filename", "PA_MAT", "Date", "Suffix"
+            ])
             self.setColumnHidden(3, True)
         else:
             self.setHorizontalHeaderLabels(
@@ -96,6 +101,15 @@ class DragDropTableWidget(QTableWidget):
                 if pos_item:
                     pos_item.setText(settings.position)
                     pos_item.setToolTip(settings.position)
+                suf_item = self.item(row, 4)
+                if suf_item:
+                    suf_item.setText(settings.suffix)
+                    suf_item.setToolTip(settings.suffix)
+            elif mode == "pa_mat":
+                mat_item = self.item(row, 2)
+                if mat_item:
+                    mat_item.setText(settings.pa_mat)
+                    mat_item.setToolTip(settings.pa_mat)
                 suf_item = self.item(row, 4)
                 if suf_item:
                     suf_item.setText(settings.suffix)
