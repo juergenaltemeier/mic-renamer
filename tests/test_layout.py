@@ -2,6 +2,7 @@ import os
 import pytest
 from PySide6.QtWidgets import QApplication, QSizePolicy
 
+
 from mic_renamer.ui.main_window import RenamerApp
 
 
