@@ -38,6 +38,7 @@ class ItemSettings:
     suffix: str = ""
     date: str = ""
     position: str = ""
+    pa_mat: str = ""
     size_bytes: int = 0
     compressed_bytes: int = 0
 

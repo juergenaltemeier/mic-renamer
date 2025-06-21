@@ -33,6 +33,7 @@ from .wrap_toolbar import WrapToolBar
 ROLE_SETTINGS = Qt.UserRole + 1
 MODE_NORMAL = "normal"
 MODE_POSITION = "position"
+MODE_PA_MAT = "pa_mat"
 
 class RenamerApp(QWidget):
     def __init__(self, state_manager=None):
@@ -264,6 +265,7 @@ class RenamerApp(QWidget):
         self.combo_mode = QComboBox()
         self.combo_mode.addItem(tr("mode_normal"), MODE_NORMAL)
         self.combo_mode.addItem(tr("mode_position"), MODE_POSITION)
+        self.combo_mode.addItem(tr("mode_pa_mat"), MODE_PA_MAT)
         self.combo_mode.currentIndexChanged.connect(self.on_mode_changed)
         tb.addWidget(self.combo_mode)
 
@@ -315,6 +317,8 @@ class RenamerApp(QWidget):
             self.btn_toggle_tags.setText(tr("show_tags"))
         self.combo_mode.setItemText(0, tr("mode_normal"))
         self.combo_mode.setItemText(1, tr("mode_position"))
+        if self.combo_mode.count() > 2:
+            self.combo_mode.setItemText(2, tr("mode_pa_mat"))
         self.update_status()
 
     def apply_toolbar_style(self, style: str) -> None:
@@ -574,9 +578,12 @@ class RenamerApp(QWidget):
             else:
                 settings.date = text
                 item.setToolTip(settings.date)
-        elif col == 2:
+        elif self.rename_mode == MODE_POSITION and col == 2:
             settings.position = item.text().strip()
             item.setToolTip(settings.position)
+        elif self.rename_mode == MODE_PA_MAT and col == 2:
+            settings.pa_mat = item.text().strip()
+            item.setToolTip(settings.pa_mat)
         elif col == 4:
             new_suffix = item.text().strip()
             settings.suffix = new_suffix
@@ -760,10 +767,14 @@ class RenamerApp(QWidget):
                 cell_date = self.table_widget.item(row, 3)
                 if cell_date:
                     settings.date = cell_date.text().strip()
-            else:
+            elif self.rename_mode == MODE_POSITION:
                 cell_pos = self.table_widget.item(row, 2)
                 if cell_pos:
                     settings.position = cell_pos.text().strip()
+            elif self.rename_mode == MODE_PA_MAT:
+                cell_mat = self.table_widget.item(row, 2)
+                if cell_mat:
+                    settings.pa_mat = cell_mat.text().strip()
             items.append(settings)
         renamer = Renamer(project, items, dest_dir=dest_dir, mode=self.rename_mode)
         mapping = renamer.build_mapping()
