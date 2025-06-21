@@ -1,6 +1,6 @@
 """Widgets for image preview and zooming."""
 from PySide6.QtWidgets import QWidget, QGraphicsView, QGraphicsScene
-from PySide6.QtGui import QPixmap, QPainter, QImage
+from PySide6.QtGui import QPixmap, QPainter, QImage, QImageReader
 from PySide6.QtCore import Qt
 
 
@@ -29,21 +29,22 @@ class ImageViewer(QGraphicsView):
             self._rotation = 0
             self.reset_transform()
             return
-        pix = QPixmap(path)
-        if pix.isNull() and path.lower().endswith(".heic"):
+        reader = QImageReader(path)
+        reader.setAutoTransform(True)
+        img = reader.read()
+        if img.isNull() and path.lower().endswith(".heic"):
             try:
                 from PIL import Image
                 from pillow_heif import register_heif_opener
 
                 register_heif_opener()
-                img = Image.open(path)
-                img = img.convert("RGBA")
-                data = img.tobytes("raw", "RGBA")
-                qimg = QImage(data, img.width, img.height, QImage.Format_RGBA8888)
-                pix = QPixmap.fromImage(qimg)
+                pil_img = Image.open(path)
+                pil_img = pil_img.convert("RGBA")
+                data = pil_img.tobytes("raw", "RGBA")
+                img = QImage(data, pil_img.width, pil_img.height, QImage.Format_RGBA8888)
             except Exception:
-                pix = QPixmap()
-        if pix.isNull():
+                img = QImage()
+        if img.isNull():
             self.scene().clear()
             self.pixmap_item = None
             self.current_pixmap = None
@@ -51,6 +52,7 @@ class ImageViewer(QGraphicsView):
             self._rotation = 0
             self.reset_transform()
             return
+        pix = QPixmap.fromImage(img)
         self.current_pixmap = pix
         self.scene().clear()
         self.pixmap_item = self.scene().addPixmap(pix)
