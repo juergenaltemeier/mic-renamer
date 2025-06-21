@@ -1,6 +1,7 @@
 import os
 import pytest
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QSizePolicy
+
 
 from mic_renamer.ui.main_window import RenamerApp
 
@@ -24,4 +25,7 @@ def test_splitter_below_toolbar(app):
     assert layout.spacing() == 2
     assert layout.itemAt(0).widget() is win.toolbar
     assert layout.itemAt(1).widget() is win.splitter
+    assert layout.stretch(1) == 1
+    policy = win.toolbar.sizePolicy()
+    assert policy.verticalPolicy() == QSizePolicy.Fixed
     win.close()
