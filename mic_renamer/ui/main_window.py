@@ -44,6 +44,8 @@ class RenamerApp(QWidget):
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(2)
 
         self.toolbar = WrapToolBar()
         self.setup_toolbar()
