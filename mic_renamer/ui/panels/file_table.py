@@ -324,3 +324,33 @@ class DragDropTableWidget(QTableWidget):
                     idx.row() for idx in self.selectionModel().selectedRows()
                 ]
         super().mousePressEvent(event)
+
+    def keyPressEvent(self, event):  # noqa: D401
+        """Start editing via keyboard and move to the next row on Enter."""
+        index = self.currentIndex()
+        edit_cols = {2, 4}
+
+        if index.isValid() and index.column() in edit_cols:
+            if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+                row = index.row()
+                col = index.column()
+                super().keyPressEvent(event)
+                if row < self.rowCount() - 1:
+                    self.setCurrentCell(row + 1, col)
+                    self.selectRow(row + 1)
+                return
+
+            if self.state() != QAbstractItemView.EditingState and event.text():
+                rows = [idx.row() for idx in self.selectionModel().selectedRows()]
+                if len(rows) > 1 and index.row() in rows:
+                    self._selection_before_edit = rows
+                    QTimer.singleShot(0, lambda r=rows: self._restore_selection(r))
+                else:
+                    self._selection_before_edit = rows
+                self.edit(index)
+                editor = QApplication.focusWidget()
+                if editor and editor is not self:
+                    QApplication.sendEvent(editor, event)
+                return
+
+        super().keyPressEvent(event)
