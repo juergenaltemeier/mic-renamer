@@ -2,7 +2,7 @@ import os
 import re
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
-    QPushButton, QSlider, QFileDialog, QMessageBox, QToolBar,
+    QPushButton, QSlider, QFileDialog, QMessageBox,
     QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox,
     QStyle, QTableWidget, QTableWidgetItem,
@@ -27,6 +27,7 @@ from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
+from .wrap_toolbar import WrapToolBar
 
 
 ROLE_SETTINGS = Qt.UserRole + 1
@@ -43,7 +44,7 @@ class RenamerApp(QWidget):
 
         main_layout = QVBoxLayout(self)
 
-        self.toolbar = QToolBar()
+        self.toolbar = WrapToolBar()
         self.setup_toolbar()
         main_layout.addWidget(self.toolbar)
 
