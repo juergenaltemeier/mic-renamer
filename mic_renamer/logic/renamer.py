@@ -37,7 +37,7 @@ class Renamer:
         if self.mode == "pa_mat":
             mapping = []
             for item in self.items:
-                base = f"{self.project}_pa_mat{item.pa_mat}"
+                base = f"{self.project}_PA_MAT{item.pa_mat}"
                 if item.suffix:
                     base += f"_{item.suffix}"
                 ext = os.path.splitext(item.original_path)[1]
