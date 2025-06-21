@@ -16,6 +16,7 @@ last_project_number: ""
 tag_panel_visible: false
 toolbar_style: icons
 default_save_directory: ""
+default_import_directory: ""
 compression_max_size_kb: 2048
 compression_quality: 95
 compression_reduce_resolution: true

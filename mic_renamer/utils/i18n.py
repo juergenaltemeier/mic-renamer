@@ -59,6 +59,8 @@ TRANSLATIONS = {
         'clear_suffix': 'Clear Suffix',
         'config_path_label': 'Configuration folder',
         'default_save_dir_label': 'Default save directory',
+        'default_import_dir_label': 'Default import directory',
+        'use_import_dir': 'Use default import directory',
         'use_text_menu': 'Text-only toolbar',
         'use_original_directory': 'Use current folder?',
         'use_original_directory_msg': 'Save renamed files in their current folder?',
@@ -148,6 +150,8 @@ TRANSLATIONS = {
         , 'undo_done': 'Umbenennungen zurückgesetzt.'
         , 'config_path_label': 'Konfigurationsordner'
         , 'default_save_dir_label': 'Standard-Speicherordner'
+        , 'default_import_dir_label': 'Standard-Importordner'
+        , 'use_import_dir': 'Standard-Importordner verwenden'
         , 'use_text_menu': 'Nur Text in der Werkzeugleiste'
         , 'use_original_directory': 'Aktuellen Ordner verwenden?'
         , 'use_original_directory_msg': 'Umbenannte Dateien im aktuellen Ordner speichern?'
