@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QRadioButton,
-    QLineEdit, QPushButton, QFileDialog, QDialogButtonBox
+    QLineEdit, QPushButton, QFileDialog, QDialogButtonBox,
+    QCheckBox,
 )
 
 from .. import config_manager
@@ -29,6 +30,10 @@ class RenameOptionsDialog(QDialog):
         layout.addWidget(self.radio_custom)
         layout.addLayout(hl)
 
+        self.chk_compress = QCheckBox(tr("compress_after_rename"))
+        self.chk_compress.setChecked(config_manager.get("compress_after_rename", False))
+        layout.addWidget(self.chk_compress)
+
 
 
         btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -47,4 +52,8 @@ class RenameOptionsDialog(QDialog):
         if self.radio_orig.isChecked():
             return None
         return self.edit_dir.text().strip() or None
+
+    @property
+    def compress_after(self) -> bool:
+        return self.chk_compress.isChecked()
 

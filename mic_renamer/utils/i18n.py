@@ -77,6 +77,7 @@ TRANSLATIONS = {
         'use_text_menu_desc': 'Show text instead of icons in the toolbar',
         'use_original_directory': 'Use current folder?',
         'use_original_directory_msg': 'Save renamed files in their current folder?',
+        'compress_after_rename': 'Compress images after renaming',
         'current_name': 'Current Name'
         , 'proposed_new_name': 'Proposed New Name'
         , 'renaming_files': 'Renaming files...'
@@ -181,6 +182,7 @@ TRANSLATIONS = {
         , 'use_text_menu_desc': 'Nur Text statt Symbole in der Werkzeugleiste'
         , 'use_original_directory': 'Aktuellen Ordner verwenden?'
         , 'use_original_directory_msg': 'Umbenannte Dateien im aktuellen Ordner speichern?'
+        , 'compress_after_rename': 'Nach dem Umbenennen komprimieren'
         , 'mode_normal': 'Normal'
         , 'mode_position': 'Pos Modus Andi'
         , 'mode_pa_mat': 'PA_MAT Mode Andi'
