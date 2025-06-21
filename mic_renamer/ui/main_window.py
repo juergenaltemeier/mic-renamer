@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox,
     QStyle, QTableWidget, QTableWidgetItem,
-    QMenu, QToolButton, QSizePolicy,
+    QMenu, QToolButton, QSizePolicy, QToolBar,
 )
 from PySide6.QtGui import QColor, QAction, QIcon
 from PySide6.QtCore import Qt, QTimer
@@ -93,13 +93,25 @@ class RenamerApp(QWidget):
         self.zoom_slider.valueChanged.connect(self.on_zoom_slider_changed)
         viewer_layout.addWidget(self.zoom_slider)
 
+        # table toolbar directly above the table widget
+        table_container = QWidget()
+        table_layout = QVBoxLayout(table_container)
+        table_layout.setContentsMargins(0, 0, 0, 0)
+        table_layout.setSpacing(2)
+
+        self.table_toolbar = QToolBar()
+        self.setup_table_toolbar()
+        self.apply_toolbar_style(config_manager.get("toolbar_style", "icons"))
+        table_layout.addWidget(self.table_toolbar)
+
         self.table_widget = DragDropTableWidget()
         self._ignore_table_changes = False
         self.table_widget.itemChanged.connect(self.on_table_item_changed)
         self.table_widget.pathsAdded.connect(lambda _: self.update_status())
+        table_layout.addWidget(self.table_widget)
 
         self.splitter.addWidget(viewer_widget)
-        self.splitter.addWidget(self.table_widget)
+        self.splitter.addWidget(table_container)
 
         if self.state_manager:
             sizes = self.state_manager.get("splitter_sizes")
@@ -225,28 +237,24 @@ class RenamerApp(QWidget):
         self.toolbar_action_icons.append(icon_undo)
 
         icon_remove_sel = resource_icon("trash-2.svg")
-        act_remove_sel = QAction(icon_remove_sel, tr("remove_selected"), self)
-        act_remove_sel.setToolTip(tr("remove_selected"))
-        act_remove_sel.triggered.connect(self.remove_selected_items)
-        tb.addAction(act_remove_sel)
-        self.toolbar_actions.append(act_remove_sel)
+        self.act_remove_sel = QAction(icon_remove_sel, tr("remove_selected"), self)
+        self.act_remove_sel.setToolTip(tr("remove_selected"))
+        self.act_remove_sel.triggered.connect(self.remove_selected_items)
+        self.toolbar_actions.append(self.act_remove_sel)
         self.toolbar_action_icons.append(icon_remove_sel)
 
-        act_clear_suffix = QAction(icon_remove_sel, tr("clear_suffix"), self)
-        act_clear_suffix.setToolTip(tr("clear_suffix"))
-        act_clear_suffix.triggered.connect(self.clear_selected_suffixes)
-        tb.addAction(act_clear_suffix)
-        self.toolbar_actions.append(act_clear_suffix)
+        self.act_clear_suffix = QAction(icon_remove_sel, tr("clear_suffix"), self)
+        self.act_clear_suffix.setToolTip(tr("clear_suffix"))
+        self.act_clear_suffix.triggered.connect(self.clear_selected_suffixes)
+        self.toolbar_actions.append(self.act_clear_suffix)
         self.toolbar_action_icons.append(icon_remove_sel)
 
         icon_clear = resource_icon("trash-2.svg")
-        act_clear = QAction(icon_clear, tr("clear_list"), self)
-        act_clear.setToolTip(tr("clear_list"))
-        act_clear.triggered.connect(self.clear_all)
-        tb.addAction(act_clear)
-        self.toolbar_actions.append(act_clear)
+        self.act_clear = QAction(icon_clear, tr("clear_list"), self)
+        self.act_clear.setToolTip(tr("clear_list"))
+        self.act_clear.triggered.connect(self.clear_all)
+        self.toolbar_actions.append(self.act_clear)
         self.toolbar_action_icons.append(icon_clear)
-        tb.addSeparator()
 
         icon_settings = resource_icon("settings.svg")
         act_settings = QAction(icon_settings, tr("settings_title"), self)
@@ -256,14 +264,6 @@ class RenamerApp(QWidget):
         self.toolbar_actions.append(act_settings)
         self.toolbar_action_icons.append(icon_settings)
 
-        tb.addSeparator()
-        self.combo_mode = QComboBox()
-        self.combo_mode.addItem(tr("mode_normal"), MODE_NORMAL)
-        self.combo_mode.addItem(tr("mode_position"), MODE_POSITION)
-        self.combo_mode.addItem(tr("mode_pa_mat"), MODE_PA_MAT)
-        self.combo_mode.currentIndexChanged.connect(self.on_mode_changed)
-        tb.addWidget(self.combo_mode)
-
         self.lbl_project = QLabel(tr("project_number_label"))
         self.input_project = ProjectNumberInput()
         self.input_project.setText(config_manager.get("last_project_number", ""))
@@ -271,7 +271,20 @@ class RenamerApp(QWidget):
         tb.addWidget(self.lbl_project)
         tb.addWidget(self.input_project)
 
-        self.apply_toolbar_style(style)
+
+    def setup_table_toolbar(self) -> None:
+        """Create toolbar with table-related actions."""
+        tb = self.table_toolbar
+        tb.addAction(self.act_remove_sel)
+        tb.addAction(self.act_clear_suffix)
+        tb.addAction(self.act_clear)
+        tb.addSeparator()
+        self.combo_mode = QComboBox()
+        self.combo_mode.addItem(tr("mode_normal"), MODE_NORMAL)
+        self.combo_mode.addItem(tr("mode_position"), MODE_POSITION)
+        self.combo_mode.addItem(tr("mode_pa_mat"), MODE_PA_MAT)
+        self.combo_mode.currentIndexChanged.connect(self.on_mode_changed)
+        tb.addWidget(self.combo_mode)
 
 
     def open_settings(self):
@@ -320,6 +333,7 @@ class RenamerApp(QWidget):
     def apply_toolbar_style(self, style: str) -> None:
         if style == "text":
             self.toolbar.setToolButtonStyle(Qt.ToolButtonTextOnly)
+            self.table_toolbar.setToolButtonStyle(Qt.ToolButtonTextOnly)
             for action in self.toolbar_actions:
                 action.setIcon(QIcon())
             if hasattr(self, "btn_add_menu"):
@@ -327,6 +341,7 @@ class RenamerApp(QWidget):
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
         else:
             self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.table_toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
             for action, icon in zip(self.toolbar_actions, self.toolbar_action_icons):
                 action.setIcon(icon)
             if hasattr(self, "btn_add_menu"):
