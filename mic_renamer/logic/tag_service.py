@@ -57,6 +57,10 @@ def extract_suffix_from_name(name: str, valid_tags: Iterable[str]) -> str:
         return ""
     candidate = tokens[-1]
     codes = set(valid_tags)
+    if candidate.isdigit():
+        if len(tokens) < 2:
+            return ""
+        candidate = tokens[-2]
     if candidate in codes:
         return ""
     if re.fullmatch(r"\d{6}", candidate):

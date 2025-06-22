@@ -47,3 +47,14 @@ def test_suffix_not_extracted_for_numeric_or_tag(app, monkeypatch, tmp_path):
     settings1 = item1.data(ROLE_SETTINGS)
     assert settings0.suffix == ""
     assert settings1.suffix == ""
+
+
+def test_suffix_before_numeric_index(app, monkeypatch, tmp_path):
+    tags = {"A": "Alpha"}
+    monkeypatch.setattr("mic_renamer.logic.tag_loader.load_tags", lambda: tags)
+    monkeypatch.setattr("mic_renamer.ui.panels.file_table.load_tags", lambda: tags)
+    img = tmp_path / "C123456_A_240101_note_001.jpg"
+    img.write_bytes(b"x")
+    win = RenamerApp()
+    win.table_widget.add_paths([str(img)])
+    assert win.table_widget.item(0, 4).text() == "note"
