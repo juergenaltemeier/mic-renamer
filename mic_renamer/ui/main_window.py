@@ -905,21 +905,23 @@ class RenamerApp(QWidget):
             return (row, path, new_path, size)
 
         worker = Worker(task, rows)
-        thread = QThread(self)
+        thread = QThread()
         worker.moveToThread(thread)
         thread.started.connect(worker.run)
         worker.progress.connect(
             lambda d, _t, _p: progress.setValue(d), Qt.QueuedConnection
         )
         progress.canceled.connect(worker.stop)
+        worker.finished.connect(thread.quit)
+        thread.finished.connect(thread.deleteLater)
         current = self.table_widget.currentRow()
 
         def on_finished(results):
             progress.close()
-            thread.quit()
-            thread.wait()
+            if thread.isRunning():
+                thread.quit()
+                thread.wait()
             worker.deleteLater()
-            thread.deleteLater()
             converted = 0
             for row, orig, new_path, size in results:
                 if new_path and new_path != orig:
