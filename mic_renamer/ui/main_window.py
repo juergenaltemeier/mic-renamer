@@ -1205,6 +1205,8 @@ class RenamerApp(QWidget):
         )
 
     def closeEvent(self, event):
+        # ensure any playing video is stopped to release multimedia resources
+        self.image_viewer.video_player.player.stop()
         if self._preview_loader:
             self._preview_loader.stop()
         if self._preview_thread:
