@@ -499,6 +499,7 @@ class RenamerApp(QWidget):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
             return
+        self.table_widget.setSortingEnabled(False)
         checkbox_states = {code: cb.checkState() for code, cb in self.tag_panel.checkbox_map.items()}
         for row in rows:
             item0 = self.table_widget.item(row, 1)
@@ -533,6 +534,7 @@ class RenamerApp(QWidget):
                     cell_suffix.setToolTip(settings.suffix)
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
+        QTimer.singleShot(0, self._enable_sorting)
 
     def on_tag_toggled(self, code: str, state: int) -> None:
         """Apply tag changes from the tag panel to all selected rows immediately.
@@ -546,6 +548,7 @@ class RenamerApp(QWidget):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
             return
+        self.table_widget.setSortingEnabled(False)
         check_state = Qt.CheckState(state)
         for row in rows:
             item0 = self.table_widget.item(row, 1)
@@ -570,6 +573,7 @@ class RenamerApp(QWidget):
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         QTimer.singleShot(0, self.on_table_selection_changed)
+        QTimer.singleShot(0, self._enable_sorting)
 
     def update_row_background(self, row: int, settings: ItemSettings):
         for col in range(self.table_widget.columnCount()):
@@ -619,6 +623,8 @@ class RenamerApp(QWidget):
                 self._ignore_table_changes = False
             item.setToolTip(text)
             rows = getattr(self.table_widget, "_selection_before_edit", [])
+            if rows:
+                self.table_widget.setSortingEnabled(False)
             for r in rows:
                 if r == row:
                     continue
@@ -640,6 +646,8 @@ class RenamerApp(QWidget):
                 other_settings.tags = set(valid_tags)
                 self.update_row_background(r, other_settings)
             self.table_widget._selection_before_edit = []
+            if rows:
+                QTimer.singleShot(0, self._enable_sorting)
         elif self.rename_mode == MODE_NORMAL and col == 3:
             text = item.text().strip()
             if not re.fullmatch(r"\d{6}", text):
@@ -665,6 +673,8 @@ class RenamerApp(QWidget):
             settings.suffix = new_suffix
             item.setToolTip(settings.suffix)
             rows = getattr(self.table_widget, "_selection_before_edit", [])
+            if rows:
+                self.table_widget.setSortingEnabled(False)
             for r in rows:
                 if r == row:
                     continue
@@ -686,6 +696,8 @@ class RenamerApp(QWidget):
                 other_settings.suffix = new_suffix
                 self.update_row_background(r, other_settings)
             self.table_widget._selection_before_edit = []
+            if rows:
+                QTimer.singleShot(0, self._enable_sorting)
         self.update_row_background(row, settings)
         if row in {idx.row() for idx in self.table_widget.selectionModel().selectedRows()}:
             self.on_table_selection_changed()
@@ -750,6 +762,7 @@ class RenamerApp(QWidget):
 
     def clear_selected_suffixes(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        self.table_widget.setSortingEnabled(False)
         for row in rows:
             item0 = self.table_widget.item(row, 1)
             if not item0:
@@ -770,6 +783,7 @@ class RenamerApp(QWidget):
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         self.on_table_selection_changed()
+        QTimer.singleShot(0, self._enable_sorting)
 
     def compress_selected(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
@@ -1130,6 +1144,14 @@ class RenamerApp(QWidget):
         if self.status_message:
             text = f"{text} - {self.status_message}"
         self.lbl_status.setText(text)
+
+    def _enable_sorting(self) -> None:
+        header = self.table_widget.horizontalHeader()
+        self.table_widget.setSortingEnabled(True)
+        self.table_widget.sortByColumn(
+            header.sortIndicatorSection(),
+            header.sortIndicatorOrder(),
+        )
 
     def closeEvent(self, event):
         if self.state_manager:
