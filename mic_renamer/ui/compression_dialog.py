@@ -17,6 +17,7 @@ from pathlib import Path
 from ..logic.image_compressor import ImageCompressor
 from ..utils.i18n import tr
 from .. import config_manager
+from ..utils.state_manager import StateManager
 from .panels.media_viewer import MediaViewer
 from ..utils.workers import Worker
 from PySide6.QtCore import QThread, Qt
@@ -25,14 +26,28 @@ from PySide6.QtCore import QThread, Qt
 class CompressionDialog(QDialog):
     """Dialog showing compression progress and results."""
 
-    def __init__(self, rows_and_paths: list[tuple[int, str]], convert_heic: bool, parent=None):
+    def __init__(
+        self,
+        rows_and_paths: list[tuple[int, str]],
+        convert_heic: bool,
+        parent=None,
+        state_manager: StateManager | None = None,
+    ):
         super().__init__(parent)
+        self.state_manager = state_manager
         self.setWindowTitle(tr("compression_window_title"))
         self.results: list[tuple[int, str, str, int, int]] = []
         self.final_results: list[tuple[int, str, int, int]] = []
         self._paths: list[str] = []
         self._tmpdir = tempfile.TemporaryDirectory()
         layout = QVBoxLayout(self)
+
+        if self.state_manager:
+            width = self.state_manager.get("compression_width", 800)
+            height = self.state_manager.get("compression_height", 600)
+        else:
+            width, height = 800, 600
+        self.resize(width, height)
 
         self.viewer = MediaViewer()
         layout.addWidget(self.viewer)
@@ -149,5 +164,12 @@ class CompressionDialog(QDialog):
     def reject(self) -> None:
         self._tmpdir.cleanup()
         super().reject()
+
+    def closeEvent(self, event):
+        if self.state_manager:
+            self.state_manager.set("compression_width", self.width())
+            self.state_manager.set("compression_height", self.height())
+            self.state_manager.save()
+        super().closeEvent(event)
 
 

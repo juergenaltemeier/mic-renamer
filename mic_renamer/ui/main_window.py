@@ -862,7 +862,12 @@ class RenamerApp(QWidget):
             )
             convert_heic = reply == QMessageBox.Yes
         from .compression_dialog import CompressionDialog
-        dlg = CompressionDialog(paths, convert_heic, parent=self)
+        dlg = CompressionDialog(
+            paths,
+            convert_heic,
+            parent=self,
+            state_manager=self.state_manager,
+        )
         if dlg.exec() == QDialog.Accepted:
             for row, new_path, size_bytes, compressed_bytes in dlg.final_results:
                 item0 = self.table_widget.item(row, 1)
