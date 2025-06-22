@@ -162,6 +162,11 @@ class CompressionDialog(QDialog):
         super().accept()
 
     def reject(self) -> None:
+        self._worker.stop()
+        self._thread.quit()
+        self._thread.wait()
+        self._worker.deleteLater()
+        self._thread.deleteLater()
         self._tmpdir.cleanup()
         super().reject()
 
