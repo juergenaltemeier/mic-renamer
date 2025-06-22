@@ -28,7 +28,7 @@ def create_dark_palette() -> QPalette:
     palette.setColor(QPalette.BrightText, Qt.red)
     palette.setColor(QPalette.Link, BRAND_PRIMARY)
     # use a brighter shade for selected cells
-    palette.setColor(QPalette.Highlight, BRAND_PRIMARY.lighter(190))
+    palette.setColor(QPalette.Highlight, BRAND_PRIMARY.lighter(210))
     palette.setColor(QPalette.HighlightedText, Qt.black)
     return palette
 
