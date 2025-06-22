@@ -173,14 +173,14 @@ class RenamerApp(QWidget):
         # actions collected in the "Add" menu
         icon_add_files = resource_icon("file-plus.svg")
         act_add_files = QAction(icon_add_files, tr("add_files"), self)
-        act_add_files.setToolTip(tr("add_files"))
+        act_add_files.setToolTip(tr("tip_add_files"))
         act_add_files.triggered.connect(self.add_files_dialog)
         self.toolbar_actions.append(act_add_files)
         self.toolbar_action_icons.append(icon_add_files)
 
         icon_add_folder = resource_icon("folder-plus.svg")
         act_add_folder = QAction(icon_add_folder, tr("add_folder"), self)
-        act_add_folder.setToolTip(tr("add_folder"))
+        act_add_folder.setToolTip(tr("tip_add_folder"))
         act_add_folder.triggered.connect(self.add_folder_dialog)
         self.toolbar_actions.append(act_add_folder)
         self.toolbar_action_icons.append(icon_add_folder)
@@ -195,7 +195,7 @@ class RenamerApp(QWidget):
         self.btn_add_menu.setMenu(self.menu_add)
         self.btn_add_menu.setIcon(self.icon_add_menu)
         self.btn_add_menu.setText(tr("add_menu"))
-        self.btn_add_menu.setToolTip(tr("add_menu"))
+        self.btn_add_menu.setToolTip(tr("tip_add_menu"))
         self.btn_add_menu.setPopupMode(QToolButton.InstantPopup)
         tb.addWidget(self.btn_add_menu)
 
@@ -203,7 +203,7 @@ class RenamerApp(QWidget):
 
         icon_preview = resource_icon("eye.svg")
         act_preview = QAction(icon_preview, tr("preview_rename"), self)
-        act_preview.setToolTip(tr("preview_rename"))
+        act_preview.setToolTip(tr("tip_preview_rename"))
         act_preview.triggered.connect(self.preview_rename)
         tb.addAction(act_preview)
         self.toolbar_actions.append(act_preview)
@@ -214,7 +214,7 @@ class RenamerApp(QWidget):
 
         icon_compress = resource_icon("arrow-down-circle.svg")
         act_compress = QAction(icon_compress, tr("compress"), self)
-        act_compress.setToolTip(tr("compress"))
+        act_compress.setToolTip(tr("tip_compress"))
         act_compress.triggered.connect(self.compress_selected)
         tb.addAction(act_compress)
         self.toolbar_actions.append(act_compress)
@@ -222,7 +222,7 @@ class RenamerApp(QWidget):
 
         icon_convert = resource_icon("image.svg")
         act_convert = QAction(icon_convert, tr("convert_heic"), self)
-        act_convert.setToolTip(tr("convert_heic"))
+        act_convert.setToolTip(tr("tip_convert_heic"))
         act_convert.triggered.connect(self.convert_selected_to_jpeg)
         tb.addAction(act_convert)
         self.toolbar_actions.append(act_convert)
@@ -231,7 +231,7 @@ class RenamerApp(QWidget):
 
         icon_undo = resource_icon("rotate-ccw.svg")
         act_undo = QAction(icon_undo, tr("undo_rename"), self)
-        act_undo.setToolTip(tr("undo_rename"))
+        act_undo.setToolTip(tr("tip_undo_rename"))
         act_undo.triggered.connect(self.undo_rename)
         tb.addAction(act_undo)
         self.toolbar_actions.append(act_undo)
@@ -239,27 +239,27 @@ class RenamerApp(QWidget):
 
         icon_remove_sel = resource_icon("trash-2.svg")
         self.act_remove_sel = QAction(icon_remove_sel, tr("remove_selected"), self)
-        self.act_remove_sel.setToolTip(tr("remove_selected"))
+        self.act_remove_sel.setToolTip(tr("tip_remove_selected"))
         self.act_remove_sel.triggered.connect(self.remove_selected_items)
         self.toolbar_actions.append(self.act_remove_sel)
         self.toolbar_action_icons.append(icon_remove_sel)
 
         self.act_clear_suffix = QAction(icon_remove_sel, tr("clear_suffix"), self)
-        self.act_clear_suffix.setToolTip(tr("clear_suffix"))
+        self.act_clear_suffix.setToolTip(tr("tip_clear_suffix"))
         self.act_clear_suffix.triggered.connect(self.clear_selected_suffixes)
         self.toolbar_actions.append(self.act_clear_suffix)
         self.toolbar_action_icons.append(icon_remove_sel)
 
         icon_clear = resource_icon("trash-2.svg")
         self.act_clear = QAction(icon_clear, tr("clear_list"), self)
-        self.act_clear.setToolTip(tr("clear_list"))
+        self.act_clear.setToolTip(tr("tip_clear_list"))
         self.act_clear.triggered.connect(self.clear_all)
         self.toolbar_actions.append(self.act_clear)
         self.toolbar_action_icons.append(icon_clear)
 
         icon_settings = resource_icon("settings.svg")
         act_settings = QAction(icon_settings, tr("settings_title"), self)
-        act_settings.setToolTip(tr("settings_title"))
+        act_settings.setToolTip(tr("tip_settings"))
         act_settings.triggered.connect(self.open_settings)
         tb.addAction(act_settings)
         self.toolbar_actions.append(act_settings)
@@ -310,15 +310,21 @@ class RenamerApp(QWidget):
             "undo_rename", "remove_selected", "clear_suffix",
             "clear_list", "settings_title"
         ]
-        for action, key in zip(actions, labels):
+        tips = [
+            "tip_add_files", "tip_add_folder", "tip_preview_rename",
+            "tip_compress", "tip_convert_heic",
+            "tip_undo_rename", "tip_remove_selected", "tip_clear_suffix",
+            "tip_clear_list", "tip_settings"
+        ]
+        for action, key, tip in zip(actions, labels, tips):
             action.setText(tr(key))
-            action.setToolTip(tr(key))
+            action.setToolTip(tr(tip))
         # update add menu title and button
         if hasattr(self, "menu_add"):
             self.menu_add.setTitle(tr("add_menu"))
         if hasattr(self, "btn_add_menu"):
             self.btn_add_menu.setText(tr("add_menu"))
-            self.btn_add_menu.setToolTip(tr("add_menu"))
+            self.btn_add_menu.setToolTip(tr("tip_add_menu"))
         # update form labels
         self.lbl_project.setText(tr("project_number_label"))
         if self.tag_panel.isVisible():
@@ -341,13 +347,13 @@ class RenamerApp(QWidget):
                 self.btn_add_menu.setIcon(QIcon())
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
         else:
-            self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
-            self.table_toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            self.table_toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             for action, icon in zip(self.toolbar_actions, self.toolbar_action_icons):
                 action.setIcon(icon)
             if hasattr(self, "btn_add_menu"):
                 self.btn_add_menu.setIcon(self.icon_add_menu)
-                self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonIconOnly)
+                self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
     def on_mode_changed(self, index: int) -> None:
         mode = self.combo_mode.itemData(index)
