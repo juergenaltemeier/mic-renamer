@@ -25,12 +25,14 @@ last_project_number: ""
 tag_panel_visible: false
 toolbar_style: icons
 default_save_directory: ""
+default_import_directory: ""
 compression_max_size_kb: 2048
 compression_quality: 95
 compression_reduce_resolution: true
 compression_resize_only: false
 compression_max_width: 0
 compression_max_height: 0
+compress_after_rename: false
 """
 import yaml
 
