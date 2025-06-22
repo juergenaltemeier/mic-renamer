@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QMenu, QToolButton, QSizePolicy, QToolBar,
 )
 from PySide6.QtGui import QColor, QAction, QIcon
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, QSize
 
 from .. import config_manager
 from ..utils.i18n import tr, set_language
@@ -50,6 +50,7 @@ class RenamerApp(QWidget):
 
         self.toolbar = WrapToolBar()
         self.toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.toolbar.setIconSize(QSize(24, 24))
         self.setup_toolbar()
         main_layout.addWidget(self.toolbar)
 
@@ -101,6 +102,7 @@ class RenamerApp(QWidget):
         table_layout.setSpacing(2)
 
         self.table_toolbar = QToolBar()
+        self.table_toolbar.setIconSize(QSize(24, 24))
         self.setup_table_toolbar()
         self.apply_toolbar_style(config_manager.get("toolbar_style", "icons"))
         table_layout.addWidget(self.table_toolbar)
@@ -244,13 +246,14 @@ class RenamerApp(QWidget):
         self.toolbar_actions.append(self.act_remove_sel)
         self.toolbar_action_icons.append(icon_remove_sel)
 
-        self.act_clear_suffix = QAction(icon_remove_sel, tr("clear_suffix"), self)
+        icon_clear_suffix = resource_icon("suffix-clear.svg")
+        self.act_clear_suffix = QAction(icon_clear_suffix, tr("clear_suffix"), self)
         self.act_clear_suffix.setToolTip(tr("tip_clear_suffix"))
         self.act_clear_suffix.triggered.connect(self.clear_selected_suffixes)
         self.toolbar_actions.append(self.act_clear_suffix)
-        self.toolbar_action_icons.append(icon_remove_sel)
+        self.toolbar_action_icons.append(icon_clear_suffix)
 
-        icon_clear = resource_icon("trash-2.svg")
+        icon_clear = resource_icon("clear.svg")
         self.act_clear = QAction(icon_clear, tr("clear_list"), self)
         self.act_clear.setToolTip(tr("tip_clear_list"))
         self.act_clear.triggered.connect(self.clear_all)
@@ -277,7 +280,9 @@ class RenamerApp(QWidget):
         """Create toolbar with table-related actions."""
         tb = self.table_toolbar
         tb.addAction(self.act_remove_sel)
+        self.act_clear_suffix.setIcon(resource_icon("suffix-clear.svg"))
         tb.addAction(self.act_clear_suffix)
+        self.act_clear.setIcon(resource_icon("clear.svg"))
         tb.addAction(self.act_clear)
         tb.addSeparator()
         self.combo_mode = QComboBox()
