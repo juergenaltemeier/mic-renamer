@@ -1230,7 +1230,8 @@ class RenamerApp(QWidget):
             if self._rename_worker:
                 self._rename_worker.stop()
             self._rename_thread.quit()
-            self._rename_thread.wait(2000)
+            # wait indefinitely for the rename thread to finish
+            self._rename_thread.wait()
             self._rename_thread = None
             self._rename_worker = None
         if self.state_manager:
