@@ -30,18 +30,85 @@ pillow-heif>=0.14
 - New modules must contain docstrings explaining their purpose and public APIs.
 
 ## Threading and Workers
-Long running tasks are executed in background threads using the utilities from `utils/workers.py`. The pattern looks like this:
-```
+
+All long-running or blocking operations are executed off the GUI thread using the `Worker` and `PreviewLoader` utilities in `utils/workers.py`. This keeps the UI responsive and avoids Qt’s “Timers cannot be stopped from another thread” and “QThread: Destroyed while thread '' is still running” warnings.
+
+### Core Pattern
+
+```python
+from utils.workers import Worker
+from PySide6.QtCore import QThread, Qt
+
+# 1. Instantiate your worker, passing in the callable and any arguments.
 worker = Worker(task_func, items)
+
+# 2. Create a QThread, then move the worker into it.
 thread = QThread()
 worker.moveToThread(thread)
-thread.started.connect(worker.run)
-worker.finished.connect(thread.quit)
-thread.finished.connect(thread.deleteLater)
-```
-Signals should use `Qt.QueuedConnection` when crossing threads. Cancel operations should call `worker.stop()` and wait for the thread to finish, as done in `MainWindow.closeEvent()` lines 1224–1241 and in `CompressionDialog` lines 93–111.
 
-Always clean up running threads on application shutdown to avoid dangling workers. Preview image loading follows the same pattern using `PreviewLoader` in `utils/workers.py`.
+# 3. Wire up signals, using QueuedConnection for cross-thread emissions.
+thread.started.connect(worker.run, Qt.QueuedConnection)
+worker.finished.connect(thread.quit, Qt.QueuedConnection)
+worker.finished.connect(worker.deleteLater, Qt.QueuedConnection)
+thread.finished.connect(thread.deleteLater, Qt.QueuedConnection)
+
+# 4. Start the thread.
+thread.start()
+
+
+QObject affinity
+All child QObjects (e.g. QTimer, network requests, temporary QObject parents) must be created inside worker.run() (i.e. after moveToThread()) so they belong to the correct thread. Creating or stopping a QTimer from the main thread will trigger QObject::killTimer errors.
+
+QueuedConnection
+Always specify Qt.QueuedConnection for cross-thread signals to ensure the slot runs in the target’s thread.
+
+Clean shutdown
+To cancel mid-flight (for instance on window close or user cancellation):
+
+python
+Copy
+Edit
+worker.stop()            # implement in your worker to set a “should_stop” flag
+if thread.isRunning():
+    thread.quit()        # exits the thread’s event loop
+    thread.wait(2000)    # block up to 2s for clean shutdown
+This prevents “Destroyed while thread is still running” when Python tears down the QThread object.
+
+MainWindow Shutdown (closeEvent)
+In MainWindow.closeEvent() (lines 1224–1241), ensure each active worker thread is stopped and waited on:
+
+python
+Copy
+Edit
+# pseudo-code from MainWindow.closeEvent
+for thread, worker in self.active_workers:
+    worker.stop()
+    if thread.isRunning():
+        thread.quit()
+        thread.wait(2000)
+This guarantees no timers or event loops linger into interpreter shutdown.
+
+Preview Image Loading
+Preview images are loaded via PreviewLoader in utils/workers.py, using the same threading pattern:
+
+python
+Copy
+Edit
+from utils.workers import PreviewLoader
+from PySide6.QtCore import QThread, Qt
+
+loader = PreviewLoader(file_path, size)
+thread = QThread()
+loader.moveToThread(thread)
+
+thread.started.connect(loader.load, Qt.QueuedConnection)
+loader.finished.connect(self.on_preview_ready, Qt.QueuedConnection)
+loader.finished.connect(thread.quit, Qt.QueuedConnection)
+thread.finished.connect(thread.deleteLater)
+
+thread.start()
+Because all QPixmap/QImage and QPainter calls happen inside loader.load(), they run in the correct thread and avoid cross-thread issues.
+
 
 ## Miscellaneous
 - Configuration files are stored in a user directory (`RENAMER_CONFIG_DIR` overrides the location). See README lines 19–24 for details.
