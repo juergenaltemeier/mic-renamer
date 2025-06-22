@@ -5,11 +5,18 @@ from __future__ import annotations
 from PySide6.QtWidgets import QLayout, QWidgetItem, QWidget
 from PySide6.QtCore import QRect, QSize, Qt
 
+from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
+
 
 class FlowLayout(QLayout):
     """Lay out widgets horizontally and wrap them to new rows when needed."""
 
-    def __init__(self, parent: QWidget | None = None, margin: int = 0, spacing: int | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        margin: int = DEFAULT_MARGIN,
+        spacing: int | None = DEFAULT_SPACING,
+    ) -> None:
         super().__init__(parent)
         self._items: list[QWidgetItem] = []
         if parent is not None:

@@ -13,6 +13,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 import re
 
+from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
+
 
 class DigitEdit(QLineEdit):
     """Single digit editor that selects its text on focus."""
@@ -31,8 +33,10 @@ class ProjectNumberInput(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(2)
+        layout.setContentsMargins(
+            DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
+        )
+        layout.setSpacing(DEFAULT_SPACING)
         self._digits: list[DigitEdit] = []
         self.prefix = QLabel(" C")
         layout.addWidget(self.prefix)
