@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import shutil
 from PIL import Image
 from pillow_heif import register_heif_opener
 
@@ -28,30 +29,39 @@ class ImageCompressor:
         self.max_width = max_width
         self.max_height = max_height
 
-    def compress(self, path: str, convert_heic: bool = False) -> tuple[str, int, int]:
-        """Compress ``path`` in-place.
+    def compress(
+        self,
+        path: str,
+        convert_heic: bool = False,
+        dest_path: str | None = None,
+    ) -> tuple[str, int, int]:
+        """Compress ``path`` optionally saving to ``dest_path``.
+
+        If ``dest_path`` is ``None`` (default) the original file is overwritten.
+        When ``dest_path`` is provided the original file is left untouched and
+        the compressed image is written to that location instead.
 
         Returns a tuple ``(new_path, new_size, reduction_percent)``.
         ``new_path`` may differ if HEIC conversion occurs.
         """
         if not os.path.isfile(path):
             return path, 0, 0
-        orig_size = os.path.getsize(path)
-        if orig_size <= self.max_size and not (convert_heic and path.lower().endswith(".heic")):
-            return path, orig_size, 0
 
-        if convert_heic and path.lower().endswith(".heic"):
-            dest_path = str(Path(path).with_suffix(".jpg"))
-            img = Image.open(path)
-            img = img.convert("RGB")
-            img.save(dest_path, "JPEG", quality=self.quality)
-            img.close()
-            os.remove(path)
-            path = dest_path
-            orig_size = os.path.getsize(path)
+        out_path = dest_path or path
+        orig_size = os.path.getsize(path)
+
+        # handle simple copy when no compression/conversion is required
+        if orig_size <= self.max_size and not (convert_heic and path.lower().endswith(".heic")):
+            if dest_path:
+                shutil.copy2(path, out_path)
+            return out_path, orig_size, 0
 
         img = Image.open(path)
         fmt = img.format
+        if convert_heic and path.lower().endswith(".heic"):
+            fmt = "JPEG"
+            img = img.convert("RGB")
+            out_path = str(Path(out_path).with_suffix(".jpg"))
 
         # resize according to configured max dimensions
         if self.max_width or self.max_height:
@@ -69,13 +79,19 @@ class ImageCompressor:
         if fmt == "JPEG" and not self.resize_only:
             save_kwargs["quality"] = self.quality
 
-        img.save(path, format=fmt, **save_kwargs)
-        new_size = os.path.getsize(path)
+        img.save(out_path, format=fmt, **save_kwargs)
+        new_size = os.path.getsize(out_path)
         if self.reduce_resolution and new_size > self.max_size:
             while new_size > self.max_size and img.width > 100 and img.height > 100:
                 img = img.resize((int(img.width * 0.9), int(img.height * 0.9)), Image.LANCZOS)
-                img.save(path, format=fmt, **save_kwargs)
-                new_size = os.path.getsize(path)
+                img.save(out_path, format=fmt, **save_kwargs)
+                new_size = os.path.getsize(out_path)
         img.close()
         reduction = int(100 - (new_size / orig_size * 100))
-        return path, new_size, reduction
+
+        if dest_path is None and out_path != path:
+            # in-place conversion from HEIC removed original file
+            os.remove(path)
+            path = out_path
+
+        return out_path, new_size, reduction

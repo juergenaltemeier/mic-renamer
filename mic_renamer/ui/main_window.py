@@ -820,7 +820,7 @@ class RenamerApp(QWidget):
         from .compression_dialog import CompressionDialog
         dlg = CompressionDialog(paths, convert_heic, parent=self)
         if dlg.exec() == QDialog.Accepted:
-            for row, new_path, size_bytes, compressed_bytes in dlg.results:
+            for row, new_path, size_bytes, compressed_bytes in dlg.final_results:
                 item0 = self.table_widget.item(row, 1)
                 item0.setData(Qt.UserRole, new_path)
                 item0.setText(os.path.basename(new_path))

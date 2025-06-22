@@ -7,8 +7,12 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QDialogButtonBox,
     QProgressDialog,
+    QLabel,
 )
 import os
+import tempfile
+import shutil
+from pathlib import Path
 
 from ..logic.image_compressor import ImageCompressor
 from ..utils.i18n import tr
@@ -24,12 +28,15 @@ class CompressionDialog(QDialog):
     def __init__(self, rows_and_paths: list[tuple[int, str]], convert_heic: bool, parent=None):
         super().__init__(parent)
         self.setWindowTitle(tr("compression_window_title"))
-        self.results: list[tuple[int, str, int, int]] = []
+        self.results: list[tuple[int, str, str, int, int]] = []
+        self.final_results: list[tuple[int, str, int, int]] = []
         self._paths: list[str] = []
+        self._tmpdir = tempfile.TemporaryDirectory()
         layout = QVBoxLayout(self)
 
         self.viewer = MediaViewer()
         layout.addWidget(self.viewer)
+        layout.addWidget(QLabel(tr("compression_ok_info")))
 
         valid = [rp for rp in rows_and_paths if os.path.isfile(rp[1])]
         self.table = QTableWidget(0, 4)
@@ -90,7 +97,13 @@ class CompressionDialog(QDialog):
     def _compress_item(self, item: tuple[int, str]):
         row, path = item
         old_size = os.path.getsize(path)
-        new_path, new_size, reduction = self._compressor.compress(path, self._convert_heic)
+        dest_name = f"{row}_{os.path.basename(path)}"
+        dest = os.path.join(self._tmpdir.name, dest_name)
+        new_path, new_size, reduction = self._compressor.compress(
+            path,
+            self._convert_heic,
+            dest_path=dest,
+        )
         return row, path, new_path, old_size, new_size, reduction
 
     def _on_progress(self, done: int, total: int, item: tuple[int, str]):
@@ -107,13 +120,13 @@ class CompressionDialog(QDialog):
         self._btn_ok.setEnabled(True)
         self.table.setRowCount(len(results))
         for idx, res in enumerate(results):
-            row, _orig, new_path, old_size, new_size, reduction = res
-            self.table.setItem(idx, 0, QTableWidgetItem(os.path.basename(new_path)))
+            row, orig, preview, old_size, new_size, reduction = res
+            self.table.setItem(idx, 0, QTableWidgetItem(os.path.basename(orig)))
             self.table.setItem(idx, 1, QTableWidgetItem(f"{old_size // 1024} KB"))
             self.table.setItem(idx, 2, QTableWidgetItem(f"{new_size // 1024} KB"))
             self.table.setItem(idx, 3, QTableWidgetItem(f"{reduction}%"))
-            self.results.append((row, new_path, old_size, new_size))
-            self._paths.append(new_path)
+            self.results.append((row, orig, preview, old_size, new_size))
+            self._paths.append(preview)
         if self.table.rowCount() > 0:
             self.table.selectRow(0)
             self.viewer.load_path(self._paths[0])
@@ -121,5 +134,20 @@ class CompressionDialog(QDialog):
     def on_row_changed(self, row: int, *_):
         if 0 <= row < len(self._paths):
             self.viewer.load_path(self._paths[row])
+
+    def accept(self) -> None:
+        for row, orig, preview, old_size, new_size in self.results:
+            final_path = orig
+            if Path(preview).suffix != Path(orig).suffix:
+                final_path = str(Path(orig).with_suffix(Path(preview).suffix))
+                os.remove(orig)
+            shutil.move(preview, final_path)
+            self.final_results.append((row, final_path, old_size, new_size))
+        self._tmpdir.cleanup()
+        super().accept()
+
+    def reject(self) -> None:
+        self._tmpdir.cleanup()
+        super().reject()
 
 
