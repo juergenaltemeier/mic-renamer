@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QMenu, QToolButton, QSizePolicy, QToolBar,
 )
 from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPixmapCache, QImage
-from PySide6.QtCore import Qt, QTimer, QSize, QThread
+from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot
 
 from .. import config_manager
 from ..utils.i18n import tr, set_language
@@ -728,9 +728,13 @@ class RenamerApp(QWidget):
         self._preview_thread = QThread(self)
         self._preview_loader.moveToThread(self._preview_thread)
         self._preview_thread.started.connect(self._preview_loader.run)
-        self._preview_loader.finished.connect(self._on_preview_loaded)
+        self._preview_loader.finished.connect(
+            self._on_preview_loaded,
+            Qt.QueuedConnection,
+        )
         self._preview_thread.start()
 
+    @Slot(str, QImage)
     def _on_preview_loaded(self, path: str, image: QImage) -> None:
         if self._preview_thread:
             self._preview_thread.quit()
