@@ -536,7 +536,6 @@ class RenamerApp(QWidget):
                     cell_suffix.setToolTip(settings.suffix)
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
-        QTimer.singleShot(0, self._enable_sorting)
 
     def on_tag_toggled(self, code: str, state: int) -> None:
         """Apply tag changes from the tag panel to all selected rows immediately.
@@ -1075,6 +1074,7 @@ class RenamerApp(QWidget):
         self.update_status()
     def execute_rename_with_progress(self, table_mapping, compress: bool = False):
         self.set_status_message(tr("renaming_files"))
+        self.table_widget.setSortingEnabled(False)
         total = len(table_mapping)
         progress = QProgressDialog(
             tr("renaming_files"),
@@ -1176,6 +1176,7 @@ class RenamerApp(QWidget):
                     increment_tags(used_tags)
                     self.tag_panel.rebuild()
             self.set_status_message(None)
+            self._enable_sorting()
 
         worker.finished.connect(on_finished)
         thread.start()
