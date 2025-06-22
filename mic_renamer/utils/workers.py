@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Callable, Iterable, Any
 
 from PySide6.QtCore import QObject, Signal, Slot, QSize
-from PySide6.QtGui import QPixmap, QPixmapCache, QImageReader
+from PySide6.QtGui import QPixmapCache, QImageReader, QImage
 
 
 class Worker(QObject):
@@ -39,7 +39,7 @@ class Worker(QObject):
 class PreviewLoader(QObject):
     """Load an image preview off the main thread."""
 
-    finished = Signal(str, QPixmap)
+    finished = Signal(str, QImage)
 
     def __init__(self, path: str, target_size: QSize) -> None:
         super().__init__()
@@ -51,18 +51,13 @@ class PreviewLoader(QObject):
     def run(self) -> None:
         if self._stop:
             return
-        pix = QPixmap()
-        if not QPixmapCache.find(self._path, pix):
-            reader = QImageReader(self._path)
-            reader.setAutoTransform(True)
-            if self._target_size.isValid():
-                reader.setScaledSize(self._target_size)
-            img = reader.read()
-            if not img.isNull():
-                pix = QPixmap.fromImage(img)
-                QPixmapCache.insert(self._path, pix)
+        reader = QImageReader(self._path)
+        reader.setAutoTransform(True)
+        if self._target_size.isValid():
+            reader.setScaledSize(self._target_size)
+        img = reader.read()
         if not self._stop:
-            self.finished.emit(self._path, pix)
+            self.finished.emit(self._path, img)
 
     @Slot()
     def stop(self) -> None:
