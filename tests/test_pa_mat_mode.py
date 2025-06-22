@@ -37,4 +37,4 @@ def test_pa_mat_used_in_name(tmp_path):
     mapping = renamer.build_mapping()
     assert len(mapping) == 1
     _, _, new = mapping[0]
-    assert "_pa_mat7" in os.path.basename(new)
+    assert "_PA_MAT7" in os.path.basename(new)
