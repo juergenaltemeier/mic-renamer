@@ -1,5 +1,6 @@
 import os
 import re
+import logging
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
     QPushButton, QSlider, QFileDialog, QMessageBox,
@@ -740,10 +741,15 @@ class RenamerApp(QWidget):
             self._preview_thread.deleteLater()
         self._preview_thread = None
         self._preview_loader = None
-        if not pixmap.isNull():
-            QPixmapCache.insert(path, pixmap)
-            self.image_viewer.show_pixmap(pixmap)
+        if pixmap.isNull():
+            logging.getLogger(__name__).warning("Failed to load preview: %s", path)
+            placeholder = self.image_viewer.image_viewer.placeholder_pixmap
+            self.image_viewer.show_pixmap(placeholder)
             self.zoom_slider.setValue(self.image_viewer.zoom_pct)
+            return
+        QPixmapCache.insert(path, pixmap)
+        self.image_viewer.show_pixmap(pixmap)
+        self.zoom_slider.setValue(self.image_viewer.zoom_pct)
 
     def on_zoom_slider_changed(self, value: int):
         self.image_viewer.zoom_pct = value
