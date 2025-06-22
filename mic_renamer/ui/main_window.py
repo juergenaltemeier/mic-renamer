@@ -728,10 +728,7 @@ class RenamerApp(QWidget):
         self._preview_thread = QThread(self)
         self._preview_loader.moveToThread(self._preview_thread)
         self._preview_thread.started.connect(self._preview_loader.run)
-        self._preview_loader.finished.connect(
-            self._on_preview_loaded,
-            Qt.QueuedConnection,
-        )
+        self._preview_loader.finished.connect(self._on_preview_loaded, Qt.QueuedConnection)
         self._preview_thread.start()
 
     @Slot(str, QImage)
