@@ -20,12 +20,16 @@ def convert_to_jpeg(path: str) -> str:
         return path
     try:
         img = Image.open(src)
+        exif_data = img.info.get("exif")
     except Exception:
         return path
     img = img.convert("RGB")
     dest = src.with_suffix(".jpg")
     try:
-        img.save(dest, format="JPEG")
+        if exif_data:
+            img.save(dest, format="JPEG", exif=exif_data)
+        else:
+            img.save(dest, format="JPEG")
     except Exception:
         img.close()
         return path
@@ -48,17 +52,24 @@ def convert_heic(path: str) -> str:
         return path
     try:
         img = Image.open(src)
+        exif_data = img.info.get("exif")
     except Exception:
         return path
 
     has_alpha = "A" in img.getbands()
     if has_alpha:
         dest = src.with_suffix(".png")
-        img.save(dest, format="PNG")
+        if exif_data:
+            img.save(dest, format="PNG", exif=exif_data)
+        else:
+            img.save(dest, format="PNG")
     else:
         img = img.convert("RGB")
         dest = src.with_suffix(".jpg")
-        img.save(dest, format="JPEG")
+        if exif_data:
+            img.save(dest, format="JPEG", exif=exif_data)
+        else:
+            img.save(dest, format="JPEG")
     img.close()
     try:
         src.unlink()

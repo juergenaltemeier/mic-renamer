@@ -57,6 +57,7 @@ class ImageCompressor:
             return out_path, orig_size, 0
 
         img = Image.open(path)
+        exif_data = img.info.get("exif")
         fmt = img.format
         if convert_heic and path.lower().endswith(".heic"):
             fmt = "JPEG"
@@ -79,11 +80,15 @@ class ImageCompressor:
         if fmt == "JPEG" and not self.resize_only:
             save_kwargs["quality"] = self.quality
 
+        if exif_data:
+            save_kwargs["exif"] = exif_data
         img.save(out_path, format=fmt, **save_kwargs)
         new_size = os.path.getsize(out_path)
         if self.reduce_resolution and new_size > self.max_size:
             while new_size > self.max_size and img.width > 100 and img.height > 100:
                 img = img.resize((int(img.width * 0.9), int(img.height * 0.9)), Image.LANCZOS)
+                if exif_data:
+                    save_kwargs["exif"] = exif_data
                 img.save(out_path, format=fmt, **save_kwargs)
                 new_size = os.path.getsize(out_path)
         img.close()
