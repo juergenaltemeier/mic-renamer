@@ -6,7 +6,7 @@ from typing import Iterable
 
 from PySide6.QtWidgets import QWidget, QToolButton, QFrame
 from PySide6.QtGui import QAction
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 
 from .flow_layout import FlowLayout
 
@@ -21,12 +21,14 @@ class WrapToolBar(QWidget):
         self._layout.setSpacing(2)
         self._buttons: list[QToolButton] = []
         self._tool_button_style = Qt.ToolButtonIconOnly
+        self._icon_size = QSize(24, 24)
 
     # basic API -------------------------------------------------------
     def addAction(self, action: QAction) -> QToolButton:  # noqa: D401 - Qt like
         btn = QToolButton()
         btn.setDefaultAction(action)
         btn.setToolButtonStyle(self._tool_button_style)
+        btn.setIconSize(self._icon_size)
         self._layout.addWidget(btn)
         self._buttons.append(btn)
         return btn
@@ -35,6 +37,7 @@ class WrapToolBar(QWidget):
         self._layout.addWidget(widget)
         if isinstance(widget, QToolButton):
             widget.setToolButtonStyle(self._tool_button_style)
+            widget.setIconSize(self._icon_size)
             self._buttons.append(widget)
 
     def addSeparator(self) -> None:  # noqa: D401 - Qt like
@@ -54,3 +57,13 @@ class WrapToolBar(QWidget):
 
     def toolButtonStyle(self) -> Qt.ToolButtonStyle:  # noqa: D401
         return self._tool_button_style
+
+    def setIconSize(self, size: QSize) -> None:
+        """Set icon size for all buttons."""
+        self._icon_size = size
+        for btn in self._buttons:
+            btn.setIconSize(size)
+
+    def iconSize(self) -> QSize:
+        """Return current icon size."""
+        return self._icon_size
