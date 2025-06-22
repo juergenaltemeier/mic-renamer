@@ -46,6 +46,7 @@ def test_rename_updates_sorted_rows(app, monkeypatch, tmp_path):
     win.table_widget.add_paths([str(img_a), str(img_b)])
     # sort descending by filename
     win.table_widget.sortByColumn(1, Qt.DescendingOrder)
+    win.table_widget.setSortingEnabled(True)
     app.processEvents()
 
     new_c = tmp_path / "c.jpg"
