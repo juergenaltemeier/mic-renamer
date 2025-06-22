@@ -2,11 +2,13 @@
 from PySide6.QtWidgets import QWidget, QGraphicsView, QGraphicsScene
 from PySide6.QtGui import QPixmap, QPainter, QImage, QImageReader
 from PySide6.QtCore import Qt
+import logging
 
 
 class ImageViewer(QGraphicsView):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._log = logging.getLogger(__name__)
         scene = QGraphicsScene(self)
         self.setScene(scene)
         self.pixmap_item = None
@@ -19,6 +21,19 @@ class ImageViewer(QGraphicsView):
         self._zoom_pct = 100
         self._rotation = 0
         self.setFocusPolicy(Qt.StrongFocus)
+        self.placeholder_pixmap = self._create_placeholder_pixmap()
+
+    def _create_placeholder_pixmap(self) -> QPixmap:
+        """Return a simple cross-hatch placeholder pixmap."""
+        size = 200
+        pix = QPixmap(size, size)
+        pix.fill(Qt.lightGray)
+        painter = QPainter(pix)
+        painter.setPen(Qt.darkGray)
+        painter.drawLine(0, 0, size, size)
+        painter.drawLine(0, size, size, 0)
+        painter.end()
+        return pix
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -26,12 +41,7 @@ class ImageViewer(QGraphicsView):
 
     def load_image(self, path: str):
         if not path:
-            self.scene().clear()
-            self.pixmap_item = None
-            self.current_pixmap = None
-            self._zoom_pct = 100
-            self._rotation = 0
-            self.reset_transform()
+            self.set_pixmap(self.placeholder_pixmap)
             return
         reader = QImageReader(path)
         reader.setAutoTransform(True)
@@ -49,12 +59,8 @@ class ImageViewer(QGraphicsView):
             except Exception:
                 img = QImage()
         if img.isNull():
-            self.scene().clear()
-            self.pixmap_item = None
-            self.current_pixmap = None
-            self._zoom_pct = 100
-            self._rotation = 0
-            self.reset_transform()
+            self._log.warning("Failed to load image: %s", path)
+            self.set_pixmap(self.placeholder_pixmap)
             return
         pix = QPixmap.fromImage(img)
         self.set_pixmap(pix)
