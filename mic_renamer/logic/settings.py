@@ -56,8 +56,6 @@ class ItemSettings:
         date_str = self._date_str(config)
         parts = [project] + ordered_tags + [date_str]
         base = config.separator.join(parts)
-        if self.suffix:
-            base += f"{config.separator}{self.suffix}"
         return base
 
     def build_new_name(
@@ -69,10 +67,13 @@ class ItemSettings:
         include_index: bool = True,
     ) -> str:
         base = self.build_base_name(project, ordered_tags, config)
+        name = base
         if include_index:
-            base += f"{config.separator}{index:0{config.index_padding}d}"
+            name += f"{config.separator}{index:0{config.index_padding}d}"
+        if self.suffix:
+            name += f"{config.separator}{self.suffix}"
         ext = os.path.splitext(self.original_path)[1]
-        return base + ext
+        return name + ext
 
 
 # backward compatibility
