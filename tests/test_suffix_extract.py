@@ -58,3 +58,17 @@ def test_suffix_before_numeric_index(app, monkeypatch, tmp_path):
     win = RenamerApp()
     win.table_widget.add_paths([str(img)])
     assert win.table_widget.item(0, 4).text() == "note"
+
+
+def test_multi_token_suffix(app, monkeypatch, tmp_path):
+    tags = {"A": "Alpha"}
+    monkeypatch.setattr("mic_renamer.logic.tag_loader.load_tags", lambda: tags)
+    monkeypatch.setattr("mic_renamer.ui.panels.file_table.load_tags", lambda: tags)
+    img = tmp_path / "proj_A_230101_long_extra_001.jpg"
+    img.write_bytes(b"x")
+    win = RenamerApp()
+    win.table_widget.add_paths([str(img)])
+    assert win.table_widget.item(0, 4).text() == "long_extra"
+    item0 = win.table_widget.item(0, 1)
+    settings = item0.data(ROLE_SETTINGS)
+    assert settings.suffix == "long_extra"
