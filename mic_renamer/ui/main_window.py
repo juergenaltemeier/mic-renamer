@@ -68,7 +68,7 @@ class RenamerApp(QWidget):
         viewer_layout = QVBoxLayout(viewer_widget)
 
         self.image_viewer = MediaViewer()
-        ar_widget = AspectRatioWidget()
+        ar_widget = AspectRatioWidget(aspect_ratio=None)
         ar_widget.setWidget(self.image_viewer)
 
         self.viewer_actions: list[QAction] = []

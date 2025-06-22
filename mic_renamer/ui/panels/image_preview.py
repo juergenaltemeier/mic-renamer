@@ -20,6 +20,10 @@ class ImageViewer(QGraphicsView):
         self._rotation = 0
         self.setFocusPolicy(Qt.StrongFocus)
 
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.apply_transformations()
+
     def load_image(self, path: str):
         if not path:
             self.scene().clear()
@@ -124,7 +128,7 @@ class ImageViewer(QGraphicsView):
 
 
 class AspectRatioWidget(QWidget):
-    def __init__(self, aspect_ratio=16 / 9, parent=None):
+    def __init__(self, aspect_ratio: float | None = 16 / 9, parent=None):
         super().__init__(parent)
         self.aspect_ratio = aspect_ratio
         self._widget = None
@@ -135,6 +139,9 @@ class AspectRatioWidget(QWidget):
 
     def resizeEvent(self, event):
         if not self._widget:
+            return super().resizeEvent(event)
+        if self.aspect_ratio is None:
+            self._widget.setGeometry(self.rect())
             return super().resizeEvent(event)
         w = self.width()
         h = self.height()
