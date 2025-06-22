@@ -9,6 +9,7 @@ from PySide6.QtGui import QAction
 from PySide6.QtCore import Qt, QSize
 
 from .flow_layout import FlowLayout
+from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
 
 
 class WrapToolBar(QWidget):
@@ -17,8 +18,10 @@ class WrapToolBar(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._layout = FlowLayout(self)
-        self._layout.setContentsMargins(0, 0, 0, 0)
-        self._layout.setSpacing(2)
+        self._layout.setContentsMargins(
+            DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
+        )
+        self._layout.setSpacing(DEFAULT_SPACING)
         self._buttons: list[QToolButton] = []
         self._tool_button_style = Qt.ToolButtonIconOnly
         self._icon_size = QSize(24, 24)

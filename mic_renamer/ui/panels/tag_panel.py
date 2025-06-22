@@ -2,6 +2,7 @@
 from PySide6.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QLabel
 from ..components import EnterToggleCheckBox
 from PySide6.QtCore import Signal
+from ..constants import DEFAULT_MARGIN, DEFAULT_SPACING
 import logging
 
 from ...logic.tag_loader import load_tags
@@ -18,12 +19,16 @@ class TagPanel(QWidget):
         super().__init__(parent)
         self._log = logging.getLogger(__name__)
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(2)
+        layout.setContentsMargins(
+            DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
+        )
+        layout.setSpacing(DEFAULT_SPACING)
         self.checkbox_container = QWidget()
         self.tag_layout = QGridLayout(self.checkbox_container)
-        self.tag_layout.setContentsMargins(0, 0, 0, 0)
-        self.tag_layout.setSpacing(2)
+        self.tag_layout.setContentsMargins(
+            DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
+        )
+        self.tag_layout.setSpacing(DEFAULT_SPACING)
         layout.addWidget(self.checkbox_container)
         self.checkbox_map: dict[str, EnterToggleCheckBox] = {}
         self.tags_info: dict[str, str] | None = tags_info

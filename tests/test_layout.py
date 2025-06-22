@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QApplication, QSizePolicy
 
 
 from mic_renamer.ui.main_window import RenamerApp
+from mic_renamer.ui.constants import DEFAULT_MARGIN, DEFAULT_SPACING
 
 
 @pytest.fixture(scope="module")
@@ -21,8 +22,18 @@ def test_splitter_below_toolbar(app):
     app.processEvents()
     layout = win.layout()
     margins = layout.contentsMargins()
-    assert (margins.left(), margins.top(), margins.right(), margins.bottom()) == (0, 0, 0, 0)
-    assert layout.spacing() == 2
+    assert (
+        margins.left(),
+        margins.top(),
+        margins.right(),
+        margins.bottom(),
+    ) == (
+        DEFAULT_MARGIN,
+        DEFAULT_MARGIN,
+        DEFAULT_MARGIN,
+        DEFAULT_MARGIN,
+    )
+    assert layout.spacing() == DEFAULT_SPACING
     assert layout.itemAt(0).widget() is win.toolbar
     assert layout.itemAt(1).widget() is win.splitter
     assert layout.stretch(1) == 1

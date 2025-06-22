@@ -17,6 +17,7 @@ from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtMultimediaWidgets import QVideoWidget
 
 from .image_preview import ImageViewer
+from ..constants import DEFAULT_MARGIN, DEFAULT_SPACING
 
 
 class VideoPlayer(QWidget):
@@ -43,7 +44,9 @@ class VideoPlayer(QWidget):
         self.player.playbackStateChanged.connect(self._sync_button)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(
+            DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
+        )
         layout.addWidget(self.video_widget)
         controls = QHBoxLayout()
         controls.addWidget(self.btn_play)

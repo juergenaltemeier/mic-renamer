@@ -15,6 +15,7 @@ from .. import config_manager
 from ..utils.i18n import tr, set_language
 from .settings_dialog import SettingsDialog
 from .theme import resource_icon
+from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
 from .panels import (
     MediaViewer,
     AspectRatioWidget,
@@ -45,8 +46,10 @@ class RenamerApp(QWidget):
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(2)
+        main_layout.setContentsMargins(
+            DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
+        )
+        main_layout.setSpacing(DEFAULT_SPACING)
 
         self.toolbar = WrapToolBar()
         self.toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -132,8 +135,10 @@ class RenamerApp(QWidget):
         # table toolbar directly above the table widget
         table_container = QWidget()
         table_layout = QVBoxLayout(table_container)
-        table_layout.setContentsMargins(0, 0, 0, 0)
-        table_layout.setSpacing(2)
+        table_layout.setContentsMargins(
+            DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
+        )
+        table_layout.setSpacing(DEFAULT_SPACING)
 
         self.table_toolbar = QToolBar()
         self.table_toolbar.setIconSize(QSize(24, 24))
