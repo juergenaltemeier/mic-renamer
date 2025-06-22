@@ -574,7 +574,6 @@ class RenamerApp(QWidget):
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         QTimer.singleShot(0, self.on_table_selection_changed)
-        QTimer.singleShot(0, self._enable_sorting)
 
     def update_row_background(self, row: int, settings: ItemSettings):
         for col in range(self.table_widget.columnCount()):
@@ -647,8 +646,6 @@ class RenamerApp(QWidget):
                 other_settings.tags = set(valid_tags)
                 self.update_row_background(r, other_settings)
             self.table_widget._selection_before_edit = []
-            if rows:
-                QTimer.singleShot(0, self._enable_sorting)
         elif self.rename_mode == MODE_NORMAL and col == 3:
             text = item.text().strip()
             if not re.fullmatch(r"\d{6}", text):
@@ -697,8 +694,6 @@ class RenamerApp(QWidget):
                 other_settings.suffix = new_suffix
                 self.update_row_background(r, other_settings)
             self.table_widget._selection_before_edit = []
-            if rows:
-                QTimer.singleShot(0, self._enable_sorting)
         self.update_row_background(row, settings)
         if row in {idx.row() for idx in self.table_widget.selectionModel().selectedRows()}:
             self.on_table_selection_changed()
@@ -826,7 +821,6 @@ class RenamerApp(QWidget):
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         self.on_table_selection_changed()
-        QTimer.singleShot(0, self._enable_sorting)
 
     def compress_selected(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
