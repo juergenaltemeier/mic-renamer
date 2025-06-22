@@ -18,7 +18,6 @@ accepted_extensions:
   - .avi
   - .mov
   - .mkv
-  - .heic
 language: en
 tags_file: tags.json
 tag_usage_file: tag_usage.json
