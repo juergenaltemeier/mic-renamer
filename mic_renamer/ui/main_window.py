@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QMenu, QToolButton, QSizePolicy, QToolBar,
 )
 from PySide6.QtGui import QColor, QAction, QIcon
-from PySide6.QtCore import Qt, QTimer, QSize
+from PySide6.QtCore import Qt, QTimer, QSize, QThread
 
 from .. import config_manager
 from ..utils.i18n import tr, set_language
@@ -30,6 +30,7 @@ from ..logic.image_compressor import ImageCompressor
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
 from .wrap_toolbar import WrapToolBar
+from ..utils.workers import Worker
 
 
 ROLE_SETTINGS = Qt.UserRole + 1
@@ -821,35 +822,52 @@ class RenamerApp(QWidget):
         progress.setWindowModality(Qt.WindowModal)
         progress.setMinimumDuration(200)
         progress.setValue(0)
-        current = self.table_widget.currentRow()
-        converted = 0
-        done = 0
-        for row in rows:
-            if progress.wasCanceled():
-                break
+
+        def task(row):
             item0 = self.table_widget.item(row, 1)
-            if item0:
-                path = item0.data(Qt.UserRole)
-                new_path = convert_to_jpeg(path)
-                if new_path != path:
+            if not item0:
+                return (row, None, None, None)
+            path = item0.data(Qt.UserRole)
+            new_path = convert_to_jpeg(path)
+            size = os.path.getsize(new_path) if new_path != path else None
+            return (row, path, new_path, size)
+
+        worker = Worker(task, rows)
+        thread = QThread(self)
+        worker.moveToThread(thread)
+        thread.started.connect(worker.run)
+        worker.progress.connect(lambda d, t, _: progress.setValue(d))
+        progress.canceled.connect(worker.stop)
+        current = self.table_widget.currentRow()
+
+        def on_finished(results):
+            progress.close()
+            thread.quit()
+            thread.wait()
+            worker.deleteLater()
+            thread.deleteLater()
+            converted = 0
+            for row, orig, new_path, size in results:
+                if new_path and new_path != orig:
+                    item0 = self.table_widget.item(row, 1)
                     item0.setData(Qt.UserRole, new_path)
                     item0.setText(os.path.basename(new_path))
-                    size = os.path.getsize(new_path)
-                    st: ItemSettings = item0.data(ROLE_SETTINGS)
-                    if st:
-                        st.size_bytes = size
-                        st.compressed_bytes = size
+                    if size is not None:
+                        st: ItemSettings = item0.data(ROLE_SETTINGS)
+                        if st:
+                            st.size_bytes = size
+                            st.compressed_bytes = size
                     if row == current:
                         self.load_preview(new_path)
                     converted += 1
-            done += 1
-            progress.setValue(done)
-        progress.close()
-        QMessageBox.information(
-            self,
-            tr("done"),
-            f"Converted {converted} of {total} images to JPEG."
-        )
+            QMessageBox.information(
+                self,
+                tr("done"),
+                f"Converted {converted} of {total} images to JPEG."
+            )
+
+        worker.finished.connect(on_finished)
+        thread.start()
 
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
@@ -984,6 +1002,10 @@ class RenamerApp(QWidget):
                     break
         self.execute_rename_with_progress(table_mapping, compress=compress)
 
+    def set_status_message(self, message: str | None) -> None:
+        """Display an additional message in the status bar."""
+        self.status_message = message or ""
+        self.update_status()
     def execute_rename_with_progress(self, table_mapping, compress: bool = False):
         self.set_status_message(tr("renaming_files"))
         total = len(table_mapping)
@@ -997,7 +1019,7 @@ class RenamerApp(QWidget):
         progress.setWindowModality(Qt.WindowModal)
         progress.setMinimumDuration(200)
         progress.setValue(0)
-        done = 0
+
         if compress:
             cfg = config_manager.load()
             compressor = ImageCompressor(
@@ -1010,58 +1032,86 @@ class RenamerApp(QWidget):
             )
         else:
             compressor = None
-        used_tags = []
-        for row, orig, new_name, new_path in table_mapping:
-            if progress.wasCanceled():
-                break
+
+        def task(item):
+            row, orig, _new_name, new_path = item
+            result = {
+                "row": row,
+                "orig": orig,
+                "new": new_path,
+                "old_size": None,
+                "new_size": None,
+                "error": None,
+            }
             try:
                 orig_abs = os.path.abspath(orig)
                 new_abs = os.path.abspath(new_path)
                 if orig_abs != new_abs:
                     os.rename(orig, new_path)
-                    item0 = self.table_widget.item(row, 1)
+                final_path = new_path
+                if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
+                    old_size = os.path.getsize(new_path)
+                    final_path, new_size, _ = compressor.compress(new_path)
+                    result["old_size"] = old_size
+                    result["new_size"] = new_size
+                result["new"] = final_path
+            except Exception as e:  # pragma: no cover - filesystem errors
+                result["error"] = str(e)
+            return result
+
+        worker = Worker(task, table_mapping)
+        thread = QThread(self)
+        worker.moveToThread(thread)
+        thread.started.connect(worker.run)
+        worker.progress.connect(lambda d, t, _: progress.setValue(d))
+        progress.canceled.connect(worker.stop)
+
+        def on_finished(results):
+            progress.close()
+            thread.quit()
+            thread.wait()
+            worker.deleteLater()
+            thread.deleteLater()
+            used_tags = []
+            done = len(results)
+            for res in results:
+                if res.get("error"):
+                    QMessageBox.warning(
+                        self,
+                        tr("rename_failed"),
+                        f"Fehler beim Umbenennen:\n{res['orig']}\n→ {res['new']}\nError: {res['error']}"
+                    )
+                    continue
+                row = res["row"]
+                new_path = res["new"]
+                item0 = self.table_widget.item(row, 1)
+                if item0:
                     item0.setText(os.path.basename(new_path))
                     item0.setData(Qt.UserRole, new_path)
                     settings = item0.data(ROLE_SETTINGS)
                     if settings and self.rename_mode == MODE_NORMAL:
                         used_tags.extend(settings.tags)
-                    self.undo_manager.record(row, orig, new_path)
+                    self.undo_manager.record(row, res["orig"], new_path)
                     if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
-                        old_size = os.path.getsize(new_path)
-                        new_path2, new_size, _ = compressor.compress(new_path)
-                        if new_path2 != new_path:
-                            item0.setText(os.path.basename(new_path2))
-                            item0.setData(Qt.UserRole, new_path2)
-                            new_path = new_path2
                         if settings:
-                            settings.size_bytes = old_size
-                            settings.compressed_bytes = new_size
-            except Exception as e:
-                QMessageBox.warning(
-                    self,
-                    tr("rename_failed"),
-                    f"Fehler beim Umbenennen:\\n{orig}\\n→ {new_path}\\nError: {e}"
-                )
-            done += 1
-            progress.setValue(done)
-        progress.close()
-        if progress.wasCanceled():
-            QMessageBox.information(
-                self,
-                tr("partial_rename"),
-                tr("partial_rename_msg").format(done=done, total=total)
-            )
-        else:
-            QMessageBox.information(self, tr("done"), tr("rename_done"))
-            if used_tags and self.rename_mode == MODE_NORMAL:
-                increment_tags(used_tags)
-                self.tag_panel.rebuild()
-        self.set_status_message(None)
+                            settings.size_bytes = res.get("old_size")
+                            settings.compressed_bytes = res.get("new_size")
 
-    def set_status_message(self, message: str | None) -> None:
-        """Display an additional message in the status bar."""
-        self.status_message = message or ""
-        self.update_status()
+            if progress.wasCanceled():
+                QMessageBox.information(
+                    self,
+                    tr("partial_rename"),
+                    tr("partial_rename_msg").format(done=done, total=total)
+                )
+            else:
+                QMessageBox.information(self, tr("done"), tr("rename_done"))
+                if used_tags and self.rename_mode == MODE_NORMAL:
+                    increment_tags(used_tags)
+                    self.tag_panel.rebuild()
+            self.set_status_message(None)
+
+        worker.finished.connect(on_finished)
+        thread.start()
 
     def update_status(self) -> None:
         """Refresh the selection count and optional message."""
