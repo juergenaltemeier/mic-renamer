@@ -1,4 +1,4 @@
 """UI layout constants for margins and spacing."""
 
-DEFAULT_MARGIN = 6
-DEFAULT_SPACING = 4
+DEFAULT_MARGIN = 2
+DEFAULT_SPACING = 2
