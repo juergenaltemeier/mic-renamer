@@ -57,9 +57,20 @@ class ImageViewer(QGraphicsView):
             self.reset_transform()
             return
         pix = QPixmap.fromImage(img)
-        self.current_pixmap = pix
+        self.set_pixmap(pix)
+
+    def set_pixmap(self, pixmap: QPixmap) -> None:
+        if pixmap.isNull():
+            self.scene().clear()
+            self.pixmap_item = None
+            self.current_pixmap = None
+            self._zoom_pct = 100
+            self._rotation = 0
+            self.reset_transform()
+            return
+        self.current_pixmap = pixmap
         self.scene().clear()
-        self.pixmap_item = self.scene().addPixmap(pix)
+        self.pixmap_item = self.scene().addPixmap(pixmap)
         self.pixmap_item.setTransformationMode(Qt.SmoothTransformation)
         self.scene().setSceneRect(self.pixmap_item.boundingRect())
         self._rotation = 0

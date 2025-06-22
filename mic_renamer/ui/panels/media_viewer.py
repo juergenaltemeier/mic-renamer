@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QWidget,
     QStackedLayout,
@@ -111,6 +112,11 @@ class MediaViewer(QWidget):
         else:
             self.image_viewer.load_image("")
             self.stack.setCurrentWidget(self.image_viewer)
+
+    def show_pixmap(self, pixmap: QPixmap) -> None:
+        """Display a preloaded pixmap."""
+        self.image_viewer.set_pixmap(pixmap)
+        self.stack.setCurrentWidget(self.image_viewer)
 
     # expose image viewer controls
     @property

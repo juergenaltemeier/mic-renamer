@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QStyle, QTableWidget, QTableWidgetItem,
     QMenu, QToolButton, QSizePolicy, QToolBar,
 )
-from PySide6.QtGui import QColor, QAction, QIcon
+from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPixmapCache
 from PySide6.QtCore import Qt, QTimer, QSize, QThread
 
 from .. import config_manager
@@ -30,7 +30,7 @@ from ..logic.image_compressor import ImageCompressor
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
 from .wrap_toolbar import WrapToolBar
-from ..utils.workers import Worker
+from ..utils.workers import Worker, PreviewLoader
 
 
 ROLE_SETTINGS = Qt.UserRole + 1
@@ -44,6 +44,8 @@ class RenamerApp(QWidget):
         self.state_manager = state_manager
         self.undo_manager = UndoManager()
         self.rename_mode = MODE_NORMAL
+        self._preview_thread: QThread | None = None
+        self._preview_loader: PreviewLoader | None = None
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
@@ -703,9 +705,51 @@ class RenamerApp(QWidget):
             self.on_table_selection_changed()
 
     def load_preview(self, path: str):
-        self.image_viewer.load_path(path)
-        self.image_viewer.zoom_fit()
-        self.zoom_slider.setValue(self.image_viewer.zoom_pct)
+        """Load preview image using a background thread."""
+        # cancel running loader
+        if self._preview_loader:
+            self._preview_loader.stop()
+        if self._preview_thread:
+            self._preview_thread.quit()
+            self._preview_thread.wait()
+            if self._preview_loader:
+                self._preview_loader.deleteLater()
+            self._preview_thread.deleteLater()
+            self._preview_thread = None
+            self._preview_loader = None
+
+        if not path:
+            self.image_viewer.load_path("")
+            self.zoom_slider.setValue(100)
+            return
+
+        pix = QPixmap()
+        if QPixmapCache.find(path, pix):
+            self.image_viewer.show_pixmap(pix)
+            self.zoom_slider.setValue(self.image_viewer.zoom_pct)
+            return
+
+        self._preview_loader = PreviewLoader(path, self.image_viewer.size())
+        self._preview_thread = QThread(self)
+        self._preview_loader.moveToThread(self._preview_thread)
+        self._preview_thread.started.connect(self._preview_loader.run)
+        self._preview_loader.finished.connect(self._on_preview_loaded)
+        self._preview_thread.start()
+
+    def _on_preview_loaded(self, path: str, pixmap: QPixmap) -> None:
+        if self._preview_thread:
+            self._preview_thread.quit()
+            self._preview_thread.wait()
+        if self._preview_loader:
+            self._preview_loader.deleteLater()
+        if self._preview_thread:
+            self._preview_thread.deleteLater()
+        self._preview_thread = None
+        self._preview_loader = None
+        if not pixmap.isNull():
+            QPixmapCache.insert(path, pixmap)
+            self.image_viewer.show_pixmap(pixmap)
+            self.zoom_slider.setValue(self.image_viewer.zoom_pct)
 
     def on_zoom_slider_changed(self, value: int):
         self.image_viewer.zoom_pct = value
@@ -1154,6 +1198,16 @@ class RenamerApp(QWidget):
         )
 
     def closeEvent(self, event):
+        if self._preview_loader:
+            self._preview_loader.stop()
+        if self._preview_thread:
+            self._preview_thread.quit()
+            self._preview_thread.wait()
+            if self._preview_loader:
+                self._preview_loader.deleteLater()
+            self._preview_thread.deleteLater()
+            self._preview_thread = None
+            self._preview_loader = None
         if self.state_manager:
             self.state_manager.set("width", self.width())
             self.state_manager.set("height", self.height())

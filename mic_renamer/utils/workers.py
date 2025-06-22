@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from typing import Callable, Iterable, Any
 
-from PySide6.QtCore import QObject, Signal, Slot
+from PySide6.QtCore import QObject, Signal, Slot, QSize
+from PySide6.QtGui import QPixmap, QPixmapCache, QImageReader
 
 
 class Worker(QObject):
@@ -33,3 +34,40 @@ class Worker(QObject):
     @Slot()
     def stop(self) -> None:
         self._stop = True
+
+
+class PreviewLoader(QObject):
+    """Load an image preview off the main thread."""
+
+    finished = Signal(str, QPixmap)
+
+    def __init__(self, path: str, target_size: QSize) -> None:
+        super().__init__()
+        self._path = path
+        self._target_size = target_size
+        self._stop = False
+
+    @Slot()
+    def run(self) -> None:
+        if self._stop:
+            return
+        pix = QPixmap()
+        if not QPixmapCache.find(self._path, pix):
+            reader = QImageReader(self._path)
+            reader.setAutoTransform(True)
+            if self._target_size.isValid():
+                reader.setScaledSize(self._target_size)
+            img = reader.read()
+            if not img.isNull():
+                pix = QPixmap.fromImage(img)
+                QPixmapCache.insert(self._path, pix)
+        if not self._stop:
+            self.finished.emit(self._path, pix)
+
+    @Slot()
+    def stop(self) -> None:
+        self._stop = True
+
+
+# keep the cache fairly small (in KB)
+QPixmapCache.setCacheLimit(20480)
