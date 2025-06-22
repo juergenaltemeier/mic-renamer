@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QStyle, QTableWidget, QTableWidgetItem,
     QMenu, QToolButton, QSizePolicy, QToolBar,
 )
-from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPixmapCache
+from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPixmapCache, QImage
 from PySide6.QtCore import Qt, QTimer, QSize, QThread
 
 from .. import config_manager
@@ -731,7 +731,7 @@ class RenamerApp(QWidget):
         self._preview_loader.finished.connect(self._on_preview_loaded)
         self._preview_thread.start()
 
-    def _on_preview_loaded(self, path: str, pixmap: QPixmap) -> None:
+    def _on_preview_loaded(self, path: str, image: QImage) -> None:
         if self._preview_thread:
             self._preview_thread.quit()
             self._preview_thread.wait()
@@ -741,12 +741,13 @@ class RenamerApp(QWidget):
             self._preview_thread.deleteLater()
         self._preview_thread = None
         self._preview_loader = None
-        if pixmap.isNull():
+        if image.isNull():
             logging.getLogger(__name__).warning("Failed to load preview: %s", path)
             placeholder = self.image_viewer.image_viewer.placeholder_pixmap
             self.image_viewer.show_pixmap(placeholder)
             self.zoom_slider.setValue(self.image_viewer.zoom_pct)
             return
+        pixmap = QPixmap.fromImage(image)
         QPixmapCache.insert(path, pixmap)
         self.image_viewer.show_pixmap(pixmap)
         self.zoom_slider.setValue(self.image_viewer.zoom_pct)
