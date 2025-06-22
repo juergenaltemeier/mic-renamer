@@ -98,12 +98,14 @@ class CompressionDialog(QDialog):
         self.progress.setValue(0)
 
         worker = Worker(self._compress_item, valid)
-        self._thread = QThread(self)
+        self._thread = QThread()
         worker.moveToThread(self._thread)
         self._worker = worker
         self._thread.started.connect(worker.run)
         worker.progress.connect(self._on_progress, Qt.QueuedConnection)
         worker.finished.connect(self._on_finished, Qt.QueuedConnection)
+        worker.finished.connect(self._thread.quit)
+        self._thread.finished.connect(self._thread.deleteLater)
         self.progress.canceled.connect(worker.stop)
         self._thread.start()
 
@@ -128,10 +130,7 @@ class CompressionDialog(QDialog):
 
     def _on_finished(self, results: list):
         self.progress.close()
-        self._thread.quit()
-        self._thread.wait()
         self._worker.deleteLater()
-        self._thread.deleteLater()
         self._btn_ok.setEnabled(True)
         self.table.setRowCount(len(results))
         for idx, res in enumerate(results):
@@ -158,15 +157,18 @@ class CompressionDialog(QDialog):
                 os.remove(orig)
             shutil.move(preview, final_path)
             self.final_results.append((row, final_path, old_size, new_size))
+        if self._thread.isRunning():
+            self._thread.quit()
+            self._thread.wait()
         self._tmpdir.cleanup()
         super().accept()
 
     def reject(self) -> None:
         self._worker.stop()
-        self._thread.quit()
-        self._thread.wait()
+        if self._thread.isRunning():
+            self._thread.quit()
+            self._thread.wait()
         self._worker.deleteLater()
-        self._thread.deleteLater()
         self._tmpdir.cleanup()
         super().reject()
 
