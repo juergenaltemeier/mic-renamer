@@ -102,8 +102,8 @@ class CompressionDialog(QDialog):
         worker.moveToThread(self._thread)
         self._worker = worker
         self._thread.started.connect(worker.run)
-        worker.progress.connect(self._on_progress)
-        worker.finished.connect(self._on_finished)
+        worker.progress.connect(self._on_progress, Qt.QueuedConnection)
+        worker.finished.connect(self._on_finished, Qt.QueuedConnection)
         self.progress.canceled.connect(worker.stop)
         self._thread.start()
 
