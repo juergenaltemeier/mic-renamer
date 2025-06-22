@@ -708,11 +708,10 @@ class RenamerApp(QWidget):
         if self._preview_thread:
             self._preview_thread.quit()
             self._preview_thread.wait()
+            self._preview_thread = None
             if self._preview_loader:
                 self._preview_loader.deleteLater()
-            self._preview_thread.deleteLater()
-            self._preview_thread = None
-            self._preview_loader = None
+                self._preview_loader = None
 
         if not path:
             self.image_viewer.load_path("")
@@ -726,23 +725,22 @@ class RenamerApp(QWidget):
             return
 
         self._preview_loader = PreviewLoader(path, self.image_viewer.size())
-        self._preview_thread = QThread(self)
+        self._preview_thread = QThread()
         self._preview_loader.moveToThread(self._preview_thread)
         self._preview_thread.started.connect(self._preview_loader.run)
+        self._preview_loader.finished.connect(self._preview_thread.quit)
+        self._preview_thread.finished.connect(self._preview_thread.deleteLater)
         self._preview_loader.finished.connect(self._on_preview_loaded, Qt.QueuedConnection)
         self._preview_thread.start()
 
     @Slot(str, QImage)
     def _on_preview_loaded(self, path: str, image: QImage) -> None:
         if self._preview_thread:
-            self._preview_thread.quit()
             self._preview_thread.wait()
+            self._preview_thread = None
         if self._preview_loader:
             self._preview_loader.deleteLater()
-        if self._preview_thread:
-            self._preview_thread.deleteLater()
-        self._preview_thread = None
-        self._preview_loader = None
+            self._preview_loader = None
         if image.isNull():
             logging.getLogger(__name__).warning("Failed to load preview: %s", path)
             placeholder = self.image_viewer.image_viewer.placeholder_pixmap
@@ -1216,13 +1214,13 @@ class RenamerApp(QWidget):
         if self._preview_loader:
             self._preview_loader.stop()
         if self._preview_thread:
-            self._preview_thread.quit()
-            self._preview_thread.wait()
+            if self._preview_thread.isRunning():
+                self._preview_thread.quit()
+                self._preview_thread.wait()
             if self._preview_loader:
                 self._preview_loader.deleteLater()
-            self._preview_thread.deleteLater()
+                self._preview_loader = None
             self._preview_thread = None
-            self._preview_loader = None
         if self._rename_thread and self._rename_thread.isRunning():
             self._rename_thread.quit()
             self._rename_thread.wait(2000)
