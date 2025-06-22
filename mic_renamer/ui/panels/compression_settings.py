@@ -26,29 +26,35 @@ class CompressionSettingsPanel(QWidget):
         self.spin_size.setRange(10, 100000)
         self.spin_size.setSuffix(" KB")
         self.spin_size.setValue(float(cfg.get("compression_max_size_kb", 2048)))
+        self.spin_size.setToolTip(tr("max_size_desc"))
         layout.addRow(tr("max_size_label"), self.spin_size)
 
         self.spin_quality = QSpinBox()
         self.spin_quality.setRange(1, 100)
         self.spin_quality.setValue(int(cfg.get("compression_quality", 95)))
+        self.spin_quality.setToolTip(tr("quality_desc"))
         layout.addRow(tr("quality_label"), self.spin_quality)
 
         self.chk_reduce = EnterToggleCheckBox(tr("reduce_resolution_label"))
         self.chk_reduce.setChecked(cfg.get("compression_reduce_resolution", True))
+        self.chk_reduce.setToolTip(tr("reduce_resolution_desc"))
         layout.addRow(self.chk_reduce)
 
         self.chk_resize_only = EnterToggleCheckBox(tr("resize_only_label"))
         self.chk_resize_only.setChecked(cfg.get("compression_resize_only", False))
+        self.chk_resize_only.setToolTip(tr("resize_only_desc"))
         layout.addRow(self.chk_resize_only)
 
         self.spin_max_w = QSpinBox()
         self.spin_max_w.setRange(0, 10000)
         self.spin_max_w.setValue(int(cfg.get("compression_max_width", 0)))
+        self.spin_max_w.setToolTip(tr("max_width_desc"))
         layout.addRow(tr("max_width_label"), self.spin_max_w)
 
         self.spin_max_h = QSpinBox()
         self.spin_max_h.setRange(0, 10000)
         self.spin_max_h.setValue(int(cfg.get("compression_max_height", 0)))
+        self.spin_max_h.setToolTip(tr("max_height_desc"))
         layout.addRow(tr("max_height_label"), self.spin_max_h)
 
         self.btn_reset = QPushButton(tr("restore_defaults"))

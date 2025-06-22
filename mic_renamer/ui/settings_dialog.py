@@ -41,15 +41,21 @@ class SettingsDialog(QDialog):
         tabs.addTab(general, tr("settings_title"))
         gen_layout = QVBoxLayout(general)
 
-        gen_layout.addWidget(QLabel(f"{tr('config_path_label')}: {config_manager.config_dir}"))
+        lbl_cfg = QLabel(f"{tr('config_path_label')}: {config_manager.config_dir}")
+        lbl_cfg.setToolTip(tr('config_path_desc'))
+        gen_layout.addWidget(lbl_cfg)
 
         gen_layout.addWidget(QLabel(tr("accepted_ext_label")))
         self.edit_ext = QLineEdit(", ".join(self.cfg.get("accepted_extensions", [])))
+        self.edit_ext.setToolTip(tr("accepted_ext_desc"))
         gen_layout.addWidget(self.edit_ext)
 
         hl_save = QHBoxLayout()
-        hl_save.addWidget(QLabel(tr('default_save_dir_label')))
+        lbl_save = QLabel(tr('default_save_dir_label'))
+        lbl_save.setToolTip(tr('default_save_dir_desc'))
+        hl_save.addWidget(lbl_save)
         self.edit_save_dir = QLineEdit(self.cfg.get('default_save_directory', ''))
+        self.edit_save_dir.setToolTip(tr('default_save_dir_desc'))
         btn_browse_save = QPushButton('...')
         btn_browse_save.clicked.connect(self.choose_save_dir)
         hl_save.addWidget(self.edit_save_dir)
@@ -57,11 +63,15 @@ class SettingsDialog(QDialog):
         gen_layout.addLayout(hl_save)
 
         self.chk_import_dir = QCheckBox(tr('use_import_dir'))
+        self.chk_import_dir.setToolTip(tr('use_import_dir_desc'))
         gen_layout.addWidget(self.chk_import_dir)
 
         hl_import = QHBoxLayout()
-        hl_import.addWidget(QLabel(tr('default_import_dir_label')))
+        lbl_import = QLabel(tr('default_import_dir_label'))
+        lbl_import.setToolTip(tr('default_import_dir_desc'))
+        hl_import.addWidget(lbl_import)
         self.edit_import_dir = QLineEdit(self.cfg.get('default_import_directory', ''))
+        self.edit_import_dir.setToolTip(tr('default_import_dir_desc'))
         self.btn_browse_import = QPushButton('...')
         self.btn_browse_import.clicked.connect(self.choose_import_dir)
         hl_import.addWidget(self.edit_import_dir)
@@ -75,9 +85,12 @@ class SettingsDialog(QDialog):
         self.chk_import_dir.toggled.connect(self.btn_browse_import.setEnabled)
 
         hl = QHBoxLayout()
-        hl.addWidget(QLabel(tr("language_label")))
+        lbl_lang = QLabel(tr("language_label"))
+        lbl_lang.setToolTip(tr("language_desc"))
+        hl.addWidget(lbl_lang)
         self.combo_lang = QComboBox()
         self.combo_lang.addItems(["en", "de"])
+        self.combo_lang.setToolTip(tr("language_desc"))
         current_lang = self.cfg.get("language", "en")
         index = self.combo_lang.findText(current_lang)
         if index >= 0:
@@ -86,6 +99,7 @@ class SettingsDialog(QDialog):
         gen_layout.addLayout(hl)
 
         self.chk_toolbar_text = QCheckBox(tr("use_text_menu"))
+        self.chk_toolbar_text.setToolTip(tr("use_text_menu_desc"))
         self.chk_toolbar_text.setChecked(
             self.cfg.get("toolbar_style", "icons") == "text"
         )

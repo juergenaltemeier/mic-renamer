@@ -32,11 +32,17 @@ TRANSLATIONS = {
         'settings_title': 'Settings',
         'compression_settings': 'Compression',
         'max_size_label': 'Max Size (KB):',
+        'max_size_desc': 'Target maximum file size after compression',
         'quality_label': 'JPEG Quality:',
+        'quality_desc': 'JPEG quality percentage',
         'reduce_resolution_label': 'Reduce resolution if needed',
+        'reduce_resolution_desc': 'Lower image resolution if needed',
         'resize_only_label': 'Resize only',
+        'resize_only_desc': 'Resize images without recompressing',
         'max_width_label': 'Max Width (px):',
+        'max_width_desc': 'Resize images wider than this width (0 = no limit)',
         'max_height_label': 'Max Height (px):',
+        'max_height_desc': 'Resize images taller than this height (0 = no limit)',
         'compression_done': 'Compression finished.',
         'rename_options_title': 'Rename Options',
         'compression_window_title': 'Compression Results',
@@ -51,19 +57,27 @@ TRANSLATIONS = {
         'show_tags': 'Show tags',
         'hide_tags': 'Hide tags',
         'accepted_ext_label': 'Accepted File Extensions (comma separated):',
+        'accepted_ext_desc': 'File types to show in the file browser',
         'language_label': 'Language:',
+        'language_desc': 'Language for interface texts',
         'tags_label': 'Tags',
         'restore_defaults': 'Restore Defaults',
         'reset_tag_usage': 'Reset Tag Usage',
         'remove_selected': 'Remove Selected',
         'clear_suffix': 'Clear Suffix',
         'config_path_label': 'Configuration folder',
+        'config_path_desc': 'Location of the configuration files',
         'default_save_dir_label': 'Default save directory',
+        'default_save_dir_desc': 'Folder used when saving renamed files',
         'default_import_dir_label': 'Default import directory',
+        'default_import_dir_desc': 'Folder used when importing files',
         'use_import_dir': 'Use default import directory',
+        'use_import_dir_desc': 'Automatically open the default import directory',
         'use_text_menu': 'Text-only toolbar',
+        'use_text_menu_desc': 'Show text instead of icons in the toolbar',
         'use_original_directory': 'Use current folder?',
         'use_original_directory_msg': 'Save renamed files in their current folder?',
+        'compress_after_rename': 'Compress images after renaming',
         'current_name': 'Current Name'
         , 'proposed_new_name': 'Proposed New Name'
         , 'renaming_files': 'Renaming files...'
@@ -114,11 +128,17 @@ TRANSLATIONS = {
         'settings_title': 'Einstellungen',
         'compression_settings': 'Kompression',
         'max_size_label': 'Maximale Größe (KB):',
+        'max_size_desc': 'Ziel für maximale Dateigröße nach Komprimierung',
         'quality_label': 'JPEG-Qualität:',
+        'quality_desc': 'JPEG-Qualität in Prozent',
         'reduce_resolution_label': 'Auflösung reduzieren falls nötig',
+        'reduce_resolution_desc': 'Bildauflösung bei Bedarf verringern',
         'resize_only_label': 'Nur Größe anpassen',
+        'resize_only_desc': 'Bilder nur skalieren ohne neue Komprimierung',
         'max_width_label': 'Maximale Breite (px):',
+        'max_width_desc': 'Bilder breiter als diese Pixelzahl verkleinern (0 = kein Limit)',
         'max_height_label': 'Maximale Höhe (px):',
+        'max_height_desc': 'Bilder höher als diese Pixelzahl verkleinern (0 = kein Limit)',
         'compression_done': 'Komprimierung abgeschlossen.',
         'rename_options_title': 'Optionen für Umbenennen',
         'compression_window_title': 'Ergebnis der Komprimierung',
@@ -131,7 +151,9 @@ TRANSLATIONS = {
         'heic_convert_title': 'HEIC umwandeln',
         'heic_convert_msg': 'HEIC-Bilder vor dem Komprimieren in JPEG konvertieren?',
         'accepted_ext_label': 'Erlaubte Dateiendungen (durch Komma getrennt):',
+        'accepted_ext_desc': 'Dateitypen, die im Dateidialog angezeigt werden',
         'language_label': 'Sprache:',
+        'language_desc': 'Sprache der Benutzeroberfläche',
         'tags_label': 'Tags',
         'restore_defaults': 'Standardeinstellungen wiederherstellen',
         'reset_tag_usage': 'Tag-Nutzung zurücksetzen',
@@ -149,12 +171,18 @@ TRANSLATIONS = {
         , 'undo_nothing_msg': 'Keine Umbenennungen zum Rückgängigmachen.'
         , 'undo_done': 'Umbenennungen zurückgesetzt.'
         , 'config_path_label': 'Konfigurationsordner'
+        , 'config_path_desc': 'Speicherort der Konfigurationsdateien'
         , 'default_save_dir_label': 'Standard-Speicherordner'
+        , 'default_save_dir_desc': 'Ordner zum Speichern umbenannter Dateien'
         , 'default_import_dir_label': 'Standard-Importordner'
+        , 'default_import_dir_desc': 'Ordner zum Importieren von Dateien'
         , 'use_import_dir': 'Standard-Importordner verwenden'
+        , 'use_import_dir_desc': 'Standard-Importordner automatisch öffnen'
         , 'use_text_menu': 'Nur Text in der Werkzeugleiste'
+        , 'use_text_menu_desc': 'Nur Text statt Symbole in der Werkzeugleiste'
         , 'use_original_directory': 'Aktuellen Ordner verwenden?'
         , 'use_original_directory_msg': 'Umbenannte Dateien im aktuellen Ordner speichern?'
+        , 'compress_after_rename': 'Nach dem Umbenennen komprimieren'
         , 'mode_normal': 'Normal'
         , 'mode_position': 'Pos Modus Andi'
         , 'mode_pa_mat': 'PA_MAT Mode Andi'
