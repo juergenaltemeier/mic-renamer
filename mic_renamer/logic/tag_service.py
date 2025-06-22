@@ -29,14 +29,14 @@ def extract_tags_from_name(name: str, valid_tags: Iterable[str]) -> set[str]:
 
 
 def extract_suffix_from_name(name: str, valid_tags: Iterable[str]) -> str:
-    """Return the trailing token from ``name`` if it represents a custom suffix.
+    """Return custom suffix tokens appearing after the first date segment.
 
-    The file name is split into alphanumeric tokens. The last token is returned
-    unless it matches one of the following patterns:
-
-    * a 6 digit date in ``YYMMDD`` format
-    * a purely numeric index
-    * a known tag code from ``valid_tags``
+    The file name is split into alphanumeric tokens. All tokens appearing
+    after the first ``YYMMDD`` date token are collected.  If the last of these
+    tokens is a purely numeric index it is ignored.  Remaining tokens are
+    joined with underscores and returned.  When the resulting suffix consists
+    of a single known tag code from ``valid_tags``, an empty string is
+    returned.
 
     Parameters
     ----------
@@ -55,16 +55,25 @@ def extract_suffix_from_name(name: str, valid_tags: Iterable[str]) -> str:
     tokens = [t for t in re.split(r"[^A-Za-z0-9]+", base) if t]
     if not tokens:
         return ""
-    candidate = tokens[-1]
+
+    date_index = None
+    for i, tok in enumerate(tokens):
+        if re.fullmatch(r"\d{6}", tok):
+            date_index = i
+            break
+    if date_index is None:
+        return ""
+
+    suffix_tokens = tokens[date_index + 1 :]
+    if not suffix_tokens:
+        return ""
+    if suffix_tokens[-1].isdigit():
+        suffix_tokens = suffix_tokens[:-1]
+    if not suffix_tokens:
+        return ""
+
+    suffix = "_".join(suffix_tokens)
     codes = set(valid_tags)
-    if candidate.isdigit():
-        if len(tokens) < 2:
-            return ""
-        candidate = tokens[-2]
-    if candidate in codes:
+    if len(suffix_tokens) == 1 and suffix in codes:
         return ""
-    if re.fullmatch(r"\d{6}", candidate):
-        return ""
-    if candidate.isdigit():
-        return ""
-    return candidate
+    return suffix
