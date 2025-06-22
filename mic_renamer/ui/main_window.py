@@ -47,6 +47,7 @@ class RenamerApp(QWidget):
         self.rename_mode = MODE_NORMAL
         self._preview_thread: QThread | None = None
         self._preview_loader: PreviewLoader | None = None
+        self._rename_thread: QThread | None = None
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
@@ -1136,20 +1137,20 @@ class RenamerApp(QWidget):
             return result
 
         worker = Worker(task, table_mapping)
-        thread = QThread(self)
-        worker.moveToThread(thread)
-        thread.started.connect(worker.run)
+        self._rename_thread = QThread()
+        worker.moveToThread(self._rename_thread)
+        self._rename_thread.started.connect(worker.run)
         worker.progress.connect(
             lambda d, _t, _p: progress.setValue(d), Qt.QueuedConnection
         )
         progress.canceled.connect(worker.stop)
+        worker.finished.connect(self._rename_thread.quit)
+        self._rename_thread.finished.connect(self._rename_thread.deleteLater)
 
         def on_finished(results):
             progress.close()
-            thread.quit()
-            thread.wait()
             worker.deleteLater()
-            thread.deleteLater()
+            self._rename_thread = None
             used_tags = []
             done = len(results)
             for res in results:
@@ -1190,7 +1191,7 @@ class RenamerApp(QWidget):
             self._enable_sorting()
 
         worker.finished.connect(on_finished, Qt.QueuedConnection)
-        thread.start()
+        self._rename_thread.start()
 
     def update_status(self) -> None:
         """Refresh the selection count and optional message."""
@@ -1222,6 +1223,10 @@ class RenamerApp(QWidget):
             self._preview_thread.deleteLater()
             self._preview_thread = None
             self._preview_loader = None
+        if self._rename_thread and self._rename_thread.isRunning():
+            self._rename_thread.quit()
+            self._rename_thread.wait(2000)
+            self._rename_thread = None
         if self.state_manager:
             self.state_manager.set("width", self.width())
             self.state_manager.set("height", self.height())
