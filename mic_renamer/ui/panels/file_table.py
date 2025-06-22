@@ -354,16 +354,4 @@ class DragDropTableWidget(QTableWidget):
                 return
 
         super().keyPressEvent(event)
-                return
-
-            if self.state() != QAbstractItemView.EditingState and event.text():
-                rows = [idx.row() for idx in self.selectionModel().selectedRows()]
-                if len(rows) > 1 and index.row() in rows:
-                    self._selection_before_edit = rows
-                    QTimer.singleShot(0, lambda r=rows: self._restore_selection(r))
-                else:
-                    self._selection_before_edit = rows
-                self.edit(index)
-                super().keyPressEvent(event)
-                return
 
