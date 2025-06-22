@@ -52,7 +52,7 @@ class DragDropTableWidget(QTableWidget):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(24)
-        self.itemSelectionChanged.connect(self.sync_check_column)
+        self.selectionModel().selectionChanged.connect(self.on_selection_changed)
         self.itemChanged.connect(self.handle_item_changed)
         self._selection_before_edit: list[int] = []
         self._initial_columns = False
@@ -269,6 +269,25 @@ class DragDropTableWidget(QTableWidget):
         if added:
             self.sortByColumn(1, Qt.AscendingOrder)
             self.pathsAdded.emit(added)
+
+    def on_selection_changed(
+        self, selected: QItemSelection, deselected: QItemSelection
+    ) -> None:
+        """Update row checkboxes when the selection changes."""
+        to_check = {index.row() for index in selected.indexes()}
+        to_uncheck = {index.row() for index in deselected.indexes()}
+        if not to_check and not to_uncheck:
+            return
+        self._updating_checks = True
+        for row in to_check:
+            item = self.item(row, 0)
+            if item:
+                item.setCheckState(Qt.Checked)
+        for row in to_uncheck:
+            item = self.item(row, 0)
+            if item:
+                item.setCheckState(Qt.Unchecked)
+        self._updating_checks = False
 
     def sync_check_column(self):
         selected = {idx.row() for idx in self.selectionModel().selectedRows()}
