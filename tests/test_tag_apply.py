@@ -2,6 +2,7 @@ import os
 import pytest
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt
+from PySide6.QtTest import QTest
 
 from mic_renamer.ui.main_window import RenamerApp, ROLE_SETTINGS
 
@@ -51,5 +52,6 @@ def test_existing_tags_detected(app, monkeypatch, tmp_path):
     settings = item0.data(ROLE_SETTINGS)
     assert settings.tags == {"A", "B"}
     win.on_table_selection_changed()
+    QTest.qWait(150)
     assert win.tag_panel.checkbox_map["A"].checkState() == Qt.Checked
     assert win.tag_panel.checkbox_map["B"].checkState() == Qt.Checked

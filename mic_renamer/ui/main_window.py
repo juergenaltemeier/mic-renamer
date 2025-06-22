@@ -167,6 +167,12 @@ class RenamerApp(QWidget):
         self.btn_toggle_tags = QPushButton()
         self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
 
+        # timer for debouncing heavy selection updates
+        self._sel_change_timer = QTimer(self)
+        self._sel_change_timer.setSingleShot(True)
+        self._sel_change_timer.setInterval(100)
+        self._sel_change_timer.timeout.connect(self._apply_selection_change)
+
         btn_layout = QHBoxLayout()
         btn_layout.addWidget(self.btn_toggle_tags)
         btn_layout.addStretch()
@@ -437,6 +443,10 @@ class RenamerApp(QWidget):
             self.set_status_message(None)
 
     def on_table_selection_changed(self):
+        """Start or restart the selection change timer."""
+        self._sel_change_timer.start()
+
+    def _apply_selection_change(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
             self.image_viewer.load_path("")
@@ -457,7 +467,6 @@ class RenamerApp(QWidget):
                 item0.setData(ROLE_SETTINGS, st)
             settings_list.append(st)
         first = settings_list[0]
-
 
         if self.rename_mode == MODE_NORMAL:
             intersect = set(settings_list[0].tags)
@@ -481,7 +490,7 @@ class RenamerApp(QWidget):
                     cb.setCheckState(Qt.Unchecked)
                     cb.setText(f"{code}: {desc}")
                 cb.blockSignals(False)
-        
+
         self.load_preview(first.original_path)
         self.table_widget.sync_check_column()
         self.update_status()
