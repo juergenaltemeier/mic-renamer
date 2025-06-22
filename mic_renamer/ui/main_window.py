@@ -908,7 +908,9 @@ class RenamerApp(QWidget):
         thread = QThread(self)
         worker.moveToThread(thread)
         thread.started.connect(worker.run)
-        worker.progress.connect(lambda d, t, _: progress.setValue(d))
+        worker.progress.connect(
+            lambda d, _t, _p: progress.setValue(d), Qt.QueuedConnection
+        )
         progress.canceled.connect(worker.stop)
         current = self.table_widget.currentRow()
 
@@ -938,7 +940,7 @@ class RenamerApp(QWidget):
                 f"Converted {converted} of {total} images to JPEG."
             )
 
-        worker.finished.connect(on_finished)
+        worker.finished.connect(on_finished, Qt.QueuedConnection)
         thread.start()
 
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
@@ -1136,7 +1138,9 @@ class RenamerApp(QWidget):
         thread = QThread(self)
         worker.moveToThread(thread)
         thread.started.connect(worker.run)
-        worker.progress.connect(lambda d, t, _: progress.setValue(d))
+        worker.progress.connect(
+            lambda d, _t, _p: progress.setValue(d), Qt.QueuedConnection
+        )
         progress.canceled.connect(worker.stop)
 
         def on_finished(results):
@@ -1184,7 +1188,7 @@ class RenamerApp(QWidget):
             self.set_status_message(None)
             self._enable_sorting()
 
-        worker.finished.connect(on_finished)
+        worker.finished.connect(on_finished, Qt.QueuedConnection)
         thread.start()
 
     def update_status(self) -> None:
