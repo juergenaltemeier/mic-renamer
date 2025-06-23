@@ -40,32 +40,6 @@ MODE_POSITION = "position"
 MODE_PA_MAT = "pa_mat"
 
 class RenamerApp(QWidget):
-    def closeEvent(self, event):
-        # stop preview loader thread
-        if getattr(self, "_preview_loader", None) and getattr(self, "_preview_thread", None):
-            try:
-                self._preview_loader.stop()
-                if self._preview_thread.isRunning():
-                    self._preview_thread.quit()
-                    self._preview_thread.wait(2000)
-            except Exception:
-                pass
-        # stop rename worker thread
-        if getattr(self, "_rename_worker", None) and getattr(self, "_rename_thread", None):
-            try:
-                self._rename_worker.stop()
-                if self._rename_thread.isRunning():
-                    self._rename_thread.quit()
-                    self._rename_thread.wait(2000)
-            except Exception:
-                pass
-        # save window and splitter sizes
-        if self.state_manager:
-            self.state_manager.set("width", self.width())
-            self.state_manager.set("height", self.height())
-            self.state_manager.set("splitter_sizes", self.splitter.sizes())
-            self.state_manager.save()
-        super().closeEvent(event)
     def __init__(self, state_manager=None):
         super().__init__()
         self.state_manager = state_manager
@@ -754,9 +728,10 @@ class RenamerApp(QWidget):
         self._preview_loader = PreviewLoader(path, self.image_viewer.size())
         self._preview_thread = QThread()
         self._preview_loader.moveToThread(self._preview_thread)
-        self._preview_thread.started.connect(self._preview_loader.run)
-        self._preview_loader.finished.connect(self._preview_thread.quit)
-        self._preview_thread.finished.connect(self._preview_thread.deleteLater)
+        self._preview_thread.started.connect(self._preview_loader.run, Qt.QueuedConnection)
+        self._preview_loader.finished.connect(self._preview_thread.quit, Qt.QueuedConnection)
+        self._preview_thread.finished.connect(self._preview_thread.deleteLater, Qt.QueuedConnection)
+        self._preview_loader.finished.connect(self._preview_loader.deleteLater, Qt.QueuedConnection)
         self._preview_loader.finished.connect(self._on_preview_loaded, Qt.QueuedConnection)
         self._preview_thread.start()
 
@@ -765,9 +740,7 @@ class RenamerApp(QWidget):
         if self._preview_thread:
             self._preview_thread.wait()
             self._preview_thread = None
-        if self._preview_loader:
-            self._preview_loader.deleteLater()
-            self._preview_loader = None
+        self._preview_loader = None
         if image.isNull():
             logging.getLogger(__name__).warning("Failed to load preview: %s", path)
             placeholder = self.image_viewer.image_viewer.placeholder_pixmap
@@ -934,13 +907,14 @@ class RenamerApp(QWidget):
         worker = Worker(task, rows)
         thread = QThread()
         worker.moveToThread(thread)
-        thread.started.connect(worker.run)
+        thread.started.connect(worker.run, Qt.QueuedConnection)
         worker.progress.connect(
             lambda d, _t, _p: progress.setValue(d), Qt.QueuedConnection
         )
-        progress.canceled.connect(worker.stop)
-        worker.finished.connect(thread.quit)
-        thread.finished.connect(thread.deleteLater)
+        progress.canceled.connect(worker.stop, Qt.QueuedConnection)
+        worker.finished.connect(thread.quit, Qt.QueuedConnection)
+        thread.finished.connect(thread.deleteLater, Qt.QueuedConnection)
+        worker.finished.connect(worker.deleteLater, Qt.QueuedConnection)
         current = self.table_widget.currentRow()
 
         def on_finished(results):
@@ -948,7 +922,6 @@ class RenamerApp(QWidget):
             if thread.isRunning():
                 thread.quit()
                 thread.wait()
-            worker.deleteLater()
             converted = 0
             for row, orig, new_path, size in results:
                 if new_path and new_path != orig:
@@ -1166,18 +1139,17 @@ class RenamerApp(QWidget):
         self._rename_worker = Worker(task, table_mapping)
         self._rename_thread = QThread()
         self._rename_worker.moveToThread(self._rename_thread)
-        self._rename_thread.started.connect(self._rename_worker.run)
+        self._rename_thread.started.connect(self._rename_worker.run, Qt.QueuedConnection)
         self._rename_worker.progress.connect(
             lambda d, _t, _p: progress.setValue(d), Qt.QueuedConnection
         )
-        progress.canceled.connect(self._rename_worker.stop)
-        self._rename_worker.finished.connect(self._rename_thread.quit)
-        self._rename_thread.finished.connect(self._rename_thread.deleteLater)
+        progress.canceled.connect(self._rename_worker.stop, Qt.QueuedConnection)
+        self._rename_worker.finished.connect(self._rename_thread.quit, Qt.QueuedConnection)
+        self._rename_thread.finished.connect(self._rename_thread.deleteLater, Qt.QueuedConnection)
+        self._rename_worker.finished.connect(self._rename_worker.deleteLater, Qt.QueuedConnection)
 
         def on_finished(results):
             progress.close()
-            if self._rename_worker:
-                self._rename_worker.deleteLater()
             self._rename_worker = None
             self._rename_thread = None
             used_tags = []
