@@ -2,13 +2,9 @@
 
 import os
 from collections import defaultdict
-from PySide6.QtWidgets import QMessageBox
-
-from ..utils.i18n import tr
 
 from .settings import ItemSettings, RenameConfig
 from ..utils.file_utils import ensure_unique_name
-from .tag_usage import increment_tags
 
 class Renamer:
     def __init__(self, project: str, items: list[ItemSettings], config: RenameConfig | None = None,
@@ -74,24 +70,3 @@ class Renamer:
                 mapping.append((item, item.original_path, unique))
 
         return mapping
-
-    def execute_rename(self, mapping: list[tuple[ItemSettings, str, str]]) -> list[tuple[str, str, Exception]]:
-        """
-        Rename files according to mapping.
-        Returns a list of errors as tuples (orig_path, new_path, exception).
-        """
-        used_tags: list[str] = []
-        errors: list[tuple[str, str, Exception]] = []
-        for item, orig, new in mapping:
-            try:
-                orig_abs = os.path.abspath(orig)
-                new_abs = os.path.abspath(new)
-                if orig_abs != new_abs:
-                    os.rename(orig, new)
-                    item.original_path = new
-                    used_tags.extend(item.tags)
-            except Exception as e:
-                errors.append((orig, new, e))
-        if used_tags and self.mode == "normal":
-            increment_tags(used_tags)
-        return errors
