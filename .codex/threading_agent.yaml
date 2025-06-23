@@ -1,0 +1,40 @@
+# threading_agent.yaml
+name: Qt Threading Checks
+on:
+  files:
+    include:
+      - "*/utils/workers.py"
+      - "*/main_window.py"
+      - "*/preview_loader.py"
+tasks:
+  - id: wrong-timer-affinity
+    type: lint
+    description: |
+      Warn if you see QTimer() being instantiated *before* worker.moveToThread(...)
+    patterns:
+      - pattern: |
+          QTimer\(
+      - pattern: |
+          moveToThread\(
+      message: |
+        You must call worker.moveToThread(thread) *before* instantiating any QTimer or other QObject children.
+
+  - id: missing-quit-wait
+    type: lint
+    description: |
+      Warn if you see thread.start() but no accompanying thread.quit() / thread.wait() on shutdown.
+    patterns:
+      - pattern: |
+          thread\.start\(
+      - not:
+          pattern: |
+            thread\.quit\(
+      - not:
+          pattern: |
+            thread\.wait\(
+      message: |
+        Every QThread you start must be cleanly stopped with thread.quit() and thread.wait() (e.g. in closeEvent).
+
+run:
+  # default to lint-only (no fixes)
+  check: true
