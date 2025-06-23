@@ -40,6 +40,32 @@ MODE_POSITION = "position"
 MODE_PA_MAT = "pa_mat"
 
 class RenamerApp(QWidget):
+    def closeEvent(self, event):
+        # stop preview loader thread
+        if getattr(self, "_preview_loader", None) and getattr(self, "_preview_thread", None):
+            try:
+                self._preview_loader.stop()
+                if self._preview_thread.isRunning():
+                    self._preview_thread.quit()
+                    self._preview_thread.wait(2000)
+            except Exception:
+                pass
+        # stop rename worker thread
+        if getattr(self, "_rename_worker", None) and getattr(self, "_rename_thread", None):
+            try:
+                self._rename_worker.stop()
+                if self._rename_thread.isRunning():
+                    self._rename_thread.quit()
+                    self._rename_thread.wait(2000)
+            except Exception:
+                pass
+        # save window and splitter sizes
+        if self.state_manager:
+            self.state_manager.set("width", self.width())
+            self.state_manager.set("height", self.height())
+            self.state_manager.set("splitter_sizes", self.splitter.sizes())
+            self.state_manager.save()
+        super().closeEvent(event)
     def __init__(self, state_manager=None):
         super().__init__()
         self.state_manager = state_manager
