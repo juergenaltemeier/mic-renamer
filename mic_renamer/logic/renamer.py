@@ -75,8 +75,13 @@ class Renamer:
 
         return mapping
 
-    def execute_rename(self, mapping: list[tuple[ItemSettings, str, str]], parent_widget):
-        used_tags = []
+    def execute_rename(self, mapping: list[tuple[ItemSettings, str, str]]) -> list[tuple[str, str, Exception]]:
+        """
+        Rename files according to mapping.
+        Returns a list of errors as tuples (orig_path, new_path, exception).
+        """
+        used_tags: list[str] = []
+        errors: list[tuple[str, str, Exception]] = []
         for item, orig, new in mapping:
             try:
                 orig_abs = os.path.abspath(orig)
@@ -86,10 +91,7 @@ class Renamer:
                     item.original_path = new
                     used_tags.extend(item.tags)
             except Exception as e:
-                QMessageBox.warning(
-                    parent_widget,
-                    tr("rename_failed"),
-                    f"Fehler beim Umbenennen:\n{orig}\n→ {new}\nError: {e}"
-                )
+                errors.append((orig, new, e))
         if used_tags and self.mode == "normal":
             increment_tags(used_tags)
+        return errors
