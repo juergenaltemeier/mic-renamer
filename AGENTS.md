@@ -65,9 +65,7 @@ Always specify Qt.QueuedConnection for cross-thread signals to ensure the slot r
 Clean shutdown
 To cancel mid-flight (for instance on window close or user cancellation):
 
-python
-Copy
-Edit
+
 worker.stop()            # implement in your worker to set a “should_stop” flag
 if thread.isRunning():
     thread.quit()        # exits the thread’s event loop
@@ -77,9 +75,6 @@ This prevents “Destroyed while thread is still running” when Python tears do
 MainWindow Shutdown (closeEvent)
 In MainWindow.closeEvent() (lines 1224–1241), ensure each active worker thread is stopped and waited on:
 
-python
-Copy
-Edit
 # pseudo-code from MainWindow.closeEvent
 for thread, worker in self.active_workers:
     worker.stop()
@@ -91,9 +86,7 @@ This guarantees no timers or event loops linger into interpreter shutdown.
 Preview Image Loading
 Preview images are loaded via PreviewLoader in utils/workers.py, using the same threading pattern:
 
-python
-Copy
-Edit
+
 from utils.workers import PreviewLoader
 from PySide6.QtCore import QThread, Qt
 
