@@ -173,6 +173,12 @@ class CompressionDialog(QDialog):
         super().reject()
 
     def closeEvent(self, event):
+        self._worker.stop()
+        if self._thread.isRunning():
+            self._thread.quit()
+            self._thread.wait()
+        self._worker.deleteLater()
+        self._tmpdir.cleanup()
         if self.state_manager:
             self.state_manager.set("compression_width", self.width())
             self.state_manager.set("compression_height", self.height())
