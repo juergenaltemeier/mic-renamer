@@ -1029,6 +1029,10 @@ class RenamerApp(QWidget):
                     break
         dlg = QDialog(self)
         dlg.setWindowTitle(tr("preview_rename"))
+        if self.state_manager:
+            w = self.state_manager.get("preview_width", 600)
+            h = self.state_manager.get("preview_height", 400)
+            dlg.resize(w, h)
         dlg_layout = QVBoxLayout(dlg)
         tbl = QTableWidget(len(table_mapping), 2, dlg)
         tbl.setHorizontalHeaderLabels([
@@ -1058,6 +1062,10 @@ class RenamerApp(QWidget):
         btn_sel.clicked.connect(lambda: (dlg.accept(), self.direct_rename_selected()))
 
         dlg.exec()
+        if self.state_manager:
+            self.state_manager.set("preview_width", dlg.width())
+            self.state_manager.set("preview_height", dlg.height())
+            self.state_manager.save()
 
     def direct_rename(self):
         self.rename_with_options(None)
