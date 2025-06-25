@@ -93,7 +93,8 @@ class CompressionDialog(QDialog):
             len(valid),
             self,
         )
-        self.progress.setWindowModality(Qt.WindowModal)
+        # allow interaction with the dialog while running
+        self.progress.setWindowModality(Qt.NonModal)
         self.progress.setMinimumDuration(200)
         self.progress.setValue(0)
 
@@ -161,6 +162,7 @@ class CompressionDialog(QDialog):
             self._thread.quit()
             self._thread.wait()
         self._tmpdir.cleanup()
+        self.progress.close()
         super().accept()
 
     def reject(self) -> None:
@@ -169,6 +171,7 @@ class CompressionDialog(QDialog):
             self._thread.quit()
             self._thread.wait()
         self._tmpdir.cleanup()
+        self.progress.close()
         super().reject()
 
     def closeEvent(self, event):
