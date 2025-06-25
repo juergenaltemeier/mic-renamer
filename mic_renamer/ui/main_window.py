@@ -897,6 +897,9 @@ class RenamerApp(QWidget):
         progress.setWindowModality(Qt.WindowModal)
         progress.setMinimumDuration(200)
         progress.setValue(0)
+        # store progress dialog and context for use in the completion slot
+        self._convert_progress = progress
+        self._convert_total = total
 
         def task(row):
             item0 = self.table_widget.item(row, 1)
@@ -923,39 +926,48 @@ class RenamerApp(QWidget):
         self._convert_thread.finished.connect(self._convert_thread.deleteLater, Qt.QueuedConnection)
         self._convert_worker.finished.connect(self._convert_worker.deleteLater, Qt.QueuedConnection)
         current = self.table_widget.currentRow()
+        # store current row for preview update
+        self._convert_current_row = current
 
-        def on_finished(results):
-            progress.close()
-            # ensure conversion thread fully stopped
-            if self._convert_thread and self._convert_thread.isRunning():
-                self._convert_thread.quit()
-                self._convert_thread.wait()
-            # clear references
-            self._convert_thread = None
-            self._convert_worker = None
-            converted = 0
-            for row, orig, new_path, size in results:
-                if new_path and new_path != orig:
-                    item0 = self.table_widget.item(row, 1)
-                    item0.setData(Qt.UserRole, new_path)
-                    item0.setText(os.path.basename(new_path))
-                    if size is not None:
-                        st: ItemSettings = item0.data(ROLE_SETTINGS)
-                        if st:
-                            st.size_bytes = size
-                            st.compressed_bytes = size
-                    if row == current:
-                        self.load_preview(new_path)
-                    converted += 1
-            QMessageBox.information(
-                self,
-                tr("done"),
-                f"Converted {converted} of {total} images to JPEG."
-            )
-
-        # connect finished signal to on_finished and start the conversion thread
-        self._convert_worker.finished.connect(on_finished, Qt.QueuedConnection)
+        # connect finished signal to our slot and start the conversion thread
+        self._convert_worker.finished.connect(self._on_convert_finished, Qt.QueuedConnection)
         self._convert_thread.start()
+
+    @Slot(list)
+    def _on_convert_finished(self, results: list):
+        """Handle JPEG conversion completion in the GUI thread."""
+        # close the progress dialog
+        if getattr(self, '_convert_progress', None):
+            self._convert_progress.close()
+        # ensure conversion thread fully stopped
+        if self._convert_thread and self._convert_thread.isRunning():
+            self._convert_thread.quit()
+            self._convert_thread.wait()
+        # clear references
+        total = getattr(self, '_convert_total', None)
+        current = getattr(self, '_convert_current_row', None)
+        self._convert_thread = None
+        self._convert_worker = None
+        # update table entries
+        converted = 0
+        for row, orig, new_path, size in results:
+            if new_path and new_path != orig:
+                item0 = self.table_widget.item(row, 1)
+                item0.setData(Qt.UserRole, new_path)
+                item0.setText(os.path.basename(new_path))
+                if size is not None:
+                    st: ItemSettings = item0.data(ROLE_SETTINGS)
+                    if st:
+                        st.size_bytes = size
+                        st.compressed_bytes = size
+                if row == current:
+                    self.load_preview(new_path)
+                converted += 1
+        QMessageBox.information(
+            self,
+            tr("done"),
+            f"Converted {converted} of {total} images to JPEG."
+        )
 
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
