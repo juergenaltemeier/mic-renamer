@@ -428,9 +428,8 @@ class RenamerApp(QWidget):
             self, tr("add_files"), "",
             filter_str
         )
-        self.set_status_message(tr("status_loading"))
-        self.table_widget.add_paths(files)
-        self.set_status_message(None)
+        if files:
+            self._import_paths(files)
 
     def add_folder_dialog(self):
         folder = QFileDialog.getExistingDirectory(
@@ -439,7 +438,6 @@ class RenamerApp(QWidget):
             config_manager.get('default_import_directory', '')
         )
         if folder:
-            self.set_status_message(tr("status_loading"))
             entries = os.listdir(folder)
             paths = [
                 os.path.join(folder, name)
@@ -447,8 +445,29 @@ class RenamerApp(QWidget):
                 if os.path.isfile(os.path.join(folder, name)) and
                    os.path.splitext(name)[1].lower() in ItemSettings.ACCEPT_EXTENSIONS
             ]
-            self.table_widget.add_paths(paths)
-            self.set_status_message(None)
+            if paths:
+                self._import_paths(paths)
+
+    def _import_paths(self, paths: list[str]) -> None:
+        """Import given file paths into the table with a progress dialog."""
+        total = len(paths)
+        progress = QProgressDialog(
+            tr("status_loading"),
+            tr("abort"),
+            0,
+            total,
+            self,
+        )
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(200)
+        progress.setValue(0)
+        for idx, path in enumerate(paths, start=1):
+            if progress.wasCanceled():
+                break
+            self.table_widget.add_paths([path])
+            progress.setValue(idx)
+            QApplication.processEvents()
+        progress.close()
 
     def on_table_selection_changed(self):
         """Start or restart the selection change timer."""
