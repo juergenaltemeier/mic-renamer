@@ -109,7 +109,8 @@ class CompressionDialog(QDialog):
         self._thread.finished.connect(self._thread.deleteLater, Qt.QueuedConnection)
         self._thread.finished.connect(self._on_thread_finished, Qt.QueuedConnection)
         worker.finished.connect(worker.deleteLater, Qt.QueuedConnection)
-        self.progress.canceled.connect(worker.stop, Qt.QueuedConnection)
+        # Canceling the progress should reject the compression dialog
+        self.progress.canceled.connect(self.reject, Qt.QueuedConnection)
         self._thread.start()
 
         self.table.currentCellChanged.connect(self.on_row_changed)
@@ -181,7 +182,7 @@ class CompressionDialog(QDialog):
     def reject(self) -> None:
         if self._worker:
             self._worker.stop()
-        if self._thread.isRunning():
+        if self._thread and self._thread.isRunning():
             self._thread.quit()
             self._thread.wait()
         self._tmpdir.cleanup()
@@ -191,7 +192,7 @@ class CompressionDialog(QDialog):
     def closeEvent(self, event):
         if self._worker:
             self._worker.stop()
-        if self._thread.isRunning():
+        if self._thread and self._thread.isRunning():
             self._thread.quit()
             self._thread.wait()
         self._tmpdir.cleanup()
