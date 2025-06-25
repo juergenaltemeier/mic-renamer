@@ -2,7 +2,16 @@
 
 # Use an absolute import so the module works when executed directly
 # (e.g. when bundled with PyInstaller).
-from mic_renamer.app import Application
+import sys
+try:
+    from mic_renamer.app import Application
+except ModuleNotFoundError as e:
+    missing = e.name if hasattr(e, 'name') else str(e)
+    sys.stderr.write(
+        f"Error: missing required module '{missing}'.\n"
+        "Please install dependencies with 'pip install -r requirements.txt'\n"
+    )
+    sys.exit(1)
 
 
 def main() -> int:
