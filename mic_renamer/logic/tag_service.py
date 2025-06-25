@@ -64,15 +64,20 @@ def extract_suffix_from_name(name: str, valid_tags: Iterable[str]) -> str:
     if date_index is None:
         return ""
 
+    # All tokens after the first date token are potential suffix parts
     suffix_tokens = tokens[date_index + 1 :]
     if not suffix_tokens:
         return ""
-    if suffix_tokens[-1].isdigit():
-        suffix_tokens = suffix_tokens[:-1]
+    # Drop any numeric tokens at the start or end (index counters or stray numbers)
+    while suffix_tokens and suffix_tokens[0].isdigit():
+        suffix_tokens.pop(0)
+    while suffix_tokens and suffix_tokens[-1].isdigit():
+        suffix_tokens.pop()
     if not suffix_tokens:
         return ""
-
+    # Join remaining tokens as suffix
     suffix = "_".join(suffix_tokens)
+    # If the suffix is exactly a known tag code, treat as no suffix
     codes = set(valid_tags)
     if len(suffix_tokens) == 1 and suffix in codes:
         return ""
