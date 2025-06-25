@@ -109,8 +109,8 @@ class CompressionDialog(QDialog):
         self._thread.finished.connect(self._thread.deleteLater, Qt.QueuedConnection)
         self._thread.finished.connect(self._on_thread_finished, Qt.QueuedConnection)
         worker.finished.connect(worker.deleteLater, Qt.QueuedConnection)
-        # Canceling the progress should reject the compression dialog
-        self.progress.canceled.connect(self.reject, Qt.QueuedConnection)
+        # Canceling the progress should stop the compression worker
+        self.progress.canceled.connect(worker.stop, Qt.QueuedConnection)
         self._thread.start()
 
         self.table.currentCellChanged.connect(self.on_row_changed)
