@@ -940,14 +940,11 @@ class RenamerApp(QWidget):
             lambda d, _t, _p: progress.setValue(d), Qt.QueuedConnection
         )
         progress.canceled.connect(self._convert_worker.stop, Qt.QueuedConnection)
-        # clean up thread and worker when done
-        self._convert_worker.finished.connect(self._convert_thread.quit, Qt.QueuedConnection)
-        self._convert_thread.finished.connect(self._convert_thread.deleteLater, Qt.QueuedConnection)
-        self._convert_worker.finished.connect(self._convert_worker.deleteLater, Qt.QueuedConnection)
+        # store context for completion
+        self._convert_total = total
+        self._convert_progress = progress
         current = self.table_widget.currentRow()
-        # store current row for preview update
         self._convert_current_row = current
-
         # connect finished signal to our slot and start the conversion thread
         self._convert_worker.finished.connect(self._on_convert_finished, Qt.QueuedConnection)
         self._convert_thread.start()
@@ -955,19 +952,26 @@ class RenamerApp(QWidget):
     @Slot(list)
     def _on_convert_finished(self, results: list):
         """Handle JPEG conversion completion in the GUI thread."""
-        # close the progress dialog
-        if getattr(self, '_convert_progress', None):
-            self._convert_progress.close()
-        # ensure conversion thread fully stopped
-        if self._convert_thread and self._convert_thread.isRunning():
-            self._convert_thread.quit()
-            self._convert_thread.wait()
-        # clear references
+        # close and delete the progress dialog
+        progress = getattr(self, '_convert_progress', None)
+        if progress:
+            progress.close()
+            progress.deleteLater()
+            self._convert_progress = None
         total = getattr(self, '_convert_total', None)
         current = getattr(self, '_convert_current_row', None)
+        # stop and delete the conversion thread
+        if self._convert_thread:
+            self._convert_thread.quit()
+            self._convert_thread.wait()
+            self._convert_thread.deleteLater()
+        # delete the worker
+        if self._convert_worker:
+            self._convert_worker.deleteLater()
+        # clear references
         self._convert_thread = None
         self._convert_worker = None
-        # update table entries
+        # apply conversion results
         converted = 0
         for row, orig, new_path, size in results:
             if new_path and new_path != orig:
@@ -982,6 +986,7 @@ class RenamerApp(QWidget):
                 if row == current:
                     self.load_preview(new_path)
                 converted += 1
+        # show completion message
         QMessageBox.information(
             self,
             tr("done"),
