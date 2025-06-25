@@ -146,6 +146,7 @@ class CompressionDialog(QDialog):
         if self.table.rowCount() > 0:
             self.table.selectRow(0)
             self.viewer.load_path(self._paths[0])
+        self._worker = None
 
     def on_row_changed(self, row: int, *_):
         if 0 <= row < len(self._paths):
@@ -178,15 +179,21 @@ class CompressionDialog(QDialog):
         super().accept()
 
     def reject(self) -> None:
-        self._worker.stop()
-        self._cleanup_thread()
+        if self._worker:
+            self._worker.stop()
+        if self._thread.isRunning():
+            self._thread.quit()
+            self._thread.wait()
         self._tmpdir.cleanup()
         self.progress.close()
         super().reject()
 
     def closeEvent(self, event):
-        self._worker.stop()
-        self._cleanup_thread()
+        if self._worker:
+            self._worker.stop()
+        if self._thread.isRunning():
+            self._thread.quit()
+            self._thread.wait()
         self._tmpdir.cleanup()
         self.progress.close()
         if self.state_manager:
