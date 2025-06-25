@@ -107,6 +107,7 @@ class CompressionDialog(QDialog):
         worker.finished.connect(self._on_finished, Qt.QueuedConnection)
         worker.finished.connect(self._thread.quit, Qt.QueuedConnection)
         self._thread.finished.connect(self._thread.deleteLater, Qt.QueuedConnection)
+        self._thread.finished.connect(self._on_thread_finished, Qt.QueuedConnection)
         worker.finished.connect(worker.deleteLater, Qt.QueuedConnection)
         self.progress.canceled.connect(worker.stop, Qt.QueuedConnection)
         self._thread.start()
@@ -151,6 +152,19 @@ class CompressionDialog(QDialog):
         if 0 <= row < len(self._paths):
             self.viewer.load_path(self._paths[row])
 
+    def _on_thread_finished(self) -> None:
+        """Reset worker and thread references when the thread ends."""
+        self._thread = None
+        self._worker = None
+
+    def _cleanup_thread(self) -> None:
+        """Stop and wait for the worker thread if it is still running."""
+        if self._thread and self._thread.isRunning():
+            if self._worker:
+                self._worker.stop()
+            self._thread.quit()
+            self._thread.wait()
+
     def accept(self) -> None:
         for row, orig, preview, old_size, new_size in self.results:
             final_path = orig
@@ -159,9 +173,7 @@ class CompressionDialog(QDialog):
                 os.remove(orig)
             shutil.move(preview, final_path)
             self.final_results.append((row, final_path, old_size, new_size))
-        if self._thread.isRunning():
-            self._thread.quit()
-            self._thread.wait()
+        self._cleanup_thread()
         self._tmpdir.cleanup()
         self.progress.close()
         super().accept()
@@ -183,6 +195,7 @@ class CompressionDialog(QDialog):
             self._thread.quit()
             self._thread.wait()
         self._tmpdir.cleanup()
+        self.progress.close()
         if self.state_manager:
             self.state_manager.set("compression_width", self.width())
             self.state_manager.set("compression_height", self.height())
