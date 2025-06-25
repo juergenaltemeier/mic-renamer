@@ -14,8 +14,9 @@ class ImageViewer(QGraphicsView):
         self.pixmap_item = None
         self.current_pixmap = None
         self.setDragMode(QGraphicsView.ScrollHandDrag)
-        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
+        # Center anchored transforms avoid distorted appearance on resize
+        self.setTransformationAnchor(QGraphicsView.AnchorViewCenter)
+        self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
         self.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self._zoom_pct = 100
@@ -113,18 +114,15 @@ class ImageViewer(QGraphicsView):
     def zoom_fit(self):
         if not self.pixmap_item:
             return
-        view_rect = self.viewport().rect()
-        scene_rect = self.scene().sceneRect().toRect()
+        scene_rect = self.scene().sceneRect()
         if scene_rect.isEmpty():
             return
-        factor_w = view_rect.width() / scene_rect.width()
-        factor_h = view_rect.height() / scene_rect.height()
-        factor = min(factor_w, factor_h)
-        self._zoom_pct = int(factor * 100)
         self.resetTransform()
         if self._rotation != 0:
             self.rotate(self._rotation)
-        self.scale(factor, factor)
+        # ``fitInView`` keeps the aspect ratio intact
+        self.fitInView(scene_rect, Qt.KeepAspectRatio)
+        self._zoom_pct = int(self.transform().m11() * 100)
         try:
             self.horizontalScrollBar().setValue(0)
             self.verticalScrollBar().setValue(0)
