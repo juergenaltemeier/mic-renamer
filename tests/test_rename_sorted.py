@@ -1,7 +1,8 @@
 import os
 import pytest
 from PySide6.QtWidgets import QApplication, QMessageBox
-from PySide6.QtCore import Qt, QThread
+from PySide6.QtCore import Qt, QThread, QTimer
+from PySide6.QtTest import QSignalSpy
 
 from mic_renamer.ui.main_window import RenamerApp
 
@@ -45,7 +46,7 @@ def test_rename_updates_sorted_rows(app, monkeypatch, tmp_path):
     win = RenamerApp()
     win.table_widget.add_paths([str(img_a), str(img_b)])
     # sort descending by filename
-    win.table_widget.sortByColumn(1, Qt.DescendingOrder)
+    win.table_widget.sortByColumn(1, Qt.SortOrder.DescendingOrder)
     win.table_widget.setSortingEnabled(True)
     app.processEvents()
 
@@ -58,17 +59,15 @@ def test_rename_updates_sorted_rows(app, monkeypatch, tmp_path):
     ]
 
     monkeypatch.setattr("mic_renamer.ui.main_window.QProgressDialog", DummyProgress)
-    monkeypatch.setattr(QThread, "start", lambda self: self.started.emit())
-    monkeypatch.setattr(QThread, "quit", lambda self: None)
-    monkeypatch.setattr(QThread, "wait", lambda self: None)
     monkeypatch.setattr(QMessageBox, "warning", lambda *a, **k: None)
     monkeypatch.setattr(QMessageBox, "information", lambda *a, **k: None)
 
     win.execute_rename_with_progress(table_mapping)
-    app.processEvents()
+    while win._rename_thread and win._rename_thread.isRunning():
+        app.processEvents()
 
     # sorting should still be descending
-    assert win.table_widget.horizontalHeader().sortIndicatorOrder() == Qt.DescendingOrder
+    assert win.table_widget.horizontalHeader().sortIndicatorOrder() == Qt.SortOrder.DescendingOrder
     assert win.table_widget.item(0, 1).text() == "d.jpg"
     assert win.table_widget.item(1, 1).text() == "c.jpg"
     assert os.path.exists(new_c)

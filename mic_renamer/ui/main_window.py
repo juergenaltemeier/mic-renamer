@@ -104,11 +104,6 @@ class RenamerApp(QWidget):
         self.rename_mode = MODE_NORMAL
         self._preview_thread: QThread | None = None
         self._preview_loader: PreviewLoader | None = None
-        self._rename_thread: QThread | None = None
-        self._rename_worker: Worker | None = None
-        # for JPEG conversion threads
-        self._convert_thread: QThread | None = None
-        self._convert_worker: Worker | None = None
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
@@ -781,13 +776,9 @@ class RenamerApp(QWidget):
         # cancel running loader
         if self._preview_loader:
             self._preview_loader.stop()
-        if self._preview_thread:
+        if self._preview_thread and self._preview_thread.isRunning():
             self._preview_thread.quit()
             self._preview_thread.wait()
-            self._preview_thread = None
-            if self._preview_loader:
-                self._preview_loader.deleteLater()
-                self._preview_loader = None
 
         if not path:
             self.image_viewer.load_path("")
@@ -811,18 +802,16 @@ class RenamerApp(QWidget):
         self._preview_loader = PreviewLoader(path, self.image_viewer.size())
         self._preview_thread = QThread()
         self._preview_loader.moveToThread(self._preview_thread)
-        self._preview_thread.started.connect(self._preview_loader.run, Qt.QueuedConnection)
-        self._preview_loader.finished.connect(self._preview_thread.quit, Qt.QueuedConnection)
-        self._preview_thread.finished.connect(self._preview_thread.deleteLater, Qt.QueuedConnection)
-        self._preview_loader.finished.connect(self._preview_loader.deleteLater, Qt.QueuedConnection)
-        self._preview_loader.finished.connect(self._on_preview_loaded, Qt.QueuedConnection)
+        self._preview_thread.started.connect(self._preview_loader.run)
+        self._preview_loader.finished.connect(self._preview_thread.quit)
+        self._preview_loader.finished.connect(self._preview_loader.deleteLater)
+        self._preview_thread.finished.connect(self._preview_thread.deleteLater)
+        self._preview_loader.finished.connect(self._on_preview_loaded)
         self._preview_thread.start()
 
     @Slot(str, QImage)
     def _on_preview_loaded(self, path: str, image: QImage) -> None:
-        if self._preview_thread:
-            self._preview_thread.wait()
-            self._preview_thread = None
+        self._preview_thread = None
         self._preview_loader = None
         if image.isNull():
             logging.getLogger(__name__).warning("Failed to load preview: %s", path)
@@ -977,77 +966,30 @@ class RenamerApp(QWidget):
         progress.setWindowModality(Qt.WindowModal)
         progress.setMinimumDuration(200)
         progress.setValue(0)
-        # store progress dialog and context for use in the completion slot
-        self._convert_progress = progress
-        self._convert_total = total
 
-        def task(row):
+        converted = 0
+        for i, row in enumerate(rows):
+            if progress.wasCanceled():
+                break
             item0 = self.table_widget.item(row, 1)
             if not item0:
-                return (row, None, None, None)
+                continue
             path = item0.data(Qt.UserRole)
             new_path = convert_to_jpeg(path)
-            size = os.path.getsize(new_path) if new_path != path else None
-            return (row, path, new_path, size)
-
-        # set up conversion worker and thread
-        self._convert_worker = Worker(task, rows)
-        self._convert_thread = QThread()
-        self._convert_worker.moveToThread(self._convert_thread)
-        # start conversion when thread starts
-        self._convert_thread.started.connect(self._convert_worker.run, Qt.QueuedConnection)
-        # update progress and handle cancellation
-        self._convert_worker.progress.connect(
-            lambda d, _t, _p: progress.setValue(d), Qt.QueuedConnection
-        )
-        progress.canceled.connect(self._convert_worker.stop, Qt.QueuedConnection)
-        # store context for completion
-        self._convert_total = total
-        self._convert_progress = progress
-        current = self.table_widget.currentRow()
-        self._convert_current_row = current
-        # connect finished signal to our slot and start the conversion thread
-        self._convert_worker.finished.connect(self._on_convert_finished, Qt.QueuedConnection)
-        self._convert_thread.start()
-
-    @Slot(list)
-    def _on_convert_finished(self, results: list):
-        """Handle JPEG conversion completion in the GUI thread."""
-        # close and delete the progress dialog
-        progress = getattr(self, '_convert_progress', None)
-        if progress:
-            progress.close()
-            progress.deleteLater()
-            self._convert_progress = None
-        total = getattr(self, '_convert_total', None)
-        current = getattr(self, '_convert_current_row', None)
-        # stop and delete the conversion thread
-        if self._convert_thread:
-            self._convert_thread.quit()
-            self._convert_thread.wait()
-            self._convert_thread.deleteLater()
-        # delete the worker
-        if self._convert_worker:
-            self._convert_worker.deleteLater()
-        # clear references
-        self._convert_thread = None
-        self._convert_worker = None
-        # apply conversion results
-        converted = 0
-        for row, orig, new_path, size in results:
-            if new_path and new_path != orig:
-                item0 = self.table_widget.item(row, 1)
+            if new_path != path:
                 item0.setData(Qt.UserRole, new_path)
                 item0.setText(os.path.basename(new_path))
-                if size is not None:
-                    st: ItemSettings = item0.data(ROLE_SETTINGS)
-                    if st:
-                        st.size_bytes = size
-                        st.compressed_bytes = size
-                if row == current:
+                st: ItemSettings = item0.data(ROLE_SETTINGS)
+                if st:
+                    st.size_bytes = os.path.getsize(new_path)
+                    st.compressed_bytes = st.size_bytes
+                if row == self.table_widget.currentRow():
                     self.load_preview(new_path)
                 converted += 1
-        # show completion message
+            progress.setValue(i + 1)
+            QApplication.processEvents()
+
+        progress.close()
         QMessageBox.information(
             self,
             tr("done"),
@@ -1231,8 +1173,10 @@ class RenamerApp(QWidget):
         else:
             compressor = None
 
-        def rename_task(item):
-            row, orig, new_name, new_path = item
+        results: list[dict] = []
+        for idx, (row, orig, new_name, new_path) in enumerate(table_mapping, start=1):
+            if progress.wasCanceled():
+                break
             result = {
                 "row": row,
                 "orig": orig,
@@ -1255,34 +1199,14 @@ class RenamerApp(QWidget):
                 result["new"] = final_path
             except Exception as e:
                 result["error"] = str(e)
-            return result
+            results.append(result)
+            progress.setValue(idx)
+            QApplication.processEvents()
 
-        self._rename_worker = Worker(rename_task, table_mapping)
-        self._rename_thread = QThread()
-        self._rename_worker.moveToThread(self._rename_thread)
-        self._rename_thread.started.connect(self._rename_worker.run, Qt.QueuedConnection)
-        self._rename_worker.progress.connect(
-            lambda done, total, item: progress.setValue(done), Qt.QueuedConnection
-        )
-        self._rename_worker.finished.connect(
-            lambda results: self._on_rename_finished(results, progress),
-            Qt.QueuedConnection,
-        )
-        progress.canceled.connect(self._rename_worker.stop, Qt.QueuedConnection)
-        self._rename_thread.start()
-
-    def _on_rename_finished(self, results: list[dict], progress: QProgressDialog):
         progress.close()
-        if self._rename_thread:
-            self._rename_thread.quit()
-            self._rename_thread.wait()
-        self._rename_thread = None
-        self._rename_worker = None
-
         used_tags: list[str] = []
-        done_count = 0
-        total_count = len(results)
-
+        done = len(results)
+        total_local = total
         for res in results:
             if res.get("error"):
                 QMessageBox.warning(
@@ -1291,8 +1215,6 @@ class RenamerApp(QWidget):
                     f"Error renaming:\n{res['orig']}\n→ {res['new']}\nError: {res['error']}"
                 )
                 continue
-
-            done_count += 1
             row = res["row"]
             new_path = res["new"]
             item0 = self.table_widget.item(row, 1)
@@ -1303,7 +1225,7 @@ class RenamerApp(QWidget):
                 if settings and self.rename_mode == MODE_NORMAL:
                     used_tags.extend(settings.tags)
                 self.undo_manager.record(row, res["orig"], new_path)
-                if res.get("old_size") is not None:
+                if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
                     if settings:
                         settings.size_bytes = res.get("old_size")
                         settings.compressed_bytes = res.get("new_size")
@@ -1312,14 +1234,13 @@ class RenamerApp(QWidget):
             QMessageBox.information(
                 self,
                 tr("partial_rename"),
-                tr("partial_rename_msg").format(done=done_count, total=total_count)
+                tr("partial_rename_msg").format(done=done, total=total_local)
             )
         else:
             QMessageBox.information(self, tr("done"), tr("rename_done"))
             if used_tags and self.rename_mode == MODE_NORMAL:
                 increment_tags(used_tags)
                 self.tag_panel.rebuild()
-
         self.set_status_message(None)
         self._enable_sorting()
 
@@ -1341,43 +1262,17 @@ class RenamerApp(QWidget):
         )
 
     def closeEvent(self, event):
-        # stop selection change timer
-        try:
-            self._sel_change_timer.stop()
-        except Exception:
-            pass
-        # ensure any playing video is stopped to release multimedia resources
-        self.image_viewer.video_player.player.stop()
         if self._preview_loader:
             self._preview_loader.stop()
-        if self._preview_thread:
-            if self._preview_thread.isRunning():
-                self._preview_thread.quit()
-                self._preview_thread.wait()
-            if self._preview_loader:
-                self._preview_loader.deleteLater()
-                self._preview_loader = None
-            self._preview_thread = None
-        # ensure any running conversion threads are stopped
-        if getattr(self, '_convert_thread', None) and self._convert_thread.isRunning():
-            if getattr(self, '_convert_worker', None):
-                self._convert_worker.stop()
-            self._convert_thread.quit()
-            self._convert_thread.wait()
-            self._convert_thread = None
-            self._convert_worker = None
-        if self._rename_thread and self._rename_thread.isRunning():
-            if self._rename_worker:
-                self._rename_worker.stop()
-            self._rename_thread.quit()
-            # wait indefinitely for the rename thread to finish
-            self._rename_thread.wait()
-            self._rename_thread = None
-            self._rename_worker = None
+
         if self.state_manager:
             self.state_manager.set("width", self.width())
             self.state_manager.set("height", self.height())
             self.state_manager.set("splitter_sizes", self.splitter.sizes())
             self.state_manager.save()
+        
+        if self.image_viewer.video_player.player:
+            self.image_viewer.video_player.player.stop()
+            
         super().closeEvent(event)
 

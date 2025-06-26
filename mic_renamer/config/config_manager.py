@@ -135,11 +135,13 @@ class ConfigManager:
         from ..logic.tag_loader import restore_default_tags
         from ..logic.tag_usage import save_counts
         restore_default_tags()
-        usage_path = Path(cfg.get("tag_usage_file"))
-        if not usage_path.is_absolute():
-            usage_path = Path(get_config_dir()) / usage_path
-        if not usage_path.is_file():
-            try:
-                save_counts({})
-            except Exception:
-                pass
+        usage_file = cfg.get("tag_usage_file")
+        if usage_file:
+            usage_path = Path(usage_file)
+            if not usage_path.is_absolute():
+                usage_path = Path(get_config_dir()) / usage_path
+            if not usage_path.is_file():
+                try:
+                    save_counts({})
+                except Exception:
+                    pass

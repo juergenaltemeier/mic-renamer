@@ -51,7 +51,8 @@ from ..utils.path_utils import get_config_dir
 DEFAULT_TAGS_FILE = Path(get_config_dir()) / "tags.json"
 BUNDLED_TAGS_FILE = resources.files("mic_renamer.config") / "tags.json"
 
-CONFIG_TAGS_FILE = config_manager.get("tags_file")
+def get_config_tags_file():
+    return config_manager.get("tags_file")
 
 ENV_TAGS_FILE = "RENAMER_TAGS_FILE"
 
@@ -59,7 +60,7 @@ ENV_TAGS_FILE = "RENAMER_TAGS_FILE"
 def _load_raw(file_path: str | None = None) -> dict:
     """Internal helper returning the raw tag dictionary."""
     if file_path is None:
-        file_path = os.environ.get(ENV_TAGS_FILE) or CONFIG_TAGS_FILE or DEFAULT_TAGS_FILE
+        file_path = os.environ.get(ENV_TAGS_FILE) or get_config_tags_file() or DEFAULT_TAGS_FILE
     path = Path(file_path)
     if not path.is_absolute():
         path = Path(get_config_dir()) / path

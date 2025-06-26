@@ -102,15 +102,14 @@ class CompressionDialog(QDialog):
         self._thread = QThread()
         worker.moveToThread(self._thread)
         self._worker = worker
-        self._thread.started.connect(worker.run, Qt.QueuedConnection)
-        worker.progress.connect(self._on_progress, Qt.QueuedConnection)
-        worker.finished.connect(self._on_finished, Qt.QueuedConnection)
-        worker.finished.connect(self._thread.quit, Qt.QueuedConnection)
-        self._thread.finished.connect(self._thread.deleteLater, Qt.QueuedConnection)
-        self._thread.finished.connect(self._on_thread_finished, Qt.QueuedConnection)
-        worker.finished.connect(worker.deleteLater, Qt.QueuedConnection)
+        self._thread.started.connect(worker.run)
+        worker.progress.connect(self._on_progress)
+        worker.finished.connect(self._on_finished)
+        worker.finished.connect(self._thread.quit)
+        worker.finished.connect(worker.deleteLater)
+        self._thread.finished.connect(self._thread.deleteLater)
         # Canceling the progress should stop the compression worker
-        self.progress.canceled.connect(worker.stop, Qt.QueuedConnection)
+        self.progress.canceled.connect(worker.stop)
         self._thread.start()
 
         self.table.currentCellChanged.connect(self.on_row_changed)
@@ -158,14 +157,6 @@ class CompressionDialog(QDialog):
         self._thread = None
         self._worker = None
 
-    def _cleanup_thread(self) -> None:
-        """Stop and wait for the worker thread if it is still running."""
-        if self._thread and self._thread.isRunning():
-            if self._worker:
-                self._worker.stop()
-            self._thread.quit()
-            self._thread.wait()
-
     def accept(self) -> None:
         for row, orig, preview, old_size, new_size in self.results:
             final_path = orig
@@ -174,7 +165,6 @@ class CompressionDialog(QDialog):
                 os.remove(orig)
             shutil.move(preview, final_path)
             self.final_results.append((row, final_path, old_size, new_size))
-        self._cleanup_thread()
         self._tmpdir.cleanup()
         self.progress.close()
         super().accept()
@@ -182,9 +172,6 @@ class CompressionDialog(QDialog):
     def reject(self) -> None:
         if self._worker:
             self._worker.stop()
-        if self._thread and self._thread.isRunning():
-            self._thread.quit()
-            self._thread.wait()
         self._tmpdir.cleanup()
         self.progress.close()
         super().reject()
@@ -192,9 +179,6 @@ class CompressionDialog(QDialog):
     def closeEvent(self, event):
         if self._worker:
             self._worker.stop()
-        if self._thread and self._thread.isRunning():
-            self._thread.quit()
-            self._thread.wait()
         self._tmpdir.cleanup()
         self.progress.close()
         if self.state_manager:

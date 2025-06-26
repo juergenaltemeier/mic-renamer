@@ -5,16 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 import re
 
-
-class RenameConfig:
-    """Configuration for building new file names."""
-
-    date_format: str = "%y%m%d"
-    index_padding: int = 3
-    separator: str = "_"
-    start_index: int = 1
-
-
+from .rename_config import RenameConfig
 from .. import config_manager
 
 # load accepted extensions from config
@@ -42,7 +33,7 @@ class ItemSettings:
     size_bytes: int = 0
     compressed_bytes: int = 0
 
-    def _date_str(self, config: "RenameConfig") -> str:
+    def _date_str(self, config: RenameConfig) -> str:
         if self.date and re.fullmatch(r"\d{6}", self.date):
             return self.date
         return datetime.now().strftime(config.date_format)
@@ -51,7 +42,7 @@ class ItemSettings:
         self,
         project: str,
         ordered_tags: list[str],
-        config: "RenameConfig",
+        config: RenameConfig,
     ) -> str:
         date_str = self._date_str(config)
         parts = [project] + ordered_tags + [date_str]
@@ -63,7 +54,7 @@ class ItemSettings:
         project: str,
         index: int,
         ordered_tags: list[str],
-        config: "RenameConfig",
+        config: RenameConfig,
         include_index: bool = True,
     ) -> str:
         base = self.build_base_name(project, ordered_tags, config)

@@ -3,7 +3,8 @@
 import os
 from collections import defaultdict
 
-from .settings import ItemSettings, RenameConfig
+from .settings import ItemSettings
+from .rename_config import RenameConfig
 from ..utils.file_utils import ensure_unique_name
 
 class Renamer:

@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import shutil
 from PIL import Image
+from PIL.Image import Resampling
 from pillow_heif import register_heif_opener
 
 register_heif_opener()
@@ -74,9 +75,9 @@ class ImageCompressor:
             if scale < 1.0:
                 new_w = int(img.width * scale)
                 new_h = int(img.height * scale)
-                img = img.resize((new_w, new_h), Image.LANCZOS)
+                img = img.resize((new_w, new_h), Resampling.LANCZOS)
 
-        save_kwargs = {"optimize": True}
+        save_kwargs: dict[str, bool | int | bytes] = {"optimize": True}
         if fmt == "JPEG" and not self.resize_only:
             save_kwargs["quality"] = self.quality
 
@@ -86,7 +87,7 @@ class ImageCompressor:
         new_size = os.path.getsize(out_path)
         if self.reduce_resolution and new_size > self.max_size:
             while new_size > self.max_size and img.width > 100 and img.height > 100:
-                img = img.resize((int(img.width * 0.9), int(img.height * 0.9)), Image.LANCZOS)
+                img = img.resize((int(img.width * 0.9), int(img.height * 0.9)), Resampling.LANCZOS)
                 if exif_data:
                     save_kwargs["exif"] = exif_data
                 img.save(out_path, format=fmt, **save_kwargs)
