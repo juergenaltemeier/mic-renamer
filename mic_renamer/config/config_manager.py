@@ -1,8 +1,12 @@
 """Load and save user configuration."""
 from __future__ import annotations
 
-from pathlib import Path
+import yaml
 from importlib import resources
+from pathlib import Path
+
+from ..utils.path_utils import get_config_dir
+
 
 # Fallback defaults used when the bundled YAML file is missing. This ensures
 # PyInstaller builds still work even if the data file was not included.
@@ -34,9 +38,6 @@ compression_max_width: 0
 compression_max_height: 0
 compress_after_rename: false
 """
-import yaml
-
-from ..utils.path_utils import get_config_dir
 
 
 class ConfigManager:

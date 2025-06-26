@@ -39,6 +39,11 @@ The codebase is organized into several packages and modules:
 - **`requirements.txt`**: Lists the Python dependencies for the project.
 - **`README.md`**: Provides instructions for setting up, running, testing, and building the application.
 
+### Additional instructions
+- on every visible UI text element be aware of the changable language of the UI
+
+
+
 ### How to Run
 
 1.  Create and activate a virtual environment.

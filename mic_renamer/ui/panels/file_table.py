@@ -7,11 +7,18 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QApplication,
     QAbstractItemView,
+    QMenu,
 )
-from PySide6.QtGui import QPalette
-
-# QItemSelectionModel and QItemSelection are in QtCore, not QtWidgets
-from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection, QEvent, Signal
+from PySide6.QtGui import QPalette, QAction, QDesktopServices
+from PySide6.QtCore import (
+    Qt,
+    QTimer,
+    QItemSelectionModel,
+    QItemSelection,
+    QEvent,
+    Signal,
+    QUrl,
+)
 import re
 from datetime import datetime
 from importlib import resources
@@ -29,14 +36,13 @@ class DragDropTableWidget(QTableWidget):
     """Table widget supporting drag-and-drop and multi-select."""
 
     pathsAdded = Signal(int)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self._updating_checks = False
         self.mode = "normal"
         self.setColumnCount(5)
-        self.setHorizontalHeaderLabels(
-            ["", "Filename", "Tags", "Date", "Suffix"]
-        )
+        self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"])
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Interactive)
@@ -72,6 +78,29 @@ class DragDropTableWidget(QTableWidget):
                 "background-position:center;}"
             )
             self.setStyleSheet(style)
+
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        open_action = QAction("Open File", self)
+        open_action.triggered.connect(self.open_selected_file)
+        menu.addAction(open_action)
+
+        if not self.selectionModel().hasSelection():
+            open_action.setEnabled(False)
+
+        menu.exec_(event.globalPos())
+
+    def open_selected_file(self):
+        selected_rows = self.selectionModel().selectedRows()
+        if not selected_rows:
+            return
+
+        first_selected_row = selected_rows[0].row()
+        item = self.item(first_selected_row, 1)
+        if item:
+            file_path = item.data(Qt.UserRole)
+            if file_path and os.path.exists(file_path):
+                QDesktopServices.openUrl(QUrl.fromLocalFile(file_path))
 
     def set_mode(self, mode: str) -> None:
         """Switch table headers for the given mode."""

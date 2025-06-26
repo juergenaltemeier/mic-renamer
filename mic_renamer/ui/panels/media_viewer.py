@@ -18,7 +18,7 @@ from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtMultimediaWidgets import QVideoWidget
 
 from .image_preview import ImageViewer
-from ..constants import DEFAULT_MARGIN, DEFAULT_SPACING
+from ..constants import DEFAULT_MARGIN
 
 
 class VideoPlayer(QWidget):

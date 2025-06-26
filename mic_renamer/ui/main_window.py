@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QPushButton, QSlider, QFileDialog, QMessageBox,
     QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox,
-    QStyle, QTableWidget, QTableWidgetItem,
+    QTableWidget, QTableWidgetItem,
     QMenu, QToolButton, QSizePolicy, QToolBar,
 )
 from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPixmapCache, QImage
@@ -219,7 +219,6 @@ class RenamerApp(QWidget):
 
     def setup_toolbar(self):
         tb = self.toolbar
-        style = config_manager.get("toolbar_style", "icons")
         self.toolbar_actions = []
         self.toolbar_action_icons = []
 
@@ -319,11 +318,9 @@ class RenamerApp(QWidget):
         self.toolbar_actions.append(act_settings)
         self.toolbar_action_icons.append(icon_settings)
 
-        self.lbl_project = QLabel(tr("project_number_label"))
         self.input_project = ProjectNumberInput()
         self.input_project.setText(config_manager.get("last_project_number", ""))
         self.input_project.textChanged.connect(self.save_last_project_number)
-        tb.addWidget(self.lbl_project)
         tb.addWidget(self.input_project)
 
 
@@ -382,7 +379,6 @@ class RenamerApp(QWidget):
             self.btn_add_menu.setText(tr("add_menu"))
             self.btn_add_menu.setToolTip(tr("tip_add_menu"))
         # update form labels
-        self.lbl_project.setText(tr("project_number_label"))
         if self.tag_panel.isVisible():
             self.btn_toggle_tags.setText(tr("hide_tags"))
         else:
@@ -607,8 +603,8 @@ class RenamerApp(QWidget):
                 (settings.tags if self.rename_mode == MODE_NORMAL else settings.position)
             )
             if has_info:
-                item.setBackground(QColor('#335533'))
-                item.setForeground(QColor('#ffffff'))
+                item.setBackground(QColor(40, 60, 40))
+                item.setForeground(QColor(220, 220, 220))
             else:
                 item.setBackground(QColor(30, 30, 30))
                 item.setForeground(QColor(220, 220, 220))

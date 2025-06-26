@@ -59,8 +59,10 @@ class TagPanel(QWidget):
         for idx, (code, desc) in enumerate(sorted_tags):
             row = idx % rows
             col = idx // rows
-            cb = EnterToggleCheckBox(f"{code}: {desc}")
-            cb.setProperty("code", code)
-            cb.stateChanged.connect(lambda state, c=code: self.tagToggled.emit(c, state))
+            cb = EnterToggleCheckBox(f"{code.upper()}: {desc}")
+            cb.setProperty("code", code.upper())
+            cb.stateChanged.connect(
+                lambda state, c=code: self.tagToggled.emit(c.upper(), state)
+            )
             self.tag_layout.addWidget(cb, row, col)
-            self.checkbox_map[code] = cb
+            self.checkbox_map[code.upper()] = cb

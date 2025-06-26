@@ -91,17 +91,49 @@ class ImageViewer(QGraphicsView):
         except Exception:
             pass
 
+    def _update_zoom_pct(self):
+        """Update self._zoom_pct based on the current transformation."""
+        if not self.pixmap_item:
+            return
+
+        scene_rect = self.scene().sceneRect()
+        if scene_rect.isEmpty():
+            return
+        view_rect = self.viewport().rect()
+        if view_rect.isEmpty():
+            return
+
+        x_scale = view_rect.width() / scene_rect.width()
+        y_scale = view_rect.height() / scene_rect.height()
+        base_factor = min(x_scale, y_scale)
+
+        if base_factor == 0:
+            return
+
+        t = self.transform()
+        current_scale = (t.m11() ** 2 + t.m21() ** 2) ** 0.5
+        self._zoom_pct = (current_scale / base_factor) * 100
+
     def wheelEvent(self, event):
         if not self.pixmap_item:
             return
+
+        factor = 1.15
+        if event.angleDelta().y() < 0:
+            factor = 1.0 / factor
+
+        t = self.transform()
+        current_scale = (t.m11() ** 2 + t.m21() ** 2) ** 0.5
+
+        # Simple zoom limits to prevent extreme zoom
+        if (current_scale > 10.0 and factor > 1.0) or (current_scale < 0.1 and factor < 1.0):
+            return
+
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        delta = event.angleDelta().y()
-        if delta > 0:
-            self._zoom_pct = min(self._zoom_pct + 10, 500)
-        else:
-            self._zoom_pct = max(self._zoom_pct - 10, 10)
-        self.apply_transformations()
+        self.scale(factor, factor)
         self.setTransformationAnchor(QGraphicsView.AnchorViewCenter)
+
+        self._update_zoom_pct()
         event.accept()
 
     def apply_transformations(self):
