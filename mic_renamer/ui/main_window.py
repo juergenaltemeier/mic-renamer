@@ -31,6 +31,64 @@ from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
 from .wrap_toolbar import WrapToolBar
 from ..utils.workers import Worker, PreviewLoader
+from datetime import datetime
+
+
+def _validate_and_format_date(date_str: str) -> str:
+    """Validate and format date input to YYMMDD format."""
+    if not date_str:
+        return ""
+    
+    # Remove any non-digit characters
+    digits_only = re.sub(r'\D', '', date_str)
+    
+    # If it's already in YYMMDD format (6 digits), validate and return
+    if len(digits_only) == 6:
+        try:
+            year = int(digits_only[:2]) + 2000  # Convert YY to YYYY
+            month = int(digits_only[2:4])
+            day = int(digits_only[4:6])
+            datetime(year, month, day)  # Validate date
+            return digits_only
+        except ValueError:
+            pass
+    
+    # Try to parse various date formats
+    date_formats = [
+        '%Y-%m-%d',    # 2024-12-26
+        '%Y/%m/%d',    # 2024/12/26
+        '%d-%m-%Y',    # 26-12-2024
+        '%d/%m/%Y',    # 26/12/2024
+        '%m-%d-%Y',    # 12-26-2024
+        '%m/%d/%Y',    # 12/26/2024
+        '%d-%m-%y',    # 26-12-24
+        '%d/%m/%y',    # 26/12/24
+        '%m-%d-%y',    # 12-26-24
+        '%m/%d/%y',    # 12/26/24
+        '%Y%m%d',      # 20241226
+    ]
+    
+    for fmt in date_formats:
+        try:
+            parsed_date = datetime.strptime(date_str, fmt)
+            return parsed_date.strftime('%y%m%d')
+        except ValueError:
+            continue
+    
+    # If no format matches, try with digits_only if it has enough digits
+    if len(digits_only) == 8:  # YYYYMMDD
+        try:
+            year = int(digits_only[:4])
+            month = int(digits_only[4:6])
+            day = int(digits_only[6:8])
+            parsed_date = datetime(year, month, day)
+            return parsed_date.strftime('%y%m%d')
+        except ValueError:
+            pass
+    
+    # Return original if we can't parse it
+    return date_str
+
 
 
 ROLE_SETTINGS = Qt.UserRole + 1
@@ -666,7 +724,8 @@ class RenamerApp(QWidget):
             self.table_widget._selection_before_edit = []
         elif self.rename_mode == MODE_NORMAL and col == 3:
             text = item.text().strip()
-            if not re.fullmatch(r"\d{6}", text):
+            formatted_date = _validate_and_format_date(text)
+            if not formatted_date:
                 QMessageBox.warning(
                     self,
                     tr("invalid_date_title"),
@@ -676,7 +735,8 @@ class RenamerApp(QWidget):
                 item.setText(settings.date)
                 self._ignore_table_changes = False
             else:
-                settings.date = text
+                settings.date = formatted_date
+                item.setText(formatted_date)
                 item.setToolTip(settings.date)
         elif self.rename_mode == MODE_POSITION and col == 2:
             settings.position = item.text().strip()
@@ -1111,7 +1171,7 @@ class RenamerApp(QWidget):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         self.rename_with_options(rows)
 
-    def rename_with_options(self, rows: list[int] | None):
+    def choose_save_directory_and_rename(self, rows: list[int] | None):
         dlg = RenameOptionsDialog(self)
         if dlg.exec() != QDialog.Accepted:
             return
@@ -1135,10 +1195,14 @@ class RenamerApp(QWidget):
                     break
         self.execute_rename_with_progress(table_mapping, compress=compress)
 
+    def rename_with_options(self, rows: list[int] | None):
+        self.choose_save_directory_and_rename(rows)
+
     def set_status_message(self, message: str | None) -> None:
         """Display an additional message in the status bar."""
         self.status_message = message or ""
         self.update_status()
+
     def execute_rename_with_progress(self, table_mapping, compress: bool = False):
         self.set_status_message(tr("renaming_files"))
         self.table_widget.setSortingEnabled(False)
@@ -1167,11 +1231,8 @@ class RenamerApp(QWidget):
         else:
             compressor = None
 
-        # perform rename synchronously to avoid thread issues
-        results: list[dict] = []
-        for idx, (row, orig, new_name, new_path) in enumerate(table_mapping, start=1):
-            if progress.wasCanceled():
-                break
+        def rename_task(item):
+            row, orig, new_name, new_path = item
             result = {
                 "row": row,
                 "orig": orig,
@@ -1194,15 +1255,34 @@ class RenamerApp(QWidget):
                 result["new"] = final_path
             except Exception as e:
                 result["error"] = str(e)
-            results.append(result)
-            progress.setValue(idx)
-            QApplication.processEvents()
+            return result
 
-        # finalize rename operations
+        self._rename_worker = Worker(rename_task, table_mapping)
+        self._rename_thread = QThread()
+        self._rename_worker.moveToThread(self._rename_thread)
+        self._rename_thread.started.connect(self._rename_worker.run, Qt.QueuedConnection)
+        self._rename_worker.progress.connect(
+            lambda done, total, item: progress.setValue(done), Qt.QueuedConnection
+        )
+        self._rename_worker.finished.connect(
+            lambda results: self._on_rename_finished(results, progress),
+            Qt.QueuedConnection,
+        )
+        progress.canceled.connect(self._rename_worker.stop, Qt.QueuedConnection)
+        self._rename_thread.start()
+
+    def _on_rename_finished(self, results: list[dict], progress: QProgressDialog):
         progress.close()
+        if self._rename_thread:
+            self._rename_thread.quit()
+            self._rename_thread.wait()
+        self._rename_thread = None
+        self._rename_worker = None
+
         used_tags: list[str] = []
-        done = len(results)
-        total_local = total
+        done_count = 0
+        total_count = len(results)
+
         for res in results:
             if res.get("error"):
                 QMessageBox.warning(
@@ -1211,6 +1291,8 @@ class RenamerApp(QWidget):
                     f"Error renaming:\n{res['orig']}\n→ {res['new']}\nError: {res['error']}"
                 )
                 continue
+
+            done_count += 1
             row = res["row"]
             new_path = res["new"]
             item0 = self.table_widget.item(row, 1)
@@ -1221,7 +1303,7 @@ class RenamerApp(QWidget):
                 if settings and self.rename_mode == MODE_NORMAL:
                     used_tags.extend(settings.tags)
                 self.undo_manager.record(row, res["orig"], new_path)
-                if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
+                if res.get("old_size") is not None:
                     if settings:
                         settings.size_bytes = res.get("old_size")
                         settings.compressed_bytes = res.get("new_size")
@@ -1230,13 +1312,14 @@ class RenamerApp(QWidget):
             QMessageBox.information(
                 self,
                 tr("partial_rename"),
-                tr("partial_rename_msg").format(done=done, total=total_local)
+                tr("partial_rename_msg").format(done=done_count, total=total_count)
             )
         else:
             QMessageBox.information(self, tr("done"), tr("rename_done"))
             if used_tags and self.rename_mode == MODE_NORMAL:
                 increment_tags(used_tags)
                 self.tag_panel.rebuild()
+
         self.set_status_message(None)
         self._enable_sorting()
 

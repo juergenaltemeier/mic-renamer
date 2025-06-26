@@ -66,23 +66,19 @@ class ConfigManager:
             defaults_text = DEFAULTS_YAML
         defaults = yaml.safe_load(defaults_text)
         # ensure default path for the tags file in user config directory
-        defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
+        if "tags_file" not in defaults:
+            defaults["tags_file"] = str(Path(get_config_dir()) / "tags.json")
         # default path for tag usage statistics
-        defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
+        if "tag_usage_file" not in defaults:
+            defaults["tag_usage_file"] = str(Path(get_config_dir()) / "tag_usage.json")
         # directory used when choosing an alternative save location
-        defaults.setdefault("default_save_directory", str(get_config_dir()))
-        defaults.setdefault("default_import_directory", "")
+        if "default_save_directory" not in defaults:
+            defaults["default_save_directory"] = str(get_config_dir())
+        if "default_import_directory" not in defaults:
+            defaults["default_import_directory"] = ""
         # migrate legacy setting name
         if "compression_max_size_mb" in data and "compression_max_size_kb" not in data:
             data["compression_max_size_kb"] = float(data.pop("compression_max_size_mb")) * 1024
-        defaults.setdefault("compression_max_size_kb", 2048)
-        defaults.setdefault("compression_quality", 95)
-        defaults.setdefault("compression_reduce_resolution", True)
-        defaults.setdefault("compression_resize_only", False)
-        defaults.setdefault("compression_max_width", 0)
-        defaults.setdefault("compression_max_height", 0)
-        defaults.setdefault("compress_after_rename", False)
-        defaults.setdefault("toolbar_style", "icons")
         self._config = {**defaults, **data}
         return self._config
 
@@ -117,18 +113,14 @@ class ConfigManager:
         except FileNotFoundError:
             defaults_text = DEFAULTS_YAML
         defaults = yaml.safe_load(defaults_text)
-        defaults.setdefault("tags_file", str(Path(get_config_dir()) / "tags.json"))
-        defaults.setdefault("tag_usage_file", str(Path(get_config_dir()) / "tag_usage.json"))
-        defaults.setdefault("default_save_directory", str(get_config_dir()))
-        defaults.setdefault("default_import_directory", "")
-        defaults.setdefault("compression_max_size_kb", 2048)
-        defaults.setdefault("compression_quality", 95)
-        defaults.setdefault("compression_reduce_resolution", True)
-        defaults.setdefault("compression_resize_only", False)
-        defaults.setdefault("compression_max_width", 0)
-        defaults.setdefault("compression_max_height", 0)
-        defaults.setdefault("compress_after_rename", False)
-        defaults.setdefault("toolbar_style", "icons")
+        if "tags_file" not in defaults:
+            defaults["tags_file"] = str(Path(get_config_dir()) / "tags.json")
+        if "tag_usage_file" not in defaults:
+            defaults["tag_usage_file"] = str(Path(get_config_dir()) / "tag_usage.json")
+        if "default_save_directory" not in defaults:
+            defaults["default_save_directory"] = str(get_config_dir())
+        if "default_import_directory" not in defaults:
+            defaults["default_import_directory"] = ""
         self._config = defaults
         self.save(defaults)
         return defaults

@@ -40,8 +40,7 @@ The codebase is organized into several packages and modules:
 - **`README.md`**: Provides instructions for setting up, running, testing, and building the application.
 
 ### Additional instructions
-- on every visible UI text element be aware of the changable language of the UI
-
+- on every visible UI text element be aware of the changable language of the UI  and that you have to add new text to the correct files in both languages.
 
 
 ### How to Run

@@ -97,7 +97,7 @@ class ImageViewer(QGraphicsView):
             return
 
         scene_rect = self.scene().sceneRect()
-        if scene_rect.isEmpty():
+        if scene_rect.isEmpty() or scene_rect.width() == 0 or scene_rect.height() == 0:
             return
         view_rect = self.viewport().rect()
         if view_rect.isEmpty():
@@ -140,7 +140,7 @@ class ImageViewer(QGraphicsView):
         if not self.pixmap_item:
             return
         scene_rect = self.scene().sceneRect()
-        if scene_rect.isEmpty():
+        if scene_rect.isEmpty() or scene_rect.width() == 0 or scene_rect.height() == 0:
             return
         view_rect = self.viewport().rect()
         if view_rect.isEmpty():

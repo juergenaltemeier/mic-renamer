@@ -19,8 +19,6 @@ from PySide6.QtCore import (
     Signal,
     QUrl,
 )
-import re
-from datetime import datetime
 from importlib import resources
 
 from ...logic.settings import ItemSettings
@@ -44,24 +42,23 @@ class DragDropTableWidget(QTableWidget):
         self.setColumnCount(5)
         self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"])
         header = self.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QHeaderView.Interactive)
-        header.setSectionResizeMode(2, QHeaderView.Interactive)
-        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Interactive)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Interactive)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
         header.setStretchLastSection(True)
         header.sectionDoubleClicked.connect(self.on_header_double_clicked)
         self.setSortingEnabled(True)
-        self.sortByColumn(1, Qt.AscendingOrder)
-        self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.sortByColumn(1, Qt.SortOrder.AscendingOrder)
+        self.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.setAcceptDrops(True)
-        self.setSelectionBehavior(QTableWidget.SelectRows)
-        self.setSelectionMode(QTableWidget.ExtendedSelection)
-        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self.verticalHeader().setDefaultSectionSize(24)
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
-        self.itemChanged.connect(self.handle_item_changed)
         self._selection_before_edit: list[int] = []
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
@@ -73,7 +70,7 @@ class DragDropTableWidget(QTableWidget):
         if logo.is_file():
             style = (
                 "QTableWidget::viewport{"
-                f"background-image:url('{logo.as_posix()}');"
+                f"background-image:url('{str(logo)}');"
                 "background-repeat:no-repeat;"
                 "background-position:center;}"
             )
@@ -177,7 +174,7 @@ class DragDropTableWidget(QTableWidget):
     # the current multi-row selection.
     # ------------------------------------------------------------------
     def eventFilter(self, source, event):
-        if source is self.viewport() and event.type() == QEvent.MouseButtonPress:
+        if source is self.viewport() and event.type() == QEvent.Type.MouseButtonPress:
             index = self.indexAt(event.pos())
             if index.isValid():
                 col = index.column()
@@ -201,7 +198,7 @@ class DragDropTableWidget(QTableWidget):
         sm.clearSelection()
         for r in rows:
             idx = self.model().index(r, 0)
-            sm.select(idx, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+            sm.select(idx, QItemSelectionModel.SelectionFlag.Select | QItemSelectionModel.SelectionFlag.Rows)
         self.sync_check_column()
 
     def on_header_double_clicked(self, index: int):
@@ -255,13 +252,13 @@ class DragDropTableWidget(QTableWidget):
             row = self.rowCount()
             self.insertRow(row)
             check_item = QTableWidgetItem()
-            check_item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-            check_item.setCheckState(Qt.Unchecked)
+            check_item.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+            check_item.setCheckState(Qt.CheckState.Unchecked)
             fname_item = QTableWidgetItem(os.path.basename(path))
-            fname_item.setData(Qt.UserRole, path)
+            fname_item.setData(Qt.ItemDataRole.UserRole, path)
             palette = QApplication.palette()
-            fname_item.setBackground(palette.color(QPalette.Base))
-            fname_item.setForeground(palette.color(QPalette.Text))
+            fname_item.setBackground(palette.color(QPalette.ColorRole.Base))
+            fname_item.setForeground(palette.color(QPalette.ColorRole.Text))
 
             tags = set()
             try:
@@ -315,11 +312,11 @@ class DragDropTableWidget(QTableWidget):
         for row in to_check:
             item = self.item(row, 0)
             if item:
-                item.setCheckState(Qt.Checked)
+                item.setCheckState(Qt.CheckState.Checked)
         for row in to_uncheck:
             item = self.item(row, 0)
             if item:
-                item.setCheckState(Qt.Unchecked)
+                item.setCheckState(Qt.CheckState.Unchecked)
         self._updating_checks = False
 
     def sync_check_column(self):
@@ -329,134 +326,8 @@ class DragDropTableWidget(QTableWidget):
             item = self.item(row, 0)
             if not item:
                 continue
-            item.setCheckState(Qt.Checked if row in selected else Qt.Unchecked)
+            item.setCheckState(Qt.CheckState.Checked if row in selected else Qt.CheckState.Unchecked)
         self._updating_checks = False
-
-    def _validate_and_format_date(self, date_str: str) -> str:
-        """Validate and format date input to YYMMDD format."""
-        if not date_str:
-            return ""
-        
-        # Remove any non-digit characters
-        digits_only = re.sub(r'\D', '', date_str)
-        
-        # If it's already in YYMMDD format (6 digits), validate and return
-        if len(digits_only) == 6:
-            try:
-                year = int(digits_only[:2]) + 2000  # Convert YY to YYYY
-                month = int(digits_only[2:4])
-                day = int(digits_only[4:6])
-                datetime(year, month, day)  # Validate date
-                return digits_only
-            except ValueError:
-                pass
-        
-        # Try to parse various date formats
-        date_formats = [
-            '%Y-%m-%d',    # 2024-12-26
-            '%Y/%m/%d',    # 2024/12/26
-            '%d-%m-%Y',    # 26-12-2024
-            '%d/%m/%Y',    # 26/12/2024
-            '%m-%d-%Y',    # 12-26-2024
-            '%m/%d/%Y',    # 12/26/2024
-            '%d-%m-%y',    # 26-12-24
-            '%d/%m/%y',    # 26/12/24
-            '%m-%d-%y',    # 12-26-24
-            '%m/%d/%y',    # 12/26/24
-            '%Y%m%d',      # 20241226
-        ]
-        
-        for fmt in date_formats:
-            try:
-                parsed_date = datetime.strptime(date_str, fmt)
-                return parsed_date.strftime('%y%m%d')
-            except ValueError:
-                continue
-        
-        # If no format matches, try with digits_only if it has enough digits
-        if len(digits_only) == 8:  # YYYYMMDD
-            try:
-                year = int(digits_only[:4])
-                month = int(digits_only[4:6])
-                day = int(digits_only[6:8])
-                parsed_date = datetime(year, month, day)
-                return parsed_date.strftime('%y%m%d')
-            except ValueError:
-                pass
-        
-        # Return original if we can't parse it
-        return date_str
-
-    def handle_item_changed(self, item: QTableWidgetItem):
-        if self._updating_checks:
-            return
-        
-        # Handle date column changes
-        if item.column() == 3 and self.mode == "normal":
-            row = item.row()
-            fname_item = self.item(row, 1)
-            if not fname_item:
-                return
-            
-            settings: ItemSettings = fname_item.data(ROLE_SETTINGS)
-            if not settings:
-                return
-            
-            # Validate and format the date
-            formatted_date = self._validate_and_format_date(item.text())
-            
-            # Update the item display
-            self._updating_checks = True
-            item.setText(formatted_date)
-            item.setToolTip(formatted_date)
-            self._updating_checks = False
-            
-            # Update the settings object
-            new_settings = ItemSettings(
-                settings.original_path,
-                tags=settings.tags,
-                suffix=settings.suffix,
-                date=formatted_date,
-                size_bytes=settings.size_bytes,
-                compressed_bytes=settings.compressed_bytes,
-                position=settings.position,
-                pa_mat=settings.pa_mat
-            )
-            fname_item.setData(ROLE_SETTINGS, new_settings)
-            return
-        
-        if item.column() != 0:
-            return
-        row = item.row()
-        index = self.model().index(row, 0)
-        mods = QApplication.keyboardModifiers()
-        if mods & Qt.ShiftModifier and self.selectionModel().hasSelection():
-            cur = self.selectionModel().currentIndex().row()
-            start = min(cur, row)
-            end = max(cur, row)
-            selection = QItemSelection(
-                self.model().index(start, 0),
-                self.model().index(end, self.columnCount() - 1),
-            )
-            command = (
-                QItemSelectionModel.Select
-                if item.checkState() == Qt.Checked
-                else QItemSelectionModel.Deselect
-            )
-            self.selectionModel().select(
-                selection, command | QItemSelectionModel.Rows
-            )
-        else:
-            if item.checkState() == Qt.Checked:
-                self.selectionModel().select(
-                    index,
-                    QItemSelectionModel.Select | QItemSelectionModel.Rows,
-                )
-            else:
-                self.selectionModel().select(
-                    index,
-                    QItemSelectionModel.Deselect | QItemSelectionModel.Rows,
-                )
 
     def mousePressEvent(self, event):
         index = self.indexAt(event.pos())
@@ -477,7 +348,7 @@ class DragDropTableWidget(QTableWidget):
             edit_cols.add(3)  # Add date column for normal mode
 
         if index.isValid() and index.column() in edit_cols:
-            if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
                 row_before = index.row()
                 col = index.column()
                 super().keyPressEvent(event)
@@ -488,7 +359,7 @@ class DragDropTableWidget(QTableWidget):
                     self.selectRow(next_row)
                 return
 
-            if self.state() != QAbstractItemView.EditingState and event.text():
+            if self.state() != QAbstractItemView.State.EditingState and event.text():
                 rows = [idx.row() for idx in self.selectionModel().selectedRows()]
                 if len(rows) > 1 and index.row() in rows:
                     self._selection_before_edit = rows
