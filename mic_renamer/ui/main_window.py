@@ -19,7 +19,6 @@ from .theme import resource_icon
 from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
 from .panels import (
     MediaViewer,
-    AspectRatioWidget,
     DragDropTableWidget,
     TagPanel,
 )
@@ -76,8 +75,6 @@ class RenamerApp(QWidget):
         viewer_layout = QVBoxLayout(viewer_widget)
 
         self.image_viewer = MediaViewer()
-        ar_widget = AspectRatioWidget(aspect_ratio=None)
-        ar_widget.setWidget(self.image_viewer)
 
         self.viewer_actions: list[QAction] = []
         self.viewer_buttons: list[QToolButton] = []
@@ -130,7 +127,7 @@ class RenamerApp(QWidget):
         self.viewer_buttons.append(btn_rot_right)
 
         viewer_layout.addLayout(viewer_toolbar)
-        viewer_layout.addWidget(ar_widget, 5)
+        viewer_layout.addWidget(self.image_viewer, 5)
 
         self.zoom_slider = QSlider(Qt.Horizontal)
         self.zoom_slider.setMinimum(10)

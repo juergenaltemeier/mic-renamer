@@ -94,35 +94,40 @@ class ImageViewer(QGraphicsView):
     def wheelEvent(self, event):
         if not self.pixmap_item:
             return
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         delta = event.angleDelta().y()
         if delta > 0:
             self._zoom_pct = min(self._zoom_pct + 10, 500)
         else:
             self._zoom_pct = max(self._zoom_pct - 10, 10)
         self.apply_transformations()
+        self.setTransformationAnchor(QGraphicsView.AnchorViewCenter)
         event.accept()
 
     def apply_transformations(self):
         if not self.pixmap_item:
             return
+        scene_rect = self.scene().sceneRect()
+        if scene_rect.isEmpty():
+            return
+        view_rect = self.viewport().rect()
+        if view_rect.isEmpty():
+            return
+        x_scale = view_rect.width() / scene_rect.width()
+        y_scale = view_rect.height() / scene_rect.height()
+        base_factor = min(x_scale, y_scale)
+        zoom_factor = self._zoom_pct / 100.0
+        final_factor = base_factor * zoom_factor
         self.resetTransform()
         if self._rotation != 0:
             self.rotate(self._rotation)
-        factor = self._zoom_pct / 100.0
-        self.scale(factor, factor)
+        self.scale(final_factor, final_factor)
 
     def zoom_fit(self):
         if not self.pixmap_item:
             return
-        scene_rect = self.scene().sceneRect()
-        if scene_rect.isEmpty():
-            return
-        self.resetTransform()
-        if self._rotation != 0:
-            self.rotate(self._rotation)
-        # ``fitInView`` keeps the aspect ratio intact
-        self.fitInView(scene_rect, Qt.KeepAspectRatio)
-        self._zoom_pct = int(self.transform().m11() * 100)
+        self._zoom_pct = 100
+        self.apply_transformations()
         try:
             self.horizontalScrollBar().setValue(0)
             self.verticalScrollBar().setValue(0)
@@ -157,7 +162,7 @@ class AspectRatioWidget(QWidget):
             return super().resizeEvent(event)
         if self.aspect_ratio is None:
             self._widget.setGeometry(self.rect())
-            return super().resizeEvent(event)
+            return
         w = self.width()
         h = self.height()
         target_w = w
