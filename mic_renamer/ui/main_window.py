@@ -99,6 +99,7 @@ MODE_PA_MAT = "pa_mat"
 class RenamerApp(QWidget):
     def __init__(self, state_manager=None):
         super().__init__()
+        self.logger = logging.getLogger(__name__)
         self.state_manager = state_manager
         self.undo_manager = UndoManager()
         self.rename_mode = MODE_NORMAL
@@ -520,8 +521,17 @@ class RenamerApp(QWidget):
         self._sel_change_timer.start()
 
     def _apply_selection_change(self):
+        self.logger.debug("Applying selection change.")
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
         if not rows:
+            self.logger.debug("Selection cleared.")
+            if self._preview_loader:
+                self.logger.debug("Stopping preview loader due to cleared selection.")
+                self._preview_loader.stop()
+            if self._preview_thread and self._preview_thread.isRunning():
+                self.logger.debug("Quitting preview thread due to cleared selection.")
+                self._preview_thread.quit()
+
             self.image_viewer.load_path("")
             self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
@@ -773,12 +783,14 @@ class RenamerApp(QWidget):
 
     def load_preview(self, path: str):
         """Load preview image/video using a background thread."""
+        self.logger.debug("Request to load preview for: %s", path)
         # cancel running loader
         if self._preview_loader:
+            self.logger.debug("Stopping previous preview loader.")
             self._preview_loader.stop()
         if self._preview_thread and self._preview_thread.isRunning():
+            self.logger.debug("Quitting previous preview thread.")
             self._preview_thread.quit()
-            self._preview_thread.wait()
 
         if not path:
             self.image_viewer.load_path("")
@@ -811,6 +823,10 @@ class RenamerApp(QWidget):
 
     @Slot(str, QImage)
     def _on_preview_loaded(self, path: str, image: QImage) -> None:
+        self.logger.debug("Preview loaded for: %s. Current loader path: %s", path, self._preview_loader.path() if self._preview_loader else "None")
+        if self._preview_loader and self._preview_loader.path() != path:
+            self.logger.debug("Ignoring stale preview for: %s", path)
+            return
         self._preview_thread = None
         self._preview_loader = None
         if image.isNull():
@@ -1262,8 +1278,14 @@ class RenamerApp(QWidget):
         )
 
     def closeEvent(self, event):
+        self.logger.info("Close event triggered.")
         if self._preview_loader:
+            self.logger.debug("Stopping preview loader on close.")
             self._preview_loader.stop()
+        if self._preview_thread and self._preview_thread.isRunning():
+            self.logger.debug("Waiting for preview thread to finish on close.")
+            self._preview_thread.quit()
+            self._preview_thread.wait()
 
         if self.state_manager:
             self.state_manager.set("width", self.width())

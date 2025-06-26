@@ -59,6 +59,9 @@ class PreviewLoader(QObject):
         if not self._stop:
             self.finished.emit(self._path, img)
 
+    def path(self) -> str:
+        return self._path
+
     @Slot()
     def stop(self) -> None:
         self._stop = True

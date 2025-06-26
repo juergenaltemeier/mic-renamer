@@ -1,4 +1,5 @@
 """Application bootstrapper."""
+import logging
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import Qt
@@ -15,6 +16,14 @@ class Application:
     """Main application class."""
 
     def __init__(self):
+        # Configure logging to output to the console
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            stream=sys.stdout,
+        )
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Application starting...")
         try:
             QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
             QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
@@ -44,5 +53,8 @@ class Application:
 
     def run(self) -> int:
         """Start the Qt event loop."""
+        self.logger.info("Showing main window.")
         self.window.show()
-        return self.app.exec()
+        result = self.app.exec()
+        self.logger.info("Application finished with exit code %d.", result)
+        return result
