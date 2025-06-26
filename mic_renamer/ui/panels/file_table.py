@@ -12,6 +12,8 @@ from PySide6.QtGui import QPalette
 
 # QItemSelectionModel and QItemSelection are in QtCore, not QtWidgets
 from PySide6.QtCore import Qt, QTimer, QItemSelectionModel, QItemSelection, QEvent, Signal
+import re
+from datetime import datetime
 from importlib import resources
 
 from ...logic.settings import ItemSettings
@@ -151,6 +153,8 @@ class DragDropTableWidget(QTableWidget):
             if index.isValid():
                 col = index.column()
                 edit_cols = [2, 4]
+                if self.mode == "normal":
+                    edit_cols.append(3)  # Add date column for normal mode
                 if col in edit_cols:
                     rows = [idx.row() for idx in self.selectionModel().selectedRows()]
                     if len(rows) > 1 and index.row() in rows:
@@ -299,8 +303,100 @@ class DragDropTableWidget(QTableWidget):
             item.setCheckState(Qt.Checked if row in selected else Qt.Unchecked)
         self._updating_checks = False
 
+    def _validate_and_format_date(self, date_str: str) -> str:
+        """Validate and format date input to YYMMDD format."""
+        if not date_str:
+            return ""
+        
+        # Remove any non-digit characters
+        digits_only = re.sub(r'\D', '', date_str)
+        
+        # If it's already in YYMMDD format (6 digits), validate and return
+        if len(digits_only) == 6:
+            try:
+                year = int(digits_only[:2]) + 2000  # Convert YY to YYYY
+                month = int(digits_only[2:4])
+                day = int(digits_only[4:6])
+                datetime(year, month, day)  # Validate date
+                return digits_only
+            except ValueError:
+                pass
+        
+        # Try to parse various date formats
+        date_formats = [
+            '%Y-%m-%d',    # 2024-12-26
+            '%Y/%m/%d',    # 2024/12/26
+            '%d-%m-%Y',    # 26-12-2024
+            '%d/%m/%Y',    # 26/12/2024
+            '%m-%d-%Y',    # 12-26-2024
+            '%m/%d/%Y',    # 12/26/2024
+            '%d-%m-%y',    # 26-12-24
+            '%d/%m/%y',    # 26/12/24
+            '%m-%d-%y',    # 12-26-24
+            '%m/%d/%y',    # 12/26/24
+            '%Y%m%d',      # 20241226
+        ]
+        
+        for fmt in date_formats:
+            try:
+                parsed_date = datetime.strptime(date_str, fmt)
+                return parsed_date.strftime('%y%m%d')
+            except ValueError:
+                continue
+        
+        # If no format matches, try with digits_only if it has enough digits
+        if len(digits_only) == 8:  # YYYYMMDD
+            try:
+                year = int(digits_only[:4])
+                month = int(digits_only[4:6])
+                day = int(digits_only[6:8])
+                parsed_date = datetime(year, month, day)
+                return parsed_date.strftime('%y%m%d')
+            except ValueError:
+                pass
+        
+        # Return original if we can't parse it
+        return date_str
+
     def handle_item_changed(self, item: QTableWidgetItem):
-        if self._updating_checks or item.column() != 0:
+        if self._updating_checks:
+            return
+        
+        # Handle date column changes
+        if item.column() == 3 and self.mode == "normal":
+            row = item.row()
+            fname_item = self.item(row, 1)
+            if not fname_item:
+                return
+            
+            settings: ItemSettings = fname_item.data(ROLE_SETTINGS)
+            if not settings:
+                return
+            
+            # Validate and format the date
+            formatted_date = self._validate_and_format_date(item.text())
+            
+            # Update the item display
+            self._updating_checks = True
+            item.setText(formatted_date)
+            item.setToolTip(formatted_date)
+            self._updating_checks = False
+            
+            # Update the settings object
+            new_settings = ItemSettings(
+                settings.original_path,
+                tags=settings.tags,
+                suffix=settings.suffix,
+                date=formatted_date,
+                size_bytes=settings.size_bytes,
+                compressed_bytes=settings.compressed_bytes,
+                position=settings.position,
+                pa_mat=settings.pa_mat
+            )
+            fname_item.setData(ROLE_SETTINGS, new_settings)
+            return
+        
+        if item.column() != 0:
             return
         row = item.row()
         index = self.model().index(row, 0)
@@ -338,7 +434,7 @@ class DragDropTableWidget(QTableWidget):
         if index.isValid():
             if index.column() == 4 or (
                 index.column() == 2 and self.mode == "normal"
-            ):
+            ) or (index.column() == 3 and self.mode == "normal"):
                 self._selection_before_edit = [
                     idx.row() for idx in self.selectionModel().selectedRows()
                 ]
@@ -348,6 +444,8 @@ class DragDropTableWidget(QTableWidget):
         """Start editing via keyboard and move to the next row on Enter."""
         index = self.currentIndex()
         edit_cols = {2, 4}
+        if self.mode == "normal":
+            edit_cols.add(3)  # Add date column for normal mode
 
         if index.isValid() and index.column() in edit_cols:
             if event.key() in (Qt.Key_Return, Qt.Key_Enter):
