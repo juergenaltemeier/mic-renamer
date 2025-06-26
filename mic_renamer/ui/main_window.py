@@ -724,7 +724,7 @@ class RenamerApp(QWidget):
             self.on_table_selection_changed()
 
     def load_preview(self, path: str):
-        """Load preview image using a background thread."""
+        """Load preview image/video using a background thread."""
         # cancel running loader
         if self._preview_loader:
             self._preview_loader.stop()
@@ -741,6 +741,14 @@ class RenamerApp(QWidget):
             self.zoom_slider.setValue(100)
             return
 
+        # Check if it's a video file - handle directly without background thread
+        ext = os.path.splitext(path)[1].lower()
+        if ext in MediaViewer.VIDEO_EXTS:
+            self.image_viewer.load_path(path)
+            self.zoom_slider.setValue(100)  # Reset zoom for videos
+            return
+
+        # Handle images with background loading and caching
         pix = QPixmap()
         if QPixmapCache.find(path, pix):
             self.image_viewer.show_pixmap(pix)
