@@ -106,6 +106,7 @@ class RenamerApp(QWidget):
         self.rename_mode = MODE_NORMAL
         self._preview_thread: QThread | None = None
         self._preview_loader: PreviewLoader | None = None
+        self._session_recording_started = False
         self.setWindowTitle(tr("app_title"))
 
         main_layout = QVBoxLayout(self)
@@ -284,6 +285,8 @@ class RenamerApp(QWidget):
         self.check_for_crashed_session()
 
     def on_change_made(self):
+        if not self._session_recording_started:
+            return
         self.set_session_status(False)
         self._session_save_timer.start()
 
@@ -642,6 +645,7 @@ class RenamerApp(QWidget):
             progress.setValue(idx)
             QApplication.processEvents()
         progress.close()
+        self._session_recording_started = True
         self._session_save_timer.start()
 
     def on_table_selection_changed(self):
@@ -1474,6 +1478,7 @@ class RenamerApp(QWidget):
                     self.update_row_background(row, settings)
 
             self.logger.info("Session restored successfully.")
+            self._session_recording_started = True
             QMessageBox.information(
                 self,
                 tr("restore_session_title"),
