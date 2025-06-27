@@ -124,6 +124,11 @@ TRANSLATIONS = {
         , 'remove_specific_tags': 'Remove Specific Tags'
         , 'clear_all_tags': 'Clear All Tags'
         , 'set_import_directory': 'Set Import Directory'
+        , 'restore_session_title': 'Restore Session'
+        , 'restore_session_msg': 'A previous session was found. Do you want to restore it?'
+        , 'session_saved': 'Session saved'
+        , 'session_not_saved': 'Session not saved'
+        , 'edit_menu': 'Edit'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -248,6 +253,11 @@ TRANSLATIONS = {
         , 'remove_specific_tags': 'Bestimmte Tags entfernen'
         , 'clear_all_tags': 'Alle Tags löschen'
         , 'set_import_directory': 'Importverzeichnis festlegen'
+        , 'restore_session_title': 'Sitzung wiederherstellen'
+        , 'restore_session_msg': 'Eine vorherige Sitzung wurde gefunden. Möchten Sie sie wiederherstellen?'
+        , 'session_saved': 'Sitzung gespeichert'
+        , 'session_not_saved': 'Sitzung nicht gespeichert'
+        , 'edit_menu': 'Bearbeiten'
     }
 }
 

@@ -33,6 +33,32 @@ class ItemSettings:
     size_bytes: int = 0
     compressed_bytes: int = 0
 
+    def to_dict(self):
+        return {
+            "original_path": self.original_path,
+            "original_filename": os.path.basename(self.original_path),
+            "tags": list(self.tags),
+            "suffix": self.suffix,
+            "date": self.date,
+            "position": self.position,
+            "pa_mat": self.pa_mat,
+            "size_bytes": self.size_bytes,
+            "compressed_bytes": self.compressed_bytes,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            original_path=data["original_path"],
+            tags=set(data.get("tags", [])),
+            suffix=data.get("suffix", ""),
+            date=data.get("date", ""),
+            position=data.get("position", ""),
+            pa_mat=data.get("pa_mat", ""),
+            size_bytes=data.get("size_bytes", 0),
+            compressed_bytes=data.get("compressed_bytes", 0),
+        )
+
     def _date_str(self, config: RenameConfig) -> str:
         if self.date and re.fullmatch(r"\d{6}", self.date):
             return self.date

@@ -1,6 +1,7 @@
 import os
 import re
 import logging
+import json
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
     QPushButton, QSlider, QFileDialog, QMessageBox,
@@ -240,12 +241,20 @@ class RenamerApp(QWidget):
         btn_layout.addStretch()
         main_layout.addLayout(btn_layout)
         main_layout.addWidget(self.tag_panel)
+        
+        status_layout = QHBoxLayout()
         self.lbl_status = QLabel()
         self.lbl_status.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.lbl_status.setMaximumHeight(
             self.lbl_status.fontMetrics().height() + 4
         )
-        main_layout.addWidget(self.lbl_status)
+        status_layout.addWidget(self.lbl_status)
+        
+        self.lbl_session_status = QLabel()
+        self.lbl_session_status.setFixedSize(16, 16)
+        status_layout.addWidget(self.lbl_session_status)
+        main_layout.addLayout(status_layout)
+
         visible = config_manager.get("tag_panel_visible", False)
         self.tag_panel.setVisible(visible)
         self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
@@ -258,6 +267,33 @@ class RenamerApp(QWidget):
         self.update_translations()
         self.status_message = ""
         self.update_status()
+
+        self._session_save_timer = QTimer(self)
+        self._session_save_timer.setSingleShot(True)
+        self._session_save_timer.setInterval(2000)  # 2 seconds
+        self._session_save_timer.timeout.connect(self.save_session)
+        
+        self.table_widget.itemChanged.connect(self.on_change_made)
+        self.input_project.textChanged.connect(self.on_change_made)
+        self.table_widget.pathsAdded.connect(self.on_change_made)
+        self.table_widget.remove_selected_requested.connect(self.on_change_made)
+        self.table_widget.clear_list_requested.connect(self.on_change_made)
+        self.table_widget.clear_suffix_requested.connect(self.on_change_made)
+
+        self.set_session_status(True)
+        self.restore_session()
+
+    def on_change_made(self):
+        self.set_session_status(False)
+        self._session_save_timer.start()
+
+    def set_session_status(self, saved: bool):
+        if saved:
+            self.lbl_session_status.setPixmap(resource_icon("status-green.svg").pixmap(16, 16))
+            self.lbl_session_status.setToolTip(tr("session_saved"))
+        else:
+            self.lbl_session_status.setPixmap(resource_icon("status-grey.svg").pixmap(16, 16))
+            self.lbl_session_status.setToolTip(tr("session_not_saved"))
 
     def set_splitter_sizes(self, sizes: list[int] | None) -> None:
         """Set the splitter sizes if a valid list is provided."""
@@ -320,6 +356,42 @@ class RenamerApp(QWidget):
 
         tb.addSeparator()
 
+        # Edit menu
+        self.menu_edit = QMenu(tr("edit_menu"), self)
+        icon_compress = resource_icon("arrow-down-circle.svg")
+        act_compress = QAction(icon_compress, tr("compress"), self)
+        act_compress.setToolTip(tr("tip_compress"))
+        act_compress.triggered.connect(self.compress_selected)
+        self.menu_edit.addAction(act_compress)
+
+        icon_convert = resource_icon("image.svg")
+        act_convert = QAction(icon_convert, tr("convert_heic"), self)
+        act_convert.setToolTip(tr("tip_convert_heic"))
+        act_convert.triggered.connect(self.convert_selected_to_jpeg)
+        self.menu_edit.addAction(act_convert)
+
+        self.menu_edit.addSeparator()
+
+        icon_undo = resource_icon("rotate-ccw.svg")
+        act_undo = QAction(icon_undo, tr("undo_rename"), self)
+        act_undo.setToolTip(tr("tip_undo_rename"))
+        act_undo.triggered.connect(self.undo_rename)
+        self.menu_edit.addAction(act_undo)
+
+        self.menu_edit.addSeparator()
+        
+        act_restore_session = QAction(tr("restore_session"), self)
+        act_restore_session.triggered.connect(self.restore_session)
+        self.menu_edit.addAction(act_restore_session)
+
+        self.btn_edit_menu = QToolButton()
+        self.btn_edit_menu.setMenu(self.menu_edit)
+        self.btn_edit_menu.setText(tr("edit_menu"))
+        self.btn_edit_menu.setPopupMode(QToolButton.InstantPopup)
+        tb.addWidget(self.btn_edit_menu)
+
+        tb.addSeparator()
+
         icon_preview = resource_icon("eye.svg")
         act_preview = QAction(icon_preview, tr("preview_rename"), self)
         act_preview.setToolTip(tr("tip_preview_rename"))
@@ -329,32 +401,6 @@ class RenamerApp(QWidget):
         self.toolbar_action_icons.append(icon_preview)
 
         tb.addSeparator()
-
-
-        icon_compress = resource_icon("arrow-down-circle.svg")
-        act_compress = QAction(icon_compress, tr("compress"), self)
-        act_compress.setToolTip(tr("tip_compress"))
-        act_compress.triggered.connect(self.compress_selected)
-        tb.addAction(act_compress)
-        self.toolbar_actions.append(act_compress)
-        self.toolbar_action_icons.append(icon_compress)
-
-        icon_convert = resource_icon("image.svg")
-        act_convert = QAction(icon_convert, tr("convert_heic"), self)
-        act_convert.setToolTip(tr("tip_convert_heic"))
-        act_convert.triggered.connect(self.convert_selected_to_jpeg)
-        tb.addAction(act_convert)
-        self.toolbar_actions.append(act_convert)
-        self.toolbar_action_icons.append(icon_convert)
-        tb.addSeparator()
-
-        icon_undo = resource_icon("rotate-ccw.svg")
-        act_undo = QAction(icon_undo, tr("undo_rename"), self)
-        act_undo.setToolTip(tr("tip_undo_rename"))
-        act_undo.triggered.connect(self.undo_rename)
-        tb.addAction(act_undo)
-        self.toolbar_actions.append(act_undo)
-        self.toolbar_action_icons.append(icon_undo)
 
         icon_remove_sel = resource_icon("trash-2.svg")
         self.act_remove_sel = QAction(icon_remove_sel, tr("remove_selected"), self)
@@ -415,6 +461,7 @@ class RenamerApp(QWidget):
 
     def save_last_project_number(self, text: str) -> None:
         config_manager.set("last_project_number", text.strip())
+        self._session_save_timer.start()
 
     def update_translations(self):
         self.setWindowTitle(tr("app_title"))
@@ -520,7 +567,7 @@ class RenamerApp(QWidget):
             paths = [
                 os.path.join(folder, name)
                 for name in entries
-                if os.path.isfile(os.path.join(folder, name)) and
+                if os.path.isfile(os.path.join(folder, name)) and\
                    os.path.splitext(name)[1].lower() in ItemSettings.ACCEPT_EXTENSIONS
             ]
             if paths:
@@ -561,6 +608,7 @@ class RenamerApp(QWidget):
             progress.setValue(idx)
             QApplication.processEvents()
         progress.close()
+        self._session_save_timer.start()
 
     def on_table_selection_changed(self):
         """Start or restart the selection change timer."""
@@ -574,7 +622,7 @@ class RenamerApp(QWidget):
         if current_row < 0:
             # If no row is current (e.g., selection cleared), stop preview
             if self._preview_loader:
-                self.logger.debug("Stopping preview loader due to no current row.")
+                self.logger.debug("Stopping previous preview loader due to no current row.")
                 self._preview_loader.stop()
             self.image_viewer.load_path("")
             self.zoom_slider.setValue(100)
@@ -672,6 +720,7 @@ class RenamerApp(QWidget):
                     cell_suffix.setToolTip(settings.suffix)
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
+        self._session_save_timer.start()
 
     def on_tag_toggled(self, code: str, state: int) -> None:
         """Apply tag changes from the tag panel to all selected rows immediately.
@@ -710,6 +759,7 @@ class RenamerApp(QWidget):
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         QTimer.singleShot(0, self.on_table_selection_changed)
+        self._session_save_timer.start()
 
     def update_row_background(self, row: int, settings: ItemSettings):
         for col in range(self.table_widget.columnCount()):
@@ -787,6 +837,7 @@ class RenamerApp(QWidget):
         self.update_row_background(row, settings)
         if row in {idx.row() for idx in self.table_widget.selectionModel().selectedRows()}:
             self.on_table_selection_changed()
+        self._session_save_timer.start()
 
     def load_preview(self, path: str):
         """Load preview image/video using a background thread."""
@@ -872,6 +923,7 @@ class RenamerApp(QWidget):
             cb.setChecked(False)
         self.set_item_controls_enabled(False)
         self.update_status()
+        self._session_save_timer.start()
 
     def undo_rename(self):
         if not self.undo_manager.has_history():
@@ -885,6 +937,7 @@ class RenamerApp(QWidget):
                     item0.setText(os.path.basename(orig))
                     item0.setData(Qt.UserRole, orig)
         QMessageBox.information(self, tr("done"), tr("undo_done"))
+        self._session_save_timer.start()
 
     def remove_selected_items(self):
         rows = sorted({idx.row() for idx in self.table_widget.selectionModel().selectedRows()}, reverse=True)
@@ -898,6 +951,7 @@ class RenamerApp(QWidget):
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
             self.table_widget.selectRow(new_row)
         self.update_status()
+        self._session_save_timer.start()
 
     def clear_selected_suffixes(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
@@ -922,6 +976,7 @@ class RenamerApp(QWidget):
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         self.on_table_selection_changed()
+        self._session_save_timer.start()
 
     def compress_selected(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
@@ -971,6 +1026,7 @@ class RenamerApp(QWidget):
                 if st:
                     st.size_bytes = size_bytes
                     st.compressed_bytes = compressed_bytes
+            self._session_save_timer.start()
 
     def convert_selected_to_jpeg(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
@@ -1017,6 +1073,7 @@ class RenamerApp(QWidget):
             tr("done"),
             f"Converted {converted} of {total} images to JPEG."
         )
+        self._session_save_timer.start()
 
     def build_rename_mapping(self, dest_dir: str | None = None, rows: list[int] | None = None):
         project = self.input_project.text().strip()
@@ -1265,6 +1322,7 @@ class RenamerApp(QWidget):
                 self.tag_panel.rebuild()
         self.set_status_message(None)
         self._enable_sorting()
+        self._session_save_timer.start()
 
     def update_status(self) -> None:
         """Refresh the selection count and optional message."""
@@ -1282,6 +1340,105 @@ class RenamerApp(QWidget):
             header.sortIndicatorSection(),
             header.sortIndicatorOrder(),
         )
+
+    def save_session(self):
+        self.logger.info("Saving session...")
+        session_file = os.path.join(config_manager.config_dir, "session.json")
+        data = {
+            "project_number": self.input_project.text(),
+            "files": []
+        }
+        for row in range(self.table_widget.rowCount()):
+            item = self.table_widget.item(row, 1)
+            if not item:
+                continue
+            settings: ItemSettings = item.data(ROLE_SETTINGS)
+            if not settings:
+                continue
+            data["files"].append(settings.to_dict())
+        
+        try:
+            with open(session_file, "w") as f:
+                json.dump(data, f, indent=2)
+            self.logger.info("Session saved successfully.")
+            self.set_session_status(True)
+        except Exception as e:
+            self.logger.error(f"Failed to save session: {e}")
+
+    def check_for_crashed_session(self):
+        session_file = os.path.join(config_manager.config_dir, "session.json")
+        if not os.path.exists(session_file):
+            return
+
+        reply = QMessageBox.question(
+            self,
+            tr("restore_session_title"),
+            tr("restore_session_msg"),
+            QMessageBox.Yes | QMessageBox.No,
+        )
+
+        if reply == QMessageBox.Yes:
+            self.restore_session(show_dialog=False)
+        else:
+            os.remove(session_file)
+
+    def restore_session(self, show_dialog=True):
+        session_file = os.path.join(config_manager.config_dir, "session.json")
+        if not os.path.exists(session_file):
+            return
+
+        if show_dialog:
+            reply = QMessageBox.question(
+                self,
+                tr("restore_session_title"),
+                tr("restore_session_msg"),
+                QMessageBox.Yes | QMessageBox.No,
+            )
+
+            if reply == QMessageBox.No:
+                return
+        
+        try:
+            with open(session_file, "r") as f:
+                data = json.load(f)
+            
+            self.input_project.setText(data.get("project_number", ""))
+            
+            paths_to_add = []
+            settings_map = {}
+            for item_data in data.get("files", []):
+                try:
+                    settings = ItemSettings.from_dict(item_data)
+                    if os.path.exists(settings.original_path):
+                        paths_to_add.append(settings.original_path)
+                        settings_map[settings.original_path] = settings
+                    else:
+                        self.logger.warning(f"File not found, skipping: {settings.original_path}")
+                except Exception as e:
+                    self.logger.error(f"Failed to restore item: {item_data}. Error: {e}")
+
+            if paths_to_add:
+                self._import_paths(paths_to_add)
+
+            for row in range(self.table_widget.rowCount()):
+                item = self.table_widget.item(row, 1)
+                if not item:
+                    continue
+                path = item.data(Qt.UserRole)
+                if path in settings_map:
+                    settings = settings_map[path]
+                    item.setData(ROLE_SETTINGS, settings)
+                    self.table_widget.item(row, 2).setText(",".join(sorted(settings.tags)))
+                    self.table_widget.item(row, 3).setText(settings.date)
+                    self.table_widget.item(row, 4).setText(settings.suffix)
+                    self.update_row_background(row, settings)
+
+            self.logger.info("Session restored successfully.")
+        except Exception as e:
+            self.logger.error(f"Failed to restore session: {e}")
+        finally:
+            if os.path.exists(session_file) and not show_dialog:
+                os.remove(session_file)
 
     def closeEvent(self, event):
         self.logger.info("Close event triggered.")
@@ -1301,6 +1458,11 @@ class RenamerApp(QWidget):
         
         if self.image_viewer.video_player.player:
             self.image_viewer.video_player.player.stop()
+            
+        # On clean shutdown, remove the session file
+        session_file = os.path.join(config_manager.config_dir, "session.json")
+        if os.path.exists(session_file):
+            os.remove(session_file)
             
         super().closeEvent(event)
 
