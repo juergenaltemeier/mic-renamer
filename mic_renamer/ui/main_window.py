@@ -272,6 +272,7 @@ class RenamerApp(QWidget):
         self.update_translations()
         self.status_message = ""
         self.update_status()
+        self.apply_toolbar_style(config_manager.get("toolbar_style", "icons"))
 
         self._session_save_timer = QTimer(self)
         self._session_save_timer.setSingleShot(True)
