@@ -4,7 +4,7 @@ import logging
 import json
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
-    QPushButton, QSlider, QFileDialog, QMessageBox,
+    QPushButton, QFileDialog, QMessageBox,
     QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox,
     QTableWidget, QTableWidgetItem,
@@ -31,7 +31,6 @@ from ..logic.renamer import Renamer
 from ..logic.image_compressor import ImageCompressor
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
-from .wrap_toolbar import WrapToolBar
 from ..utils.workers import Worker, PreviewLoader
 from datetime import datetime
 
@@ -116,7 +115,7 @@ class RenamerApp(QWidget):
         )
         main_layout.setSpacing(DEFAULT_SPACING)
 
-        self.toolbar = WrapToolBar()
+        self.toolbar = QToolBar()
         self.toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.toolbar.setIconSize(QSize(24, 24))
         self.setup_toolbar()
@@ -185,15 +184,6 @@ class RenamerApp(QWidget):
 
         viewer_layout.addLayout(viewer_toolbar)
         viewer_layout.addWidget(self.image_viewer, 5)
-
-        self.zoom_slider = QSlider(Qt.Horizontal)
-        self.zoom_slider.setMinimum(10)
-        self.zoom_slider.setMaximum(500)
-        self.zoom_slider.setValue(100)
-        self.zoom_slider.setTickInterval(10)
-        self.zoom_slider.setTickPosition(QSlider.TicksBelow)
-        self.zoom_slider.valueChanged.connect(self.on_zoom_slider_changed)
-        viewer_layout.addWidget(self.zoom_slider)
 
         # table toolbar directly above the table widget
         table_container = QWidget()
@@ -442,6 +432,13 @@ class RenamerApp(QWidget):
         self.toolbar_actions.append(act_settings)
         self.toolbar_action_icons.append(icon_settings)
 
+        tb.addActions(self.toolbar_actions)
+
+        self.act_help = QAction(resource_icon("help-blue.svg"), tr("help_title"), self)
+        self.act_help.setToolTip(tr("tip_help"))
+        self.act_help.triggered.connect(self.show_help)
+        tb.addAction(self.act_help)
+
         # add spacer to push the project number input to the right
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -451,18 +448,6 @@ class RenamerApp(QWidget):
         self.input_project.setText(config_manager.get("last_project_number", ""))
         self.input_project.textChanged.connect(self.save_last_project_number)
         
-        # create main actions
-        self.main_actions = QToolBar()
-        self.main_actions.addActions(self.toolbar_actions)
-        tb.addWidget(self.main_actions)
-
-        self.act_help = QAction(resource_icon("help-blue.svg"), tr("help_title"), self)
-        self.act_help.setToolTip(tr("tip_help"))
-        self.act_help.triggered.connect(self.show_help)
-        self.btn_help = QToolButton()
-        self.btn_help.setDefaultAction(self.act_help)
-        tb.addWidget(self.btn_help)
-
         tb.addWidget(self.input_project)
 
 
@@ -571,13 +556,13 @@ class RenamerApp(QWidget):
 
     def apply_toolbar_style(self, style: str) -> None:
         if style == "text":
-            self.main_actions.setToolButtonStyle(Qt.ToolButtonTextOnly)
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextOnly)
             if hasattr(self, "btn_add_menu"):
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
             if hasattr(self, "btn_edit_menu"):
                 self.btn_edit_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
         else:
-            self.main_actions.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             if hasattr(self, "btn_add_menu"):
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             if hasattr(self, "btn_edit_menu"):
@@ -945,16 +930,10 @@ class RenamerApp(QWidget):
             logging.getLogger(__name__).warning("Failed to load preview: %s", path)
             placeholder = self.image_viewer.image_viewer.placeholder_pixmap
             self.image_viewer.show_pixmap(placeholder)
-            self.zoom_slider.setValue(self.image_viewer.zoom_pct)
             return
         pixmap = QPixmap.fromImage(image)
         QPixmapCache.insert(path, pixmap)
         self.image_viewer.show_pixmap(pixmap)
-        self.zoom_slider.setValue(self.image_viewer.zoom_pct)
-
-    def on_zoom_slider_changed(self, value: int):
-        self.image_viewer.zoom_pct = value
-        self.image_viewer.apply_transformations()
 
     def goto_previous_item(self):
         row = self.table_widget.currentRow()
