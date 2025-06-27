@@ -34,7 +34,7 @@ class TagPanel(QWidget):
         self.tags_info: dict[str, str] | None = tags_info
         self.rebuild()
 
-    def rebuild(self):
+    def rebuild(self, language: str | None = None):
         while self.tag_layout.count():
             item = self.tag_layout.takeAt(0)
             w = item.widget()
@@ -42,7 +42,7 @@ class TagPanel(QWidget):
                 w.deleteLater()
         self.checkbox_map = {}
         # always reload tags to pick up language or file changes
-        tags = load_tags()
+        tags = load_tags(language=language)
         if not isinstance(tags, dict):
             self._log.warning("Invalid tags info, expected dict but got %s", type(tags).__name__)
             tags = {}
@@ -66,3 +66,6 @@ class TagPanel(QWidget):
             )
             self.tag_layout.addWidget(cb, row, col)
             self.checkbox_map[code.upper()] = cb
+
+    def retranslate_ui(self, language: str | None = None):
+        self.rebuild(language=language)

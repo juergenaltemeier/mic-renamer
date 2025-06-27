@@ -281,7 +281,7 @@ class RenamerApp(QWidget):
         self.table_widget.clear_suffix_requested.connect(self.on_change_made)
 
         self.set_session_status(True)
-        self.restore_session()
+        self.check_for_crashed_session()
 
     def on_change_made(self):
         self.set_session_status(False)
@@ -475,9 +475,9 @@ class RenamerApp(QWidget):
         dlg = SettingsDialog(self, state_manager=self.state_manager)
         if dlg.exec() == QDialog.Accepted:
             cfg = config_manager.load()
-            set_language(cfg.get("language", "en"))
-            self.update_translations()
-            self.rebuild_tag_checkboxes()
+            language = cfg.get("language", "en")
+            set_language(language)
+            self.update_translations(language=language)
             style = cfg.get("toolbar_style", "icons")
             self.apply_toolbar_style(style)
 
@@ -485,7 +485,7 @@ class RenamerApp(QWidget):
         config_manager.set("last_project_number", text.strip())
         self._session_save_timer.start()
 
-    def update_translations(self):
+    def update_translations(self, language: str | None = None):
         self.setWindowTitle(tr("app_title"))
         
         # Update main toolbar actions
