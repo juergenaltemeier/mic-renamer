@@ -285,6 +285,7 @@ class DragDropTableWidget(QTableWidget):
             self.setHorizontalHeaderLabels([
                 "", "Filename", "Pos", "Date", "Suffix"
             ])
+            self.setColumnHidden(2, True)
             self.setColumnHidden(3, True)
         elif mode == "pa_mat":
             self.setHorizontalHeaderLabels([

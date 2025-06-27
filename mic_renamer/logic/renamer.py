@@ -21,7 +21,7 @@ class Renamer:
         if self.mode == "position":
             mapping = []
             for item in self.items:
-                base = f"{self.project}_pos{item.position}"
+                base = f"{self.project}_pos"
                 if item.suffix:
                     base += f"_{item.suffix}"
                 ext = os.path.splitext(item.original_path)[1]

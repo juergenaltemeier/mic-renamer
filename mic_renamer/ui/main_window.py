@@ -465,6 +465,10 @@ class RenamerApp(QWidget):
     def on_tab_changed(self, index):
         self.table_widget = self.mode_tabs.current_table()
         self.rename_mode = self.table_widget.mode
+
+        is_position_mode = self.rename_mode == MODE_POSITION
+        self.table_widget.setColumnHidden(2, is_position_mode)
+
         self.on_table_selection_changed()
 
     def open_settings(self):
