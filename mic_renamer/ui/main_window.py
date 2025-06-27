@@ -264,7 +264,9 @@ class RenamerApp(QWidget):
         
         # Initial deaktivieren
         self.set_item_controls_enabled(False)
-        self.table_widget.itemSelectionChanged.connect(self.on_table_selection_changed)
+        self.mode_tabs.normal_tab.itemSelectionChanged.connect(self.on_table_selection_changed)
+        self.mode_tabs.position_tab.itemSelectionChanged.connect(self.on_table_selection_changed)
+        self.mode_tabs.pa_mat_tab.itemSelectionChanged.connect(self.on_table_selection_changed)
 
         self.status_message = ""
         self.update_translations()
