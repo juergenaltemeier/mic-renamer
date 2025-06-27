@@ -109,6 +109,15 @@ TRANSLATIONS = {
         , 'invalid_tags_msg': 'Invalid tags: {tags}'
         , 'invalid_date_title': 'Invalid Date'
         , 'invalid_date_msg': 'Date must be YYMMDD'
+        , 'open_file': 'Open File'
+        , 'add_tags_for_selected': 'Add Tags for Selected'
+        , 'add_suffix_for_selected': 'Add Suffix for Selected'
+        , 'add_tags': 'Add Tags'
+        , 'enter_comma_separated_tags': 'Enter comma-separated tags:'
+        , 'add_suffix': 'Add Suffix'
+        , 'enter_suffix': 'Enter suffix:'
+        , 'remove_tags_for_selected': 'Remove Tags for Selected'
+        , 'remove_tags': 'Remove Tags'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -218,6 +227,15 @@ TRANSLATIONS = {
         , 'invalid_tags_msg': 'Ungültige Tags: {tags}'
         , 'invalid_date_title': 'Ungültiges Datum'
         , 'invalid_date_msg': 'Datum muss JJMMTT sein'
+        , 'open_file': 'Datei öffnen'
+        , 'add_tags_for_selected': 'Tags für Auswahl hinzufügen'
+        , 'add_suffix_for_selected': 'Suffix für Auswahl hinzufügen'
+        , 'add_tags': 'Tags hinzufügen'
+        , 'enter_comma_separated_tags': 'Tags komma-getrennt eingeben:'
+        , 'add_suffix': 'Suffix hinzufügen'
+        , 'enter_suffix': 'Suffix eingeben:'
+        , 'remove_tags_for_selected': 'Tags von Auswahl entfernen'
+        , 'remove_tags': 'Tags entfernen'
     }
 }
 

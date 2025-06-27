@@ -210,6 +210,9 @@ class RenamerApp(QWidget):
         self._ignore_table_changes = False
         self.table_widget.itemChanged.connect(self.on_table_item_changed)
         self.table_widget.pathsAdded.connect(lambda _: self.update_status())
+        self.table_widget.remove_selected_requested.connect(self.remove_selected_items)
+        self.table_widget.clear_suffix_requested.connect(self.clear_selected_suffixes)
+        self.table_widget.clear_list_requested.connect(self.clear_all)
         table_layout.addWidget(self.table_widget)
 
         self.splitter.addWidget(viewer_widget)
@@ -381,11 +384,6 @@ class RenamerApp(QWidget):
     def setup_table_toolbar(self) -> None:
         """Create toolbar with table-related actions."""
         tb = self.table_toolbar
-        tb.addAction(self.act_remove_sel)
-        self.act_clear_suffix.setIcon(resource_icon("suffix-clear.svg"))
-        tb.addAction(self.act_clear_suffix)
-        self.act_clear.setIcon(resource_icon("clear.svg"))
-        tb.addAction(self.act_clear)
         tb.addSeparator()
         self.combo_mode = QComboBox()
         self.combo_mode.addItem(tr("mode_normal"), MODE_NORMAL)
@@ -703,30 +701,6 @@ class RenamerApp(QWidget):
                 item.setText(text)
                 self._ignore_table_changes = False
             item.setToolTip(text)
-            rows = getattr(self.table_widget, "_selection_before_edit", [])
-            if rows:
-                self.table_widget.setSortingEnabled(False)
-            for r in rows:
-                if r == row:
-                    continue
-                cell = self.table_widget.item(r, 2)
-                if not cell or cell.text().strip():
-                    continue
-                other_item0 = self.table_widget.item(r, 1)
-                other_settings: ItemSettings | None = (
-                    other_item0.data(ROLE_SETTINGS) if other_item0 else None
-                )
-                if other_settings is None:
-                    continue
-                self._ignore_table_changes = True
-                try:
-                    cell.setText(text)
-                finally:
-                    self._ignore_table_changes = False
-                cell.setToolTip(text)
-                other_settings.tags = set(valid_tags)
-                self.update_row_background(r, other_settings)
-            self.table_widget._selection_before_edit = []
         elif self.rename_mode == MODE_NORMAL and col == 3:
             text = item.text().strip()
             formatted_date = _validate_and_format_date(text)
@@ -753,30 +727,6 @@ class RenamerApp(QWidget):
             new_suffix = item.text().strip()
             settings.suffix = new_suffix
             item.setToolTip(settings.suffix)
-            rows = getattr(self.table_widget, "_selection_before_edit", [])
-            if rows:
-                self.table_widget.setSortingEnabled(False)
-            for r in rows:
-                if r == row:
-                    continue
-                cell = self.table_widget.item(r, 4)
-                if not cell or cell.text().strip():
-                    continue
-                other_item0 = self.table_widget.item(r, 1)
-                other_settings: ItemSettings | None = (
-                    other_item0.data(ROLE_SETTINGS) if other_item0 else None
-                )
-                if other_settings is None:
-                    continue
-                self._ignore_table_changes = True
-                try:
-                    cell.setText(new_suffix)
-                finally:
-                    self._ignore_table_changes = False
-                cell.setToolTip(new_suffix)
-                other_settings.suffix = new_suffix
-                self.update_row_background(r, other_settings)
-            self.table_widget._selection_before_edit = []
         self.update_row_background(row, settings)
         if row in {idx.row() for idx in self.table_widget.selectionModel().selectedRows()}:
             self.on_table_selection_changed()

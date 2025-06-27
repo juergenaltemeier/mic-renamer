@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QApplication,
     QAbstractItemView,
     QMenu,
+    QInputDialog,
 )
 from PySide6.QtGui import QPalette, QAction, QDesktopServices
 from PySide6.QtCore import (
@@ -25,6 +26,7 @@ from ...logic.settings import ItemSettings
 from ...logic.tag_loader import load_tags
 from ...logic.tag_service import extract_tags_from_name, extract_suffix_from_name
 from ...logic.heic_converter import convert_heic
+from ...utils.i18n import tr
 from ...utils.meta_utils import get_capture_date
 
 ROLE_SETTINGS = Qt.UserRole + 1
@@ -34,6 +36,9 @@ class DragDropTableWidget(QTableWidget):
     """Table widget supporting drag-and-drop and multi-select."""
 
     pathsAdded = Signal(int)
+    remove_selected_requested = Signal()
+    clear_suffix_requested = Signal()
+    clear_list_requested = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -59,7 +64,6 @@ class DragDropTableWidget(QTableWidget):
         self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self.verticalHeader().setDefaultSectionSize(24)
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
-        self._selection_before_edit: list[int] = []
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
 
@@ -78,14 +82,139 @@ class DragDropTableWidget(QTableWidget):
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
-        open_action = QAction("Open File", self)
+        has_selection = self.selectionModel().hasSelection()
+
+        open_action = QAction(tr("open_file"), self)
         open_action.triggered.connect(self.open_selected_file)
+        open_action.setEnabled(has_selection)
         menu.addAction(open_action)
 
-        if not self.selectionModel().hasSelection():
-            open_action.setEnabled(False)
+        menu.addSeparator()
+
+        if self.mode == "normal":
+            set_tags_action = QAction(tr("add_tags_for_selected"), self)
+            set_tags_action.triggered.connect(self.set_tags_for_selected)
+            set_tags_action.setEnabled(has_selection)
+            menu.addAction(set_tags_action)
+
+            remove_tags_action = QAction(tr("remove_tags_for_selected"), self)
+            remove_tags_action.triggered.connect(self.remove_tags_for_selected)
+            remove_tags_action.setEnabled(has_selection)
+            menu.addAction(remove_tags_action)
+
+        set_suffix_action = QAction(tr("add_suffix_for_selected"), self)
+        set_suffix_action.triggered.connect(self.set_suffix_for_selected)
+        set_suffix_action.setEnabled(has_selection)
+        menu.addAction(set_suffix_action)
+
+        menu.addSeparator()
+
+        remove_selected_action = QAction(tr("remove_selected"), self)
+        remove_selected_action.triggered.connect(self.remove_selected_requested.emit)
+        remove_selected_action.setEnabled(has_selection)
+        menu.addAction(remove_selected_action)
+
+        clear_suffix_action = QAction(tr("clear_suffix"), self)
+        clear_suffix_action.triggered.connect(self.clear_suffix_requested.emit)
+        clear_suffix_action.setEnabled(has_selection)
+        menu.addAction(clear_suffix_action)
+
+        menu.addSeparator()
+
+        clear_list_action = QAction(tr("clear_list"), self)
+        clear_list_action.triggered.connect(self.clear_list_requested.emit)
+        menu.addAction(clear_list_action)
 
         menu.exec_(event.globalPos())
+
+    def set_tags_for_selected(self):
+        selected_rows = self.selectionModel().selectedRows()
+        if not selected_rows:
+            return
+
+        text, ok = QInputDialog.getText(
+            self,
+            tr("add_tags"),
+            tr("enter_comma_separated_tags"),
+        )
+
+        if ok and text:
+            new_tags_to_add = {t.strip() for t in text.split(",") if t.strip()}
+            for index in selected_rows:
+                row = index.row()
+                item = self.item(row, 1)
+                if not item:
+                    continue
+                settings = item.data(ROLE_SETTINGS)
+                if not settings:
+                    continue
+                
+                settings.tags.update(new_tags_to_add)
+                
+                tags_text = ",".join(sorted(settings.tags))
+                tags_item = self.item(row, 2)
+                if tags_item:
+                    tags_item.setText(tags_text)
+                    tags_item.setToolTip(tags_text)
+
+    def remove_tags_for_selected(self):
+        selected_rows = self.selectionModel().selectedRows()
+        if not selected_rows:
+            return
+
+        text, ok = QInputDialog.getText(
+            self,
+            tr("remove_tags"),
+            tr("enter_comma_separated_tags"),
+        )
+
+        if ok and text:
+            tags_to_remove = {t.strip() for t in text.split(",") if t.strip()}
+            for index in selected_rows:
+                row = index.row()
+                item = self.item(row, 1)
+                if not item:
+                    continue
+                settings = item.data(ROLE_SETTINGS)
+                if not settings:
+                    continue
+                
+                settings.tags.difference_update(tags_to_remove)
+                
+                tags_text = ",".join(sorted(settings.tags))
+                tags_item = self.item(row, 2)
+                if tags_item:
+                    tags_item.setText(tags_text)
+                    tags_item.setToolTip(tags_text)
+
+    def set_suffix_for_selected(self):
+        selected_rows = self.selectionModel().selectedRows()
+        if not selected_rows:
+            return
+
+        text, ok = QInputDialog.getText(
+            self,
+            tr("add_suffix"),
+            tr("enter_suffix"),
+        )
+
+        if ok and text:
+            suffix_to_append = text.strip()
+            for index in selected_rows:
+                row = index.row()
+                item = self.item(row, 1)
+                if not item:
+                    continue
+                settings = item.data(ROLE_SETTINGS)
+                if not settings:
+                    continue
+
+                settings.suffix += suffix_to_append
+                
+                suffix_item = self.item(row, 4)
+                if suffix_item:
+                    suffix_item.setText(settings.suffix)
+                    suffix_item.setToolTip(settings.suffix)
 
     def open_selected_file(self):
         selected_rows = self.selectionModel().selectedRows()
@@ -177,29 +306,15 @@ class DragDropTableWidget(QTableWidget):
         if source is self.viewport() and event.type() == QEvent.Type.MouseButtonPress:
             index = self.indexAt(event.pos())
             if index.isValid():
+                if len(self.selectionModel().selectedRows()) > 1:
+                    return super().eventFilter(source, event)
                 col = index.column()
                 edit_cols = [2, 4]
                 if self.mode == "normal":
                     edit_cols.append(3)  # Add date column for normal mode
                 if col in edit_cols:
-                    rows = [idx.row() for idx in self.selectionModel().selectedRows()]
-                    if len(rows) > 1 and index.row() in rows:
-                        self._selection_before_edit = rows
-                        QTimer.singleShot(0, lambda r=rows: self._restore_selection(r))
-                    else:
-                        self._selection_before_edit = rows
                     QTimer.singleShot(0, lambda idx=index: self.edit(idx))
         return super().eventFilter(source, event)
-
-    def _restore_selection(self, rows: list[int]):
-        if not rows:
-            return
-        sm = self.selectionModel()
-        sm.clearSelection()
-        for r in rows:
-            idx = self.model().index(r, 0)
-            sm.select(idx, QItemSelectionModel.SelectionFlag.Select | QItemSelectionModel.SelectionFlag.Rows)
-        self.sync_check_column()
 
     def on_header_double_clicked(self, index: int):
         header = self.horizontalHeader()
@@ -345,14 +460,17 @@ class DragDropTableWidget(QTableWidget):
         index = self.currentIndex()
         edit_cols = {2, 4}
         if self.mode == "normal":
-            edit_cols.add(3)  # Add date column for normal mode
+            edit_cols.add(3)
 
         if index.isValid() and index.column() in edit_cols:
+            if len(self.selectionModel().selectedRows()) > 1:
+                super().keyPressEvent(event)
+                return
+
             if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
                 row_before = index.row()
                 col = index.column()
                 super().keyPressEvent(event)
-                # Qt sometimes moves to the next row automatically
                 if self.currentRow() == row_before and row_before < self.rowCount() - 1:
                     next_row = row_before + 1
                     self.setCurrentCell(next_row, col)
@@ -360,12 +478,6 @@ class DragDropTableWidget(QTableWidget):
                 return
 
             if self.state() != QAbstractItemView.State.EditingState and event.text():
-                rows = [idx.row() for idx in self.selectionModel().selectedRows()]
-                if len(rows) > 1 and index.row() in rows:
-                    self._selection_before_edit = rows
-                    QTimer.singleShot(0, lambda r=rows: self._restore_selection(r))
-                else:
-                    self._selection_before_edit = rows
                 self.edit(index)
                 super().keyPressEvent(event)
                 return
