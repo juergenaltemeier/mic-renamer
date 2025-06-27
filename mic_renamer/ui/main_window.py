@@ -289,10 +289,10 @@ class RenamerApp(QWidget):
 
     def set_session_status(self, saved: bool):
         if saved:
-            self.lbl_session_status.setPixmap(resource_icon("status-green.svg").pixmap(16, 16))
+            self.lbl_session_status.setPixmap(resource_icon("status-blue.svg").pixmap(16, 16))
             self.lbl_session_status.setToolTip(tr("session_saved"))
         else:
-            self.lbl_session_status.setPixmap(resource_icon("status-grey.svg").pixmap(16, 16))
+            self.lbl_session_status.setPixmap(resource_icon("status-inactive.svg").pixmap(16, 16))
             self.lbl_session_status.setToolTip(tr("session_not_saved"))
 
     def set_splitter_sizes(self, sizes: list[int] | None) -> None:
@@ -358,17 +358,21 @@ class RenamerApp(QWidget):
 
         # Edit menu
         self.menu_edit = QMenu(tr("edit_menu"), self)
+        self.menu_edit_actions = []
+        
         icon_compress = resource_icon("arrow-down-circle.svg")
         act_compress = QAction(icon_compress, tr("compress"), self)
         act_compress.setToolTip(tr("tip_compress"))
         act_compress.triggered.connect(self.compress_selected)
         self.menu_edit.addAction(act_compress)
+        self.menu_edit_actions.append(act_compress)
 
         icon_convert = resource_icon("image.svg")
         act_convert = QAction(icon_convert, tr("convert_heic"), self)
         act_convert.setToolTip(tr("tip_convert_heic"))
         act_convert.triggered.connect(self.convert_selected_to_jpeg)
         self.menu_edit.addAction(act_convert)
+        self.menu_edit_actions.append(act_convert)
 
         self.menu_edit.addSeparator()
 
@@ -377,16 +381,23 @@ class RenamerApp(QWidget):
         act_undo.setToolTip(tr("tip_undo_rename"))
         act_undo.triggered.connect(self.undo_rename)
         self.menu_edit.addAction(act_undo)
+        self.menu_edit_actions.append(act_undo)
 
         self.menu_edit.addSeparator()
         
-        act_restore_session = QAction(tr("restore_session"), self)
+        icon_restore_session = resource_icon("history-blue.svg")
+        act_restore_session = QAction(icon_restore_session, tr("restore_session"), self)
+        act_restore_session.setToolTip(tr("tip_restore_session"))
         act_restore_session.triggered.connect(self.restore_session)
         self.menu_edit.addAction(act_restore_session)
+        self.menu_edit_actions.append(act_restore_session)
 
+        self.icon_edit_menu = resource_icon("edit-blue.svg")
         self.btn_edit_menu = QToolButton()
         self.btn_edit_menu.setMenu(self.menu_edit)
+        self.btn_edit_menu.setIcon(self.icon_edit_menu)
         self.btn_edit_menu.setText(tr("edit_menu"))
+        self.btn_edit_menu.setToolTip(tr("edit_menu"))
         self.btn_edit_menu.setPopupMode(QToolButton.InstantPopup)
         tb.addWidget(self.btn_edit_menu)
 
@@ -500,6 +511,26 @@ class RenamerApp(QWidget):
         if hasattr(self, "btn_add_menu"):
             self.btn_add_menu.setText(tr("add_menu"))
             self.btn_add_menu.setToolTip(tr("tip_add_menu"))
+            
+        # Update "Edit" menu
+        if hasattr(self, "menu_edit"):
+            self.menu_edit.setTitle(tr("edit_menu"))
+        if hasattr(self, "btn_edit_menu"):
+            self.btn_edit_menu.setText(tr("edit_menu"))
+            self.btn_edit_menu.setToolTip(tr("edit_menu"))
+
+        if hasattr(self, "menu_edit_actions"):
+            menu_edit_actions = self.menu_edit_actions
+            menu_edit_labels = [
+                "compress", "convert_heic", "undo_rename", "restore_session"
+            ]
+            menu_edit_tips = [
+                "tip_compress", "tip_convert_heic", "tip_undo_rename", "tip_restore_session"
+            ]
+            for action, key, tip in zip(menu_edit_actions, menu_edit_labels, menu_edit_tips):
+                action.setText(tr(key))
+                action.setToolTip(tr(tip))
+                
         # update form labels
         if self.tag_panel.isVisible():
             self.btn_toggle_tags.setText(tr("hide_tags"))
@@ -520,6 +551,9 @@ class RenamerApp(QWidget):
             if hasattr(self, "btn_add_menu"):
                 self.btn_add_menu.setIcon(QIcon())
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
+            if hasattr(self, "btn_edit_menu"):
+                self.btn_edit_menu.setIcon(QIcon())
+                self.btn_edit_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
         else:
             self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             self.table_toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -528,6 +562,9 @@ class RenamerApp(QWidget):
             if hasattr(self, "btn_add_menu"):
                 self.btn_add_menu.setIcon(self.icon_add_menu)
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            if hasattr(self, "btn_edit_menu"):
+                self.btn_edit_menu.setIcon(self.icon_edit_menu)
+                self.btn_edit_menu.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
     def on_mode_changed(self, index: int) -> None:
         mode = self.combo_mode.itemData(index)

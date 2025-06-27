@@ -129,6 +129,7 @@ TRANSLATIONS = {
         , 'session_saved': 'Session saved'
         , 'session_not_saved': 'Session not saved'
         , 'edit_menu': 'Edit'
+        , 'tip_restore_session': 'Restore the last saved session'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -258,6 +259,7 @@ TRANSLATIONS = {
         , 'session_saved': 'Sitzung gespeichert'
         , 'session_not_saved': 'Sitzung nicht gespeichert'
         , 'edit_menu': 'Bearbeiten'
+        , 'tip_restore_session': 'Letzte gespeicherte Sitzung wiederherstellen'
     }
 }
 
