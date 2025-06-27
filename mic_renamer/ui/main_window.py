@@ -15,6 +15,7 @@ from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot
 
 from .. import config_manager
 from ..utils.i18n import tr, set_language
+from .dialogs.help_dialog import HelpDialog
 from .settings_dialog import SettingsDialog
 from .theme import resource_icon
 from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
@@ -454,6 +455,14 @@ class RenamerApp(QWidget):
         self.main_actions = QToolBar()
         self.main_actions.addActions(self.toolbar_actions)
         tb.addWidget(self.main_actions)
+
+        self.act_help = QAction(resource_icon("help-blue.svg"), tr("help_title"), self)
+        self.act_help.setToolTip(tr("tip_help"))
+        self.act_help.triggered.connect(self.show_help)
+        self.btn_help = QToolButton()
+        self.btn_help.setDefaultAction(self.act_help)
+        tb.addWidget(self.btn_help)
+
         tb.addWidget(self.input_project)
 
 
@@ -484,6 +493,10 @@ class RenamerApp(QWidget):
             style = cfg.get("toolbar_style", "icons")
             self.apply_toolbar_style(style)
 
+    def show_help(self):
+        dlg = HelpDialog(self)
+        dlg.exec()
+
     def save_last_project_number(self, text: str) -> None:
         config_manager.set("last_project_number", text.strip())
         self._session_save_timer.start()
@@ -502,6 +515,10 @@ class RenamerApp(QWidget):
         for action, key, tip in zip(actions, labels, tips):
             action.setText(tr(key))
             action.setToolTip(tr(tip))
+
+        if hasattr(self, "act_help"):
+            self.act_help.setText(tr("help_title"))
+            self.act_help.setToolTip(tr("tip_help"))
 
         # Update "Add" menu actions
         menu_actions = self.menu_actions

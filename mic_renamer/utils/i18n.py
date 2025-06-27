@@ -133,6 +133,27 @@ TRANSLATIONS = {
         , 'no_session_to_restore': 'No session to restore.'
         , 'session_restored_successfully': 'Session restored successfully.'
         , 'session_restore_failed': 'Failed to restore session.'
+        , 'help_title': 'Help'
+        , 'tip_help': 'Show help'
+        , 'help_content_html': """
+            <h2>How to Use the Renamer</h2>
+            <p>This application helps you rename image and video files based on a project number and descriptive tags.</p>
+            <h3>Steps:</h3>
+            <ol>
+                <li><b>Set Project Number:</b> Enter the project number (e.g., C123456) in the "MC-No." field.</li>
+                <li><b>Add Files:</b> Use the "Add" menu to add files or folders to the list.</li>
+                <li><b>Select Tags:</b> For each file, select one or more tags that describe its content. You can also add a custom suffix.</li>
+                <li><b>Preview:</b> Click "Preview Rename" to see the proposed new filenames.</li>
+                <li><b>Rename:</b> Click "Rename All" or "Rename Selected" to perform the renaming.</li>
+            </ol>
+            <h3>Additional Features:</h3>
+            <ul>
+                <li><b>Compression:</b> Compress images to reduce their file size.</li>
+                <li><b>HEIC Conversion:</b> Convert HEIC files to JPEG format.</li>
+                <li><b>Undo:</b> Revert the last renaming operation.</li>
+                <li><b>Settings:</b> Customize application settings, such as language and accepted file types.</li>
+            </ul>
+        """
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -266,6 +287,27 @@ TRANSLATIONS = {
         , 'no_session_to_restore': 'Keine Sitzung zum Wiederherstellen vorhanden.'
         , 'session_restored_successfully': 'Sitzung erfolgreich wiederhergestellt.'
         , 'session_restore_failed': 'Fehler beim Wiederherstellen der Sitzung.'
+        , 'help_title': 'Hilfe'
+        , 'tip_help': 'Hilfe anzeigen'
+        , 'help_content_html': """
+            <h2>Anleitung zum Renamer</h2>
+            <p>Diese Anwendung hilft Ihnen, Bild- und Videodateien basierend auf einer Projektnummer und beschreibenden Tags umzubenennen.</p>
+            <h3>Schritte:</h3>
+            <ol>
+                <li><b>Projektnummer festlegen:</b> Geben Sie die Projektnummer (z. B. C123456) in das Feld "MC-Nr." ein.</li>
+                <li><b>Dateien hinzufügen:</b> Verwenden Sie das Menü "Hinzufügen", um Dateien oder Ordner zur Liste hinzuzufügen.</li>
+                <li><b>Tags auswählen:</b> Wählen Sie für jede Datei ein oder mehrere Tags aus, die den Inhalt beschreiben. Sie können auch einen benutzerdefinierten Suffix hinzufügen.</li>
+                <li><b>Vorschau:</b> Klicken Sie auf "Umbenennen Vorschau", um die vorgeschlagenen neuen Dateinamen anzuzeigen.</li>
+                <li><b>Umbenennen:</b> Klicken Sie auf "Alle umbenennen" oder "Nur Auswahl umbenennen", um die Umbenennung durchzuführen.</li>
+            </ol>
+            <h3>Zusätzliche Funktionen:</h3>
+            <ul>
+                <li><b>Komprimierung:</b> Komprimieren Sie Bilder, um deren Dateigröße zu reduzieren.</li>
+                <li><b>HEIC-Konvertierung:</b> Konvertieren Sie HEIC-Dateien in das JPEG-Format.</li>
+                <li><b>Rückgängig:</b> Machen Sie die letzte Umbenennungsoperation rückgängig.</li>
+                <li><b>Einstellungen:</b> Passen Sie die Anwendungseinstellungen an, wie z. B. die Sprache und die akzeptierten Dateitypen.</li>
+            </ul>
+        """
     }
 }
 
