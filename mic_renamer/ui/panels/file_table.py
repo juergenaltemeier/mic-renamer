@@ -1,5 +1,6 @@
 """Table widget with drag and drop support."""
 
+import logging
 import os
 from PySide6.QtWidgets import (
     QTableWidget,
@@ -9,6 +10,7 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
     QMenu,
     QInputDialog,
+    QMessageBox,
 )
 from PySide6.QtGui import QPalette, QAction, QDesktopServices
 from PySide6.QtCore import (
@@ -30,6 +32,7 @@ from ...utils.i18n import tr
 from ...utils.meta_utils import get_capture_date
 
 ROLE_SETTINGS = Qt.UserRole + 1
+log = logging.getLogger(__name__)
 
 
 class DragDropTableWidget(QTableWidget):
@@ -162,14 +165,39 @@ class DragDropTableWidget(QTableWidget):
         if not selected_rows:
             return
 
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle(tr("remove_tags"))
+        msg_box.setText(tr("remove_tags_question"))
+        remove_specific_button = msg_box.addButton(
+            tr("remove_specific_tags"), QMessageBox.ActionRole
+        )
+        clear_all_button = msg_box.addButton(
+            tr("clear_all_tags"), QMessageBox.ActionRole
+        )
+        msg_box.addButton(QMessageBox.Cancel)
+
+        msg_box.exec()
+
+        clicked_button = msg_box.clickedButton()
+        if clicked_button == remove_specific_button:
+            self.prompt_for_specific_tags()
+        elif clicked_button == clear_all_button:
+            self.clear_all_tags()
+
+    def prompt_for_specific_tags(self):
+        selected_rows = self.selectionModel().selectedRows()
+        if not selected_rows:
+            return
+
         text, ok = QInputDialog.getText(
             self,
-            tr("remove_tags"),
+            tr("remove_specific_tags"),
             tr("enter_comma_separated_tags"),
         )
 
         if ok and text:
             tags_to_remove = {t.strip() for t in text.split(",") if t.strip()}
+            log.debug(f"Removing specific tags: {tags_to_remove}")
             for index in selected_rows:
                 row = index.row()
                 item = self.item(row, 1)
@@ -178,14 +206,36 @@ class DragDropTableWidget(QTableWidget):
                 settings = item.data(ROLE_SETTINGS)
                 if not settings:
                     continue
-                
+
                 settings.tags.difference_update(tags_to_remove)
-                
+
                 tags_text = ",".join(sorted(settings.tags))
                 tags_item = self.item(row, 2)
                 if tags_item:
                     tags_item.setText(tags_text)
                     tags_item.setToolTip(tags_text)
+
+    def clear_all_tags(self):
+        selected_rows = self.selectionModel().selectedRows()
+        if not selected_rows:
+            return
+
+        log.debug("Clearing all tags from selected rows")
+        for index in selected_rows:
+            row = index.row()
+            item = self.item(row, 1)
+            if not item:
+                continue
+            settings = item.data(ROLE_SETTINGS)
+            if not settings:
+                continue
+
+            settings.tags.clear()
+
+            tags_item = self.item(row, 2)
+            if tags_item:
+                tags_item.setText("")
+                tags_item.setToolTip("")
 
     def set_suffix_for_selected(self):
         selected_rows = self.selectionModel().selectedRows()
@@ -483,4 +533,3 @@ class DragDropTableWidget(QTableWidget):
                 return
 
         super().keyPressEvent(event)
-

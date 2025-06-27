@@ -278,26 +278,36 @@ class RenamerApp(QWidget):
         tb = self.toolbar
         self.toolbar_actions = []
         self.toolbar_action_icons = []
+        self.menu_actions = []
 
         # actions collected in the "Add" menu
         icon_add_files = resource_icon("file-plus.svg")
         act_add_files = QAction(icon_add_files, tr("add_files"), self)
         act_add_files.setToolTip(tr("tip_add_files"))
         act_add_files.triggered.connect(self.add_files_dialog)
-        self.toolbar_actions.append(act_add_files)
-        self.toolbar_action_icons.append(icon_add_files)
+        self.menu_actions.append(act_add_files)
 
         icon_add_folder = resource_icon("folder-plus.svg")
         act_add_folder = QAction(icon_add_folder, tr("add_folder"), self)
         act_add_folder.setToolTip(tr("tip_add_folder"))
         act_add_folder.triggered.connect(self.add_folder_dialog)
-        self.toolbar_actions.append(act_add_folder)
-        self.toolbar_action_icons.append(icon_add_folder)
+        self.menu_actions.append(act_add_folder)
+
+        act_add_folder_recursive = QAction(icon_add_folder, tr("add_folder_recursive"), self)
+        act_add_folder_recursive.setToolTip(tr("tip_add_folder_recursive"))
+        act_add_folder_recursive.triggered.connect(self.add_folder_with_subdirectories)
+        self.menu_actions.append(act_add_folder_recursive)
 
         # create drop-down menu button for adding items
         self.menu_add = QMenu(tr("add_menu"), self)
         self.menu_add.addAction(act_add_files)
         self.menu_add.addAction(act_add_folder)
+        self.menu_add.addAction(act_add_folder_recursive)
+        self.menu_add.addSeparator()
+        act_set_import_dir = QAction(tr("set_import_directory"), self)
+        act_set_import_dir.triggered.connect(self.set_import_directory)
+        self.menu_add.addAction(act_set_import_dir)
+        self.menu_actions.append(act_set_import_dir)
 
         self.icon_add_menu = resource_icon("file-plus.svg")
         self.btn_add_menu = QToolButton()
@@ -408,22 +418,35 @@ class RenamerApp(QWidget):
 
     def update_translations(self):
         self.setWindowTitle(tr("app_title"))
+        
+        # Update main toolbar actions
         actions = self.toolbar_actions
         labels = [
-            "add_files", "add_folder", "preview_rename",
-            "compress", "convert_heic",
+            "preview_rename", "compress", "convert_heic",
             "undo_rename", "remove_selected", "clear_suffix",
             "clear_list", "settings_title"
         ]
         tips = [
-            "tip_add_files", "tip_add_folder", "tip_preview_rename",
-            "tip_compress", "tip_convert_heic",
+            "tip_preview_rename", "tip_compress", "tip_convert_heic",
             "tip_undo_rename", "tip_remove_selected", "tip_clear_suffix",
             "tip_clear_list", "tip_settings"
         ]
         for action, key, tip in zip(actions, labels, tips):
             action.setText(tr(key))
             action.setToolTip(tr(tip))
+
+        # Update "Add" menu actions
+        menu_actions = self.menu_actions
+        menu_labels = [
+            "add_files", "add_folder", "add_folder_recursive", "set_import_directory"
+        ]
+        menu_tips = [
+            "tip_add_files", "tip_add_folder", "tip_add_folder_recursive", ""
+        ]
+        for action, key, tip in zip(menu_actions, menu_labels, menu_tips):
+            action.setText(tr(key))
+            action.setToolTip(tr(tip))
+
         # update add menu title and button
         if hasattr(self, "menu_add"):
             self.menu_add.setTitle(tr("add_menu"))
@@ -466,11 +489,21 @@ class RenamerApp(QWidget):
         self.rename_mode = mode
         self.table_widget.set_mode(mode)
 
+    def set_import_directory(self):
+        directory = QFileDialog.getExistingDirectory(
+            self,
+            tr("set_import_directory"),
+            config_manager.get('default_import_directory', '')
+        )
+        if directory:
+            config_manager.set('default_import_directory', directory)
+
     def add_files_dialog(self):
         exts = " ".join(f"*{e}" for e in ItemSettings.ACCEPT_EXTENSIONS)
         filter_str = f"Images and Videos ({exts})"
+        import_dir = config_manager.get('default_import_directory', '')
         files, _ = QFileDialog.getOpenFileNames(
-            self, tr("add_files"), "",
+            self, tr("add_files"), import_dir,
             filter_str
         )
         if files:
@@ -490,6 +523,21 @@ class RenamerApp(QWidget):
                 if os.path.isfile(os.path.join(folder, name)) and
                    os.path.splitext(name)[1].lower() in ItemSettings.ACCEPT_EXTENSIONS
             ]
+            if paths:
+                self._import_paths(paths)
+
+    def add_folder_with_subdirectories(self):
+        folder = QFileDialog.getExistingDirectory(
+            self,
+            tr("add_folder_recursive"),
+            config_manager.get('default_import_directory', '')
+        )
+        if folder:
+            paths = []
+            for root, _, files in os.walk(folder):
+                for name in files:
+                    if os.path.splitext(name)[1].lower() in ItemSettings.ACCEPT_EXTENSIONS:
+                        paths.append(os.path.join(root, name))
             if paths:
                 self._import_paths(paths)
 
@@ -520,16 +568,14 @@ class RenamerApp(QWidget):
 
     def _apply_selection_change(self):
         self.logger.debug("Applying selection change.")
-        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
-        if not rows:
-            self.logger.debug("Selection cleared.")
+        
+        # Use the current row for the preview to ensure it follows focus
+        current_row = self.table_widget.currentRow()
+        if current_row < 0:
+            # If no row is current (e.g., selection cleared), stop preview
             if self._preview_loader:
-                self.logger.debug("Stopping preview loader due to cleared selection.")
+                self.logger.debug("Stopping preview loader due to no current row.")
                 self._preview_loader.stop()
-            if self._preview_thread and self._preview_thread.isRunning():
-                self.logger.debug("Quitting preview thread due to cleared selection.")
-                self._preview_thread.quit()
-
             self.image_viewer.load_path("")
             self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
@@ -537,19 +583,25 @@ class RenamerApp(QWidget):
             self.update_status()
             return
 
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        if not rows:
+            self.set_item_controls_enabled(False)
+            self.table_widget.sync_check_column()
+            self.update_status()
+            return
+
         self.set_item_controls_enabled(True)
+        
+        # Update tag panel based on the entire selection
         settings_list = []
         for r in rows:
             item0 = self.table_widget.item(r, 1)
-            path = item0.data(Qt.UserRole)
-            st: ItemSettings = item0.data(ROLE_SETTINGS)
-            if st is None:
-                st = ItemSettings(path)
-                item0.setData(ROLE_SETTINGS, st)
-            settings_list.append(st)
-        first = settings_list[0]
+            if item0:
+                st: ItemSettings = item0.data(ROLE_SETTINGS)
+                if st:
+                    settings_list.append(st)
 
-        if self.rename_mode == MODE_NORMAL:
+        if self.rename_mode == MODE_NORMAL and settings_list:
             intersect = set(settings_list[0].tags)
             union = set(settings_list[0].tags)
             for st in settings_list[1:]:
@@ -572,7 +624,12 @@ class RenamerApp(QWidget):
                     cb.setText(f"{code}: {desc}")
                 cb.blockSignals(False)
 
-        self.load_preview(first.original_path)
+        # Load preview for the currently focused row
+        item_to_preview = self.table_widget.item(current_row, 1)
+        if item_to_preview:
+            path_to_preview = item_to_preview.data(Qt.UserRole)
+            self.load_preview(path_to_preview)
+
         self.table_widget.sync_check_column()
         self.update_status()
 
@@ -734,13 +791,12 @@ class RenamerApp(QWidget):
     def load_preview(self, path: str):
         """Load preview image/video using a background thread."""
         self.logger.debug("Request to load preview for: %s", path)
-        # cancel running loader
-        if self._preview_loader:
-            self.logger.debug("Stopping previous preview loader.")
-            self._preview_loader.stop()
+        
+        # If a thread is already running, request it to quit and wait for it to finish.
         if self._preview_thread and self._preview_thread.isRunning():
-            self.logger.debug("Quitting previous preview thread.")
+            self.logger.debug("Stopping previous preview loader.")
             self._preview_thread.quit()
+            self._preview_thread.wait(500) # Wait up to 500ms
 
         if not path:
             self.image_viewer.load_path("")

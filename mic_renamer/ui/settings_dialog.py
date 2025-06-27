@@ -62,28 +62,6 @@ class SettingsDialog(QDialog):
         hl_save.addWidget(btn_browse_save)
         gen_layout.addLayout(hl_save)
 
-        self.chk_import_dir = QCheckBox(tr('use_import_dir'))
-        self.chk_import_dir.setToolTip(tr('use_import_dir_desc'))
-        gen_layout.addWidget(self.chk_import_dir)
-
-        hl_import = QHBoxLayout()
-        lbl_import = QLabel(tr('default_import_dir_label'))
-        lbl_import.setToolTip(tr('default_import_dir_desc'))
-        hl_import.addWidget(lbl_import)
-        self.edit_import_dir = QLineEdit(self.cfg.get('default_import_directory', ''))
-        self.edit_import_dir.setToolTip(tr('default_import_dir_desc'))
-        self.btn_browse_import = QPushButton('...')
-        self.btn_browse_import.clicked.connect(self.choose_import_dir)
-        hl_import.addWidget(self.edit_import_dir)
-        hl_import.addWidget(self.btn_browse_import)
-        gen_layout.addLayout(hl_import)
-
-        self.chk_import_dir.setChecked(bool(self.cfg.get('default_import_directory')))
-        self.edit_import_dir.setEnabled(self.chk_import_dir.isChecked())
-        self.btn_browse_import.setEnabled(self.chk_import_dir.isChecked())
-        self.chk_import_dir.toggled.connect(self.edit_import_dir.setEnabled)
-        self.chk_import_dir.toggled.connect(self.btn_browse_import.setEnabled)
-
         hl = QHBoxLayout()
         lbl_lang = QLabel(tr("language_label"))
         lbl_lang.setToolTip(tr("language_desc"))
@@ -147,12 +125,6 @@ class SettingsDialog(QDialog):
         if dir_path:
             self.edit_save_dir.setText(dir_path)
 
-    def choose_import_dir(self):
-        from PySide6.QtWidgets import QFileDialog
-        dir_path = QFileDialog.getExistingDirectory(self, tr('default_import_dir_label'), self.edit_import_dir.text() or str(config_manager.get('default_import_directory', '')))
-        if dir_path:
-            self.edit_import_dir.setText(dir_path)
-
     def add_tag_row(self):
         row = self.tbl_tags.rowCount()
         self.tbl_tags.insertRow(row)
@@ -166,10 +138,6 @@ class SettingsDialog(QDialog):
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
         self.cfg['default_save_directory'] = self.edit_save_dir.text().strip()
-        if self.chk_import_dir.isChecked():
-            self.cfg['default_import_directory'] = self.edit_import_dir.text().strip()
-        else:
-            self.cfg['default_import_directory'] = ''
         style = 'text' if self.chk_toolbar_text.isChecked() else 'icons'
         self.cfg['toolbar_style'] = style
         config_manager.set('toolbar_style', style)
@@ -211,10 +179,6 @@ class SettingsDialog(QDialog):
         restore_default_tags()
         self.edit_ext.setText(", ".join(self.cfg.get("accepted_extensions", [])))
         self.edit_save_dir.setText(self.cfg.get('default_save_directory', ''))
-        self.edit_import_dir.setText(self.cfg.get('default_import_directory', ''))
-        self.chk_import_dir.setChecked(bool(self.cfg.get('default_import_directory')))
-        self.edit_import_dir.setEnabled(self.chk_import_dir.isChecked())
-        self.btn_browse_import.setEnabled(self.chk_import_dir.isChecked())
         self.chk_toolbar_text.setChecked(
             self.cfg.get("toolbar_style", "icons") == "text"
         )

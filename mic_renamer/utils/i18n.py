@@ -12,6 +12,7 @@ TRANSLATIONS = {
         'add_menu': 'Add',
         'add_files': 'Add Files...',
         'add_folder': 'Add Folder...',
+        'add_folder_recursive': 'Add Folder and Subfolders...',
         'preview_rename': 'Preview Rename',
         'rename_all': 'Rename All',
         'rename_selected': 'Rename Selected Only',
@@ -68,6 +69,7 @@ TRANSLATIONS = {
         'clear_suffix': 'Clear Suffix',
         'tip_add_files': 'Add files to the list',
         'tip_add_folder': 'Add all supported files from a folder',
+        'tip_add_folder_recursive': 'Add all supported files from a folder and its subfolders',
         'tip_preview_rename': 'Show a preview of the new file names',
         'tip_compress': 'Compress selected images',
         'tip_convert_heic': 'Convert HEIC files to JPEG',
@@ -118,6 +120,10 @@ TRANSLATIONS = {
         , 'enter_suffix': 'Enter suffix:'
         , 'remove_tags_for_selected': 'Remove Tags for Selected'
         , 'remove_tags': 'Remove Tags'
+        , 'remove_tags_question': 'Do you want to remove specific tags or clear all tags?'
+        , 'remove_specific_tags': 'Remove Specific Tags'
+        , 'clear_all_tags': 'Clear All Tags'
+        , 'set_import_directory': 'Set Import Directory'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -130,6 +136,7 @@ TRANSLATIONS = {
         'add_menu': 'Hinzufügen',
         'add_files': 'Dateien hinzufügen...',
         'add_folder': 'Ordner hinzufügen...',
+        'add_folder_recursive': 'Ordner und Unterordner hinzufügen...',
         'preview_rename': 'Umbenennen Vorschau',
         'rename_all': 'Alle umbenennen',
         'rename_selected': 'Nur Auswahl umbenennen',
@@ -184,6 +191,7 @@ TRANSLATIONS = {
         'clear_suffix': 'Suffix entfernen',
         'tip_add_files': 'Dateien zur Liste hinzufügen',
         'tip_add_folder': 'Alle unterstützten Dateien aus einem Ordner hinzufügen',
+        'tip_add_folder_recursive': 'Alle unterstützten Dateien aus einem Ordner und seinen Unterordnern hinzufügen',
         'tip_preview_rename': 'Vorschau der neuen Dateinamen anzeigen',
         'tip_compress': 'Ausgewählte Bilder komprimieren',
         'tip_convert_heic': 'HEIC-Dateien in JPEG umwandeln',
@@ -236,6 +244,10 @@ TRANSLATIONS = {
         , 'enter_suffix': 'Suffix eingeben:'
         , 'remove_tags_for_selected': 'Tags von Auswahl entfernen'
         , 'remove_tags': 'Tags entfernen'
+        , 'remove_tags_question': 'Möchten Sie bestimmte Tags entfernen oder alle Tags löschen?'
+        , 'remove_specific_tags': 'Bestimmte Tags entfernen'
+        , 'clear_all_tags': 'Alle Tags löschen'
+        , 'set_import_directory': 'Importverzeichnis festlegen'
     }
 }
 
@@ -247,4 +259,3 @@ def set_language(lang: str):
 
 def tr(key: str) -> str:
     return TRANSLATIONS.get(current_language, {}).get(key, key)
-
