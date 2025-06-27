@@ -384,6 +384,27 @@ class RenamerApp(QWidget):
         self.menu_edit_actions.append(act_undo)
 
         self.menu_edit.addSeparator()
+
+        icon_remove_sel = resource_icon("trash-2.svg")
+        self.act_remove_sel = QAction(icon_remove_sel, tr("remove_selected"), self)
+        self.act_remove_sel.setToolTip(tr("tip_remove_selected"))
+        self.act_remove_sel.triggered.connect(self.remove_selected_items)
+        self.menu_edit.addAction(self.act_remove_sel)
+        self.menu_edit_actions.append(self.act_remove_sel)
+
+        icon_clear_suffix = resource_icon("suffix-clear.svg")
+        self.act_clear_suffix = QAction(icon_clear_suffix, tr("clear_suffix"), self)
+        self.act_clear_suffix.setToolTip(tr("tip_clear_suffix"))
+        self.act_clear_suffix.triggered.connect(self.clear_selected_suffixes)
+        self.menu_edit.addAction(self.act_clear_suffix)
+        self.menu_edit_actions.append(self.act_clear_suffix)
+
+        icon_clear = resource_icon("clear.svg")
+        self.act_clear = QAction(icon_clear, tr("clear_list"), self)
+        self.act_clear.setToolTip(tr("tip_clear_list"))
+        self.act_clear.triggered.connect(self.clear_all)
+        self.menu_edit.addAction(self.act_clear)
+        self.menu_edit_actions.append(self.act_clear)
         
         icon_restore_session = resource_icon("history-blue.svg")
         act_restore_session = QAction(icon_restore_session, tr("restore_session"), self)
@@ -407,44 +428,29 @@ class RenamerApp(QWidget):
         act_preview = QAction(icon_preview, tr("preview_rename"), self)
         act_preview.setToolTip(tr("tip_preview_rename"))
         act_preview.triggered.connect(self.preview_rename)
-        tb.addAction(act_preview)
         self.toolbar_actions.append(act_preview)
         self.toolbar_action_icons.append(icon_preview)
-
-        tb.addSeparator()
-
-        icon_remove_sel = resource_icon("trash-2.svg")
-        self.act_remove_sel = QAction(icon_remove_sel, tr("remove_selected"), self)
-        self.act_remove_sel.setToolTip(tr("tip_remove_selected"))
-        self.act_remove_sel.triggered.connect(self.remove_selected_items)
-        self.toolbar_actions.append(self.act_remove_sel)
-        self.toolbar_action_icons.append(icon_remove_sel)
-
-        icon_clear_suffix = resource_icon("suffix-clear.svg")
-        self.act_clear_suffix = QAction(icon_clear_suffix, tr("clear_suffix"), self)
-        self.act_clear_suffix.setToolTip(tr("tip_clear_suffix"))
-        self.act_clear_suffix.triggered.connect(self.clear_selected_suffixes)
-        self.toolbar_actions.append(self.act_clear_suffix)
-        self.toolbar_action_icons.append(icon_clear_suffix)
-
-        icon_clear = resource_icon("clear.svg")
-        self.act_clear = QAction(icon_clear, tr("clear_list"), self)
-        self.act_clear.setToolTip(tr("tip_clear_list"))
-        self.act_clear.triggered.connect(self.clear_all)
-        self.toolbar_actions.append(self.act_clear)
-        self.toolbar_action_icons.append(icon_clear)
 
         icon_settings = resource_icon("settings.svg")
         act_settings = QAction(icon_settings, tr("settings_title"), self)
         act_settings.setToolTip(tr("tip_settings"))
         act_settings.triggered.connect(self.open_settings)
-        tb.addAction(act_settings)
         self.toolbar_actions.append(act_settings)
         self.toolbar_action_icons.append(icon_settings)
+
+        # add spacer to push the project number input to the right
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        tb.addWidget(spacer)
 
         self.input_project = ProjectNumberInput()
         self.input_project.setText(config_manager.get("last_project_number", ""))
         self.input_project.textChanged.connect(self.save_last_project_number)
+        
+        # create main actions
+        self.main_actions = QToolBar()
+        self.main_actions.addActions(self.toolbar_actions)
+        tb.addWidget(self.main_actions)
         tb.addWidget(self.input_project)
 
 
@@ -458,6 +464,11 @@ class RenamerApp(QWidget):
         self.combo_mode.addItem(tr("mode_pa_mat"), MODE_PA_MAT)
         self.combo_mode.currentIndexChanged.connect(self.on_mode_changed)
         tb.addWidget(self.combo_mode)
+        
+        # add spacer to push the combo box to the right
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        tb.addWidget(spacer)
 
 
     def open_settings(self):
@@ -480,14 +491,10 @@ class RenamerApp(QWidget):
         # Update main toolbar actions
         actions = self.toolbar_actions
         labels = [
-            "preview_rename", "compress", "convert_heic",
-            "undo_rename", "remove_selected", "clear_suffix",
-            "clear_list", "settings_title"
+            "preview_rename", "settings_title"
         ]
         tips = [
-            "tip_preview_rename", "tip_compress", "tip_convert_heic",
-            "tip_undo_rename", "tip_remove_selected", "tip_clear_suffix",
-            "tip_clear_list", "tip_settings"
+            "tip_preview_rename", "tip_settings"
         ]
         for action, key, tip in zip(actions, labels, tips):
             action.setText(tr(key))
@@ -522,10 +529,10 @@ class RenamerApp(QWidget):
         if hasattr(self, "menu_edit_actions"):
             menu_edit_actions = self.menu_edit_actions
             menu_edit_labels = [
-                "compress", "convert_heic", "undo_rename", "restore_session"
+                "compress", "convert_heic", "undo_rename", "remove_selected", "clear_suffix", "clear_list", "restore_session"
             ]
             menu_edit_tips = [
-                "tip_compress", "tip_convert_heic", "tip_undo_rename", "tip_restore_session"
+                "tip_compress", "tip_convert_heic", "tip_undo_rename", "tip_remove_selected", "tip_clear_suffix", "tip_clear_list", "tip_restore_session"
             ]
             for action, key, tip in zip(menu_edit_actions, menu_edit_labels, menu_edit_tips):
                 action.setText(tr(key))
@@ -544,26 +551,16 @@ class RenamerApp(QWidget):
 
     def apply_toolbar_style(self, style: str) -> None:
         if style == "text":
-            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextOnly)
-            self.table_toolbar.setToolButtonStyle(Qt.ToolButtonTextOnly)
-            for action in self.toolbar_actions:
-                action.setIcon(QIcon())
+            self.main_actions.setToolButtonStyle(Qt.ToolButtonTextOnly)
             if hasattr(self, "btn_add_menu"):
-                self.btn_add_menu.setIcon(QIcon())
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
             if hasattr(self, "btn_edit_menu"):
-                self.btn_edit_menu.setIcon(QIcon())
                 self.btn_edit_menu.setToolButtonStyle(Qt.ToolButtonTextOnly)
         else:
-            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-            self.table_toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-            for action, icon in zip(self.toolbar_actions, self.toolbar_action_icons):
-                action.setIcon(icon)
+            self.main_actions.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             if hasattr(self, "btn_add_menu"):
-                self.btn_add_menu.setIcon(self.icon_add_menu)
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             if hasattr(self, "btn_edit_menu"):
-                self.btn_edit_menu.setIcon(self.icon_edit_menu)
                 self.btn_edit_menu.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
     def on_mode_changed(self, index: int) -> None:
@@ -1422,6 +1419,12 @@ class RenamerApp(QWidget):
     def restore_session(self, show_dialog=True):
         session_file = os.path.join(config_manager.config_dir, "session.json")
         if not os.path.exists(session_file):
+            if show_dialog:
+                QMessageBox.information(
+                    self,
+                    tr("restore_session_title"),
+                    tr("no_session_to_restore"),
+                )
             return
 
         if show_dialog:
@@ -1471,8 +1474,18 @@ class RenamerApp(QWidget):
                     self.update_row_background(row, settings)
 
             self.logger.info("Session restored successfully.")
+            QMessageBox.information(
+                self,
+                tr("restore_session_title"),
+                tr("session_restored_successfully"),
+            )
         except Exception as e:
             self.logger.error(f"Failed to restore session: {e}")
+            QMessageBox.warning(
+                self,
+                tr("restore_session_title"),
+                tr("session_restore_failed"),
+            )
         finally:
             if os.path.exists(session_file) and not show_dialog:
                 os.remove(session_file)

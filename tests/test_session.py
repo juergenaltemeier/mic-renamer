@@ -19,7 +19,7 @@ def app(qtbot):
     qtbot.addWidget(window)
     return window
 
-def test_session_save_and_restore(app, tmp_path, monkeypatch):
+def test_session_save_and_restore(app: RenamerApp, tmp_path, monkeypatch):
     # 1. Setup initial state
     img_a = tmp_path / "a.jpg"
     img_b = tmp_path / "b.jpg"
