@@ -21,7 +21,7 @@ from .theme import resource_icon
 from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
 from .panels import (
     MediaViewer,
-    DragDropTableWidget,
+    ModeTabs,
     TagPanel,
 )
 from .rename_options_dialog import RenameOptionsDialog
@@ -185,7 +185,6 @@ class RenamerApp(QWidget):
         viewer_layout.addLayout(viewer_toolbar)
         viewer_layout.addWidget(self.image_viewer, 5)
 
-        # table toolbar directly above the table widget
         table_container = QWidget()
         table_layout = QVBoxLayout(table_container)
         table_layout.setContentsMargins(
@@ -193,20 +192,32 @@ class RenamerApp(QWidget):
         )
         table_layout.setSpacing(DEFAULT_SPACING)
 
-        self.table_toolbar = QToolBar()
-        self.table_toolbar.setIconSize(QSize(24, 24))
-        self.setup_table_toolbar()
-        self.apply_toolbar_style(config_manager.get("toolbar_style", "icons"))
-        table_layout.addWidget(self.table_toolbar)
+        self.mode_tabs = ModeTabs()
+        self.table_widget = self.mode_tabs.current_table()
+        self.mode_tabs.tabs.currentChanged.connect(self.on_tab_changed)
 
-        self.table_widget = DragDropTableWidget()
         self._ignore_table_changes = False
-        self.table_widget.itemChanged.connect(self.on_table_item_changed)
-        self.table_widget.pathsAdded.connect(lambda _: self.update_status())
-        self.table_widget.remove_selected_requested.connect(self.remove_selected_items)
-        self.table_widget.clear_suffix_requested.connect(self.clear_selected_suffixes)
-        self.table_widget.clear_list_requested.connect(self.clear_all)
-        table_layout.addWidget(self.table_widget)
+        self.mode_tabs.normal_tab.itemChanged.connect(self.on_table_item_changed)
+        self.mode_tabs.position_tab.itemChanged.connect(self.on_table_item_changed)
+        self.mode_tabs.pa_mat_tab.itemChanged.connect(self.on_table_item_changed)
+
+        self.mode_tabs.normal_tab.pathsAdded.connect(lambda _: self.update_status())
+        self.mode_tabs.position_tab.pathsAdded.connect(lambda _: self.update_status())
+        self.mode_tabs.pa_mat_tab.pathsAdded.connect(lambda _: self.update_status())
+
+        self.mode_tabs.normal_tab.remove_selected_requested.connect(self.remove_selected_items)
+        self.mode_tabs.position_tab.remove_selected_requested.connect(self.remove_selected_items)
+        self.mode_tabs.pa_mat_tab.remove_selected_requested.connect(self.remove_selected_items)
+
+        self.mode_tabs.normal_tab.clear_suffix_requested.connect(self.clear_selected_suffixes)
+        self.mode_tabs.position_tab.clear_suffix_requested.connect(self.clear_selected_suffixes)
+        self.mode_tabs.pa_mat_tab.clear_suffix_requested.connect(self.clear_selected_suffixes)
+
+        self.mode_tabs.normal_tab.clear_list_requested.connect(self.clear_all)
+        self.mode_tabs.position_tab.clear_list_requested.connect(self.clear_all)
+        self.mode_tabs.pa_mat_tab.clear_list_requested.connect(self.clear_all)
+        
+        table_layout.addWidget(self.mode_tabs)
 
         self.splitter.addWidget(viewer_widget)
         self.splitter.addWidget(table_container)
@@ -451,22 +462,10 @@ class RenamerApp(QWidget):
         tb.addWidget(self.input_project)
 
 
-    def setup_table_toolbar(self) -> None:
-        """Create toolbar with table-related actions."""
-        tb = self.table_toolbar
-        tb.addSeparator()
-        self.combo_mode = QComboBox()
-        self.combo_mode.addItem(tr("mode_normal"), MODE_NORMAL)
-        self.combo_mode.addItem(tr("mode_position"), MODE_POSITION)
-        self.combo_mode.addItem(tr("mode_pa_mat"), MODE_PA_MAT)
-        self.combo_mode.currentIndexChanged.connect(self.on_mode_changed)
-        tb.addWidget(self.combo_mode)
-        
-        # add spacer to push the combo box to the right
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        tb.addWidget(spacer)
-
+    def on_tab_changed(self, index):
+        self.table_widget = self.mode_tabs.current_table()
+        self.rename_mode = self.table_widget.mode
+        self.on_table_selection_changed()
 
     def open_settings(self):
         dlg = SettingsDialog(self, state_manager=self.state_manager)
@@ -548,10 +547,9 @@ class RenamerApp(QWidget):
             self.btn_toggle_tags.setText(tr("hide_tags"))
         else:
             self.btn_toggle_tags.setText(tr("show_tags"))
-        self.combo_mode.setItemText(0, tr("mode_normal"))
-        self.combo_mode.setItemText(1, tr("mode_position"))
-        if self.combo_mode.count() > 2:
-            self.combo_mode.setItemText(2, tr("mode_pa_mat"))
+        self.mode_tabs.tabs.setTabText(0, tr("mode_normal"))
+        self.mode_tabs.tabs.setTabText(1, tr("mode_position"))
+        self.mode_tabs.tabs.setTabText(2, tr("mode_pa_mat"))
         self.update_status()
 
     def apply_toolbar_style(self, style: str) -> None:
@@ -567,13 +565,6 @@ class RenamerApp(QWidget):
                 self.btn_add_menu.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             if hasattr(self, "btn_edit_menu"):
                 self.btn_edit_menu.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-
-    def on_mode_changed(self, index: int) -> None:
-        mode = self.combo_mode.itemData(index)
-        if mode is None:
-            mode = MODE_NORMAL
-        self.rename_mode = mode
-        self.table_widget.set_mode(mode)
 
     def set_import_directory(self):
         directory = QFileDialog.getExistingDirectory(
@@ -643,7 +634,9 @@ class RenamerApp(QWidget):
         for idx, path in enumerate(paths, start=1):
             if progress.wasCanceled():
                 break
-            self.table_widget.add_paths([path])
+            self.mode_tabs.normal_tab.add_paths([path])
+            self.mode_tabs.position_tab.add_paths([path])
+            self.mode_tabs.pa_mat_tab.add_paths([path])
             progress.setValue(idx)
             QApplication.processEvents()
         progress.close()
@@ -665,7 +658,6 @@ class RenamerApp(QWidget):
                 self.logger.debug("Stopping previous preview loader due to no current row.")
                 self._preview_loader.stop()
             self.image_viewer.load_path("")
-            self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
             self.table_widget.sync_check_column()
             self.update_status()
@@ -891,21 +883,18 @@ class RenamerApp(QWidget):
 
         if not path:
             self.image_viewer.load_path("")
-            self.zoom_slider.setValue(100)
             return
 
         # Check if it's a video file - handle directly without background thread
         ext = os.path.splitext(path)[1].lower()
         if ext in MediaViewer.VIDEO_EXTS:
             self.image_viewer.load_path(path)
-            self.zoom_slider.setValue(100)  # Reset zoom for videos
             return
 
         # Handle images with background loading and caching
         pix = QPixmap()
         if QPixmapCache.find(path, pix):
             self.image_viewer.show_pixmap(pix)
-            self.zoom_slider.setValue(self.image_viewer.zoom_pct)
             return
 
         self._preview_loader = PreviewLoader(path, self.image_viewer.size())
@@ -917,6 +906,8 @@ class RenamerApp(QWidget):
         self._preview_thread.finished.connect(self._preview_thread.deleteLater)
         self._preview_loader.finished.connect(self._on_preview_loaded)
         self._preview_thread.start()
+        
+        self.current_preview_thread = self._preview_thread
 
     @Slot(str, QImage)
     def _on_preview_loaded(self, path: str, image: QImage) -> None:
@@ -950,9 +941,10 @@ class RenamerApp(QWidget):
             cb.setEnabled(enabled)
 
     def clear_all(self):
-        self.table_widget.setRowCount(0)
+        self.mode_tabs.normal_tab.setRowCount(0)
+        self.mode_tabs.position_tab.setRowCount(0)
+        self.mode_tabs.pa_mat_tab.setRowCount(0)
         self.image_viewer.load_path("")
-        self.zoom_slider.setValue(100)
         for cb in self.tag_panel.checkbox_map.values():
             cb.setChecked(False)
         self.set_item_controls_enabled(False)
@@ -965,21 +957,23 @@ class RenamerApp(QWidget):
             return
         undone = self.undo_manager.undo_all()
         for row, orig in undone:
-            if 0 <= row < self.table_widget.rowCount():
-                item0 = self.table_widget.item(row, 1)
-                if item0:
-                    item0.setText(os.path.basename(orig))
-                    item0.setData(Qt.UserRole, orig)
+            for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
+                if 0 <= row < table.rowCount():
+                    item0 = table.item(row, 1)
+                    if item0:
+                        item0.setText(os.path.basename(orig))
+                        item0.setData(Qt.UserRole, orig)
         QMessageBox.information(self, tr("done"), tr("undo_done"))
         self._session_save_timer.start()
 
     def remove_selected_items(self):
         rows = sorted({idx.row() for idx in self.table_widget.selectionModel().selectedRows()}, reverse=True)
         for row in rows:
-            self.table_widget.removeRow(row)
+            self.mode_tabs.normal_tab.removeRow(row)
+            self.mode_tabs.position_tab.removeRow(row)
+            self.mode_tabs.pa_mat_tab.removeRow(row)
         if self.table_widget.rowCount() == 0:
             self.image_viewer.load_path("")
-            self.zoom_slider.setValue(100)
             self.set_item_controls_enabled(False)
         else:
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
@@ -1053,13 +1047,14 @@ class RenamerApp(QWidget):
         )
         if dlg.exec() == QDialog.Accepted:
             for row, new_path, size_bytes, compressed_bytes in dlg.final_results:
-                item0 = self.table_widget.item(row, 1)
-                item0.setData(Qt.UserRole, new_path)
-                item0.setText(os.path.basename(new_path))
-                st: ItemSettings = item0.data(ROLE_SETTINGS)
-                if st:
-                    st.size_bytes = size_bytes
-                    st.compressed_bytes = compressed_bytes
+                for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
+                    item0 = table.item(row, 1)
+                    item0.setData(Qt.UserRole, new_path)
+                    item0.setText(os.path.basename(new_path))
+                    st: ItemSettings = item0.data(ROLE_SETTINGS)
+                    if st:
+                        st.size_bytes = size_bytes
+                        st.compressed_bytes = compressed_bytes
             self._session_save_timer.start()
 
     def convert_selected_to_jpeg(self):
@@ -1089,12 +1084,14 @@ class RenamerApp(QWidget):
             path = item0.data(Qt.UserRole)
             new_path = convert_to_jpeg(path)
             if new_path != path:
-                item0.setData(Qt.UserRole, new_path)
-                item0.setText(os.path.basename(new_path))
-                st: ItemSettings = item0.data(ROLE_SETTINGS)
-                if st:
-                    st.size_bytes = os.path.getsize(new_path)
-                    st.compressed_bytes = st.size_bytes
+                for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
+                    item0 = table.item(row, 1)
+                    item0.setData(Qt.UserRole, new_path)
+                    item0.setText(os.path.basename(new_path))
+                    st: ItemSettings = item0.data(ROLE_SETTINGS)
+                    if st:
+                        st.size_bytes = os.path.getsize(new_path)
+                        st.compressed_bytes = st.size_bytes
                 if row == self.table_widget.currentRow():
                     self.load_preview(new_path)
                 converted += 1
@@ -1330,18 +1327,19 @@ class RenamerApp(QWidget):
                 continue
             row = res["row"]
             new_path = res["new"]
-            item0 = self.table_widget.item(row, 1)
-            if item0:
-                item0.setText(os.path.basename(new_path))
-                item0.setData(Qt.UserRole, new_path)
-                settings = item0.data(ROLE_SETTINGS)
-                if settings and self.rename_mode == MODE_NORMAL:
-                    used_tags.extend(settings.tags)
-                self.undo_manager.record(row, res["orig"], new_path)
-                if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
-                    if settings:
-                        settings.size_bytes = res.get("old_size")
-                        settings.compressed_bytes = res.get("new_size")
+            for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
+                item0 = table.item(row, 1)
+                if item0:
+                    item0.setText(os.path.basename(new_path))
+                    item0.setData(Qt.UserRole, new_path)
+                    settings = item0.data(ROLE_SETTINGS)
+                    if settings and self.rename_mode == MODE_NORMAL:
+                        used_tags.extend(settings.tags)
+                    self.undo_manager.record(row, res["orig"], new_path)
+                    if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
+                        if settings:
+                            settings.size_bytes = res.get("old_size")
+                            settings.compressed_bytes = res.get("new_size")
 
         if progress.wasCanceled():
             QMessageBox.information(
@@ -1382,8 +1380,8 @@ class RenamerApp(QWidget):
             "project_number": self.input_project.text(),
             "files": []
         }
-        for row in range(self.table_widget.rowCount()):
-            item = self.table_widget.item(row, 1)
+        for row in range(self.mode_tabs.normal_tab.rowCount()):
+            item = self.mode_tabs.normal_tab.item(row, 1)
             if not item:
                 continue
             settings: ItemSettings = item.data(ROLE_SETTINGS)
@@ -1460,18 +1458,19 @@ class RenamerApp(QWidget):
             if paths_to_add:
                 self._import_paths(paths_to_add)
 
-            for row in range(self.table_widget.rowCount()):
-                item = self.table_widget.item(row, 1)
+            for row in range(self.mode_tabs.normal_tab.rowCount()):
+                item = self.mode_tabs.normal_tab.item(row, 1)
                 if not item:
                     continue
                 path = item.data(Qt.UserRole)
                 if path in settings_map:
                     settings = settings_map[path]
-                    item.setData(ROLE_SETTINGS, settings)
-                    self.table_widget.item(row, 2).setText(",".join(sorted(settings.tags)))
-                    self.table_widget.item(row, 3).setText(settings.date)
-                    self.table_widget.item(row, 4).setText(settings.suffix)
-                    self.update_row_background(row, settings)
+                    for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
+                        table.item(row, 1).setData(ROLE_SETTINGS, settings)
+                        table.item(row, 2).setText(",".join(sorted(settings.tags)))
+                        table.item(row, 3).setText(settings.date)
+                        table.item(row, 4).setText(settings.suffix)
+                        self.update_row_background(row, settings)
 
             self.logger.info("Session restored successfully.")
             self._session_recording_started = True

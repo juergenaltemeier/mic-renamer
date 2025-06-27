@@ -1,15 +1,13 @@
-from .image_preview import ImageViewer, AspectRatioWidget
-from .media_viewer import MediaViewer, VideoPlayer
 from .file_table import DragDropTableWidget
+from .media_viewer import MediaViewer
 from .tag_panel import TagPanel
+from .mode_tabs import ModeTabs
 from .compression_settings import CompressionSettingsPanel
 
 __all__ = [
-    "ImageViewer",
-    "AspectRatioWidget",
-    "MediaViewer",
-    "VideoPlayer",
     "DragDropTableWidget",
+    "MediaViewer",
     "TagPanel",
-    "CompressionSettingsPanel",
+    "ModeTabs",
+    "CompressionSettingsPanel"
 ]

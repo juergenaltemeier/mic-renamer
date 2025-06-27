@@ -1,1 +1,7 @@
+PySide6
+appdirs
+PyYAML
+Pillow
+pillow-heif
+pytest
 pytest-qt
