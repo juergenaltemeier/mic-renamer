@@ -291,11 +291,13 @@ class DragDropTableWidget(QTableWidget):
             self.setHorizontalHeaderLabels([
                 "", "Filename", "PA_MAT", "Date", "Suffix"
             ])
-            self.setColumnHidden(3, True)
+            self.setColumnHidden(2, True)
+            self.setColumnHidden(3, False)
         else:
             self.setHorizontalHeaderLabels(
                 ["", "Filename", "Tags", "Date", "Suffix"]
             )
+            self.setColumnHidden(2, False)
             self.setColumnHidden(3, False)
         for row in range(self.rowCount()):
             item1 = self.item(row, 1)
@@ -361,7 +363,7 @@ class DragDropTableWidget(QTableWidget):
                     return super().eventFilter(source, event)
                 col = index.column()
                 edit_cols = [2, 4]
-                if self.mode == "normal":
+                if self.mode == "normal" or self.mode == "pa_mat":
                     edit_cols.append(3)  # Add date column for normal mode
                 if col in edit_cols:
                     QTimer.singleShot(0, lambda idx=index: self.edit(idx))
@@ -510,7 +512,7 @@ class DragDropTableWidget(QTableWidget):
         """Start editing via keyboard and move to the next row on Enter."""
         index = self.currentIndex()
         edit_cols = {2, 4}
-        if self.mode == "normal":
+        if self.mode == "normal" or self.mode == "pa_mat":
             edit_cols.add(3)
 
         if index.isValid() and index.column() in edit_cols:

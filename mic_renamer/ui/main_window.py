@@ -467,7 +467,10 @@ class RenamerApp(QWidget):
         self.rename_mode = self.table_widget.mode
 
         is_position_mode = self.rename_mode == MODE_POSITION
-        self.table_widget.setColumnHidden(2, is_position_mode)
+        is_pa_mat_mode = self.rename_mode == MODE_PA_MAT
+
+        self.table_widget.setColumnHidden(2, is_position_mode or is_pa_mat_mode)
+        self.table_widget.setColumnHidden(3, is_position_mode)
 
         self.on_table_selection_changed()
 
