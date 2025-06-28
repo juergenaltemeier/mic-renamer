@@ -8,9 +8,9 @@ from PySide6.QtWidgets import (
     QApplication, QLabel, QComboBox,
     QProgressDialog, QDialog, QDialogButtonBox,
     QTableWidget, QTableWidgetItem,
-    QMenu, QToolButton, QSizePolicy, QToolBar,
+    QMenu, QToolButton, QSizePolicy, QToolBar, QAbstractItemView
 )
-from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPixmapCache, QImage
+from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPixmapCache, QImage, QKeySequence
 from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot
 
 from .. import config_manager
@@ -92,7 +92,7 @@ def _validate_and_format_date(date_str: str) -> str:
 
 
 
-ROLE_SETTINGS = Qt.UserRole + 1
+ROLE_SETTINGS = int(Qt.ItemDataRole.UserRole) + 1
 MODE_NORMAL = "normal"
 MODE_POSITION = "position"
 MODE_PA_MAT = "pa_mat"
@@ -193,7 +193,7 @@ class RenamerApp(QWidget):
         table_layout.setSpacing(DEFAULT_SPACING)
 
         self.mode_tabs = ModeTabs()
-        self.table_widget = self.mode_tabs.current_table()
+        self.table_widget: DragDropTableWidget = self.mode_tabs.current_table()
         self.mode_tabs.tabs.currentChanged.connect(self.on_tab_changed)
 
         self._ignore_table_changes = False
@@ -205,17 +205,17 @@ class RenamerApp(QWidget):
         self.mode_tabs.position_tab.pathsAdded.connect(lambda _: self.update_status())
         self.mode_tabs.pa_mat_tab.pathsAdded.connect(lambda _: self.update_status())
 
-        self.mode_tabs.normal_tab.remove_selected_requested.connect(self.remove_selected_items)
-        self.mode_tabs.position_tab.remove_selected_requested.connect(self.remove_selected_items)
-        self.mode_tabs.pa_mat_tab.remove_selected_requested.connect(self.remove_selected_items)
+        (self.mode_tabs.normal_tab).remove_selected_requested.connect(self.remove_selected_items)
+        (self.mode_tabs.position_tab).remove_selected_requested.connect(self.remove_selected_items)
+        (self.mode_tabs.pa_mat_tab).remove_selected_requested.connect(self.remove_selected_items)
 
-        self.mode_tabs.normal_tab.clear_suffix_requested.connect(self.clear_selected_suffixes)
-        self.mode_tabs.position_tab.clear_suffix_requested.connect(self.clear_selected_suffixes)
-        self.mode_tabs.pa_mat_tab.clear_suffix_requested.connect(self.clear_selected_suffixes)
+        (self.mode_tabs.normal_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
+        (self.mode_tabs.position_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
+        (self.mode_tabs.pa_mat_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
 
-        self.mode_tabs.normal_tab.clear_list_requested.connect(self.clear_all)
-        self.mode_tabs.position_tab.clear_list_requested.connect(self.clear_all)
-        self.mode_tabs.pa_mat_tab.clear_list_requested.connect(self.clear_all)
+        (self.mode_tabs.normal_tab).clear_list_requested.connect(self.clear_all)
+        (self.mode_tabs.position_tab).clear_list_requested.connect(self.clear_all)
+        (self.mode_tabs.pa_mat_tab).clear_list_requested.connect(self.clear_all)
         
         table_layout.addWidget(self.mode_tabs)
 
@@ -687,14 +687,14 @@ class RenamerApp(QWidget):
                 self._preview_loader.stop()
             self.image_viewer.load_path("")
             self.set_item_controls_enabled(False)
-            self.table_widget.sync_check_column()
+            (self.table_widget).sync_check_column()
             self.update_status()
             return
 
-        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        rows = [idx.row() for idx in (self.table_widget).selectionModel().selectedRows()]
         if not rows:
             self.set_item_controls_enabled(False)
-            self.table_widget.sync_check_column()
+            (self.table_widget).sync_check_column()
             self.update_status()
             return
 
@@ -703,7 +703,7 @@ class RenamerApp(QWidget):
         # Update tag panel based on the entire selection
         settings_list = []
         for r in rows:
-            item0 = self.table_widget.item(r, 1)
+            item0 = (self.table_widget).item(r, 1)
             if item0:
                 st: ItemSettings = item0.data(ROLE_SETTINGS)
                 if st:
@@ -735,7 +735,7 @@ class RenamerApp(QWidget):
         # Load preview for the currently focused row
         item_to_preview = self.table_widget.item(current_row, 1)
         if item_to_preview:
-            path_to_preview = item_to_preview.data(Qt.UserRole)
+            path_to_preview = item_to_preview.data(int(Qt.ItemDataRole.UserRole))
             self.load_preview(path_to_preview)
 
         self.table_widget.sync_check_column()
@@ -802,7 +802,7 @@ class RenamerApp(QWidget):
                 continue
             settings: ItemSettings = item0.data(ROLE_SETTINGS)
             if settings is None:
-                settings = ItemSettings(item0.data(Qt.UserRole))
+                settings = ItemSettings(item0.data(int(Qt.ItemDataRole.UserRole)))
                 item0.setData(ROLE_SETTINGS, settings)
             if check_state in (Qt.Checked, Qt.PartiallyChecked):
                 settings.tags.add(code)
@@ -990,7 +990,7 @@ class RenamerApp(QWidget):
                     item0 = table.item(row, 1)
                     if item0:
                         item0.setText(os.path.basename(orig))
-                        item0.setData(Qt.UserRole, orig)
+                        item0.setData(int(Qt.ItemDataRole.UserRole), orig)
         QMessageBox.information(self, tr("done"), tr("undo_done"))
         self._session_save_timer.start()
 
@@ -1018,7 +1018,7 @@ class RenamerApp(QWidget):
                 continue
             settings: ItemSettings = item0.data(ROLE_SETTINGS)
             if settings is None:
-                settings = ItemSettings(item0.data(Qt.UserRole))
+                settings = ItemSettings(item0.data(int(Qt.ItemDataRole.UserRole)))
                 item0.setData(ROLE_SETTINGS, settings)
             settings.suffix = ""
             cell = self.table_widget.item(row, 4)
@@ -1045,7 +1045,7 @@ class RenamerApp(QWidget):
             item0 = self.table_widget.item(row, 1)
             if not item0:
                 continue
-            path = item0.data(Qt.UserRole)
+            path = item0.data(int(Qt.ItemDataRole.UserRole))
             ext = os.path.splitext(path)[1].lower()
             if ext in MediaViewer.VIDEO_EXTS:
                 videos.append(path)
@@ -1063,9 +1063,9 @@ class RenamerApp(QWidget):
                 self,
                 tr("heic_convert_title"),
                 tr("heic_convert_msg"),
-                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
-            convert_heic = reply == QMessageBox.Yes
+            convert_heic = reply == QMessageBox.StandardButton.Yes
         from .compression_dialog import CompressionDialog
         dlg = CompressionDialog(
             paths,
@@ -1077,7 +1077,7 @@ class RenamerApp(QWidget):
             for row, new_path, size_bytes, compressed_bytes in dlg.final_results:
                 for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
                     item0 = table.item(row, 1)
-                    item0.setData(Qt.UserRole, new_path)
+                    item0.setData(int(Qt.ItemDataRole.UserRole), new_path)
                     item0.setText(os.path.basename(new_path))
                     st: ItemSettings = item0.data(ROLE_SETTINGS)
                     if st:
@@ -1109,12 +1109,12 @@ class RenamerApp(QWidget):
             item0 = self.table_widget.item(row, 1)
             if not item0:
                 continue
-            path = item0.data(Qt.UserRole)
+            path = item0.data(int(Qt.ItemDataRole.UserRole))
             new_path = convert_to_jpeg(path)
             if new_path != path:
                 for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
                     item0 = table.item(row, 1)
-                    item0.setData(Qt.UserRole, new_path)
+                    item0.setData(int(Qt.ItemDataRole.UserRole), new_path)
                     item0.setText(os.path.basename(new_path))
                     st: ItemSettings = item0.data(ROLE_SETTINGS)
                     if st:
@@ -1151,7 +1151,7 @@ class RenamerApp(QWidget):
         items = []
         for row in row_iter:
             item0 = self.table_widget.item(row, 1)
-            path = item0.data(Qt.UserRole)
+            path = item0.data(int(Qt.ItemDataRole.UserRole))
             settings: ItemSettings = item0.data(ROLE_SETTINGS)
             if settings is None:
                 settings = ItemSettings(path)
@@ -1179,9 +1179,9 @@ class RenamerApp(QWidget):
             self,
             tr('use_original_directory'),
             tr('use_original_directory_msg'),
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             return None
         directory = QFileDialog.getExistingDirectory(
             self,
@@ -1201,7 +1201,7 @@ class RenamerApp(QWidget):
             new_name = os.path.basename(new)
             for row in range(self.table_widget.rowCount()):
                 item0 = self.table_widget.item(row, 1)
-                if item0.data(Qt.UserRole) == orig:
+                if item0.data(int(Qt.ItemDataRole.UserRole)) == orig:
                     table_mapping.append((row, orig, new_name, new))
                     break
         dlg = QDialog(self)
@@ -1231,7 +1231,7 @@ class RenamerApp(QWidget):
         btns = QDialogButtonBox(parent=dlg)
         btn_all = btns.addButton(tr("rename_all"), QDialogButtonBox.AcceptRole)
         btn_sel = btns.addButton(tr("rename_selected"), QDialogButtonBox.AcceptRole)
-        btn_cancel = btns.addButton(QDialogButtonBox.Cancel)
+        btn_cancel = btns.addButton(QDialogButtonBox.StandardButton.Cancel)
         dlg_layout.addWidget(btns)
 
         btn_cancel.clicked.connect(dlg.reject)
@@ -1253,7 +1253,7 @@ class RenamerApp(QWidget):
 
     def choose_save_directory_and_rename(self, rows: list[int] | None):
         dlg = RenameOptionsDialog(self)
-        if dlg.exec() != QDialog.Accepted:
+        if dlg.exec() != QDialog.DialogCode.Accepted:
             return
         dest = dlg.directory
         compress = dlg.compress_after
@@ -1270,7 +1270,7 @@ class RenamerApp(QWidget):
             new_name = os.path.basename(new)
             for row in rows:
                 item0 = self.table_widget.item(row, 1)
-                if item0.data(Qt.UserRole) == orig:
+                if item0.data(int(Qt.ItemDataRole.UserRole)) == orig:
                     table_mapping.append((row, orig, new_name, new))
                     break
         self.execute_rename_with_progress(table_mapping, compress=compress)
@@ -1359,7 +1359,7 @@ class RenamerApp(QWidget):
                 item0 = table.item(row, 1)
                 if item0:
                     item0.setText(os.path.basename(new_path))
-                    item0.setData(Qt.UserRole, new_path)
+                    item0.setData(int(Qt.ItemDataRole.UserRole), new_path)
                     settings = item0.data(ROLE_SETTINGS)
                     if settings and self.rename_mode == MODE_NORMAL:
                         used_tags.extend(settings.tags)
@@ -1434,10 +1434,10 @@ class RenamerApp(QWidget):
             self,
             tr("restore_session_title"),
             tr("restore_session_msg"),
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
 
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             self.restore_session(show_dialog=False)
         else:
             os.remove(session_file)
@@ -1458,10 +1458,10 @@ class RenamerApp(QWidget):
                 self,
                 tr("restore_session_title"),
                 tr("restore_session_msg"),
-                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
 
-            if reply == QMessageBox.No:
+            if reply == QMessageBox.StandardButton.No:
                 return
         
         try:
@@ -1490,7 +1490,7 @@ class RenamerApp(QWidget):
                 item = self.mode_tabs.normal_tab.item(row, 1)
                 if not item:
                     continue
-                path = item.data(Qt.UserRole)
+                path = item.data(int(Qt.ItemDataRole.UserRole))
                 if path in settings_map:
                     settings = settings_map[path]
                     for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:

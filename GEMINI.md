@@ -42,6 +42,7 @@ The codebase is organized into several packages and modules:
 ### Additional instructions
 - on every visible UI text element be aware of the changable language of the UI  and that you have to add new text to the correct files in both languages.
 - icon color should be #009ee0
+- be aware of the Pylance and lint your code always to minimize errors and typos
 
 
 ### How to Run
