@@ -243,7 +243,13 @@ class RenamerApp(QWidget):
         btn_layout.addWidget(self.btn_toggle_tags)
         btn_layout.addStretch()
         main_layout.addLayout(btn_layout)
-        main_layout.addWidget(self.tag_panel)
+
+        self.tag_container = QWidget()
+        tag_container_layout = QVBoxLayout(self.tag_container)
+        tag_container_layout.setContentsMargins(0, 0, 0, 0)
+        tag_container_layout.addWidget(self.tag_panel)
+        self.tag_container.setMaximumHeight(200)  # Limit the height of the tag panel area
+        main_layout.addWidget(self.tag_container)
         
         status_layout = QHBoxLayout()
         self.lbl_status = QLabel()
@@ -288,6 +294,18 @@ class RenamerApp(QWidget):
 
         self.set_session_status(True)
         self.check_for_crashed_session()
+
+        self._setup_shortcuts()
+
+    def _setup_shortcuts(self):
+        find_action = QAction(self)
+        find_action.setShortcut(Qt.CTRL | Qt.Key_F)
+        find_action.triggered.connect(self.focus_tag_search)
+        self.addAction(find_action)
+
+    def focus_tag_search(self):
+        self.tag_panel.search_bar.setFocus()
+        self.tag_panel.search_bar.selectAll()
 
     def on_change_made(self):
         if not self._session_recording_started:
@@ -701,17 +719,17 @@ class RenamerApp(QWidget):
                 desc = self.tag_panel.tags_info.get(code, "")
                 cb.blockSignals(True)
                 if code in intersect:
-                    cb.setTristate(False)
-                    cb.setCheckState(Qt.Checked)
-                    cb.setText(f"{code}: {desc}")
+                    cb.checkbox.setTristate(False)
+                    cb.setChecked(True)
+                    cb.checkbox.setText(f"{code}: {desc}")
                 elif code in union:
-                    cb.setTristate(True)
-                    cb.setCheckState(Qt.PartiallyChecked)
-                    cb.setText(f"[~] {code}: {desc}")
+                    cb.checkbox.setTristate(True)
+                    cb.setChecked(False) # TagBox handles partially checked state visually
+                    cb.checkbox.setText(f"[~] {code}: {desc}")
                 else:
-                    cb.setTristate(False)
-                    cb.setCheckState(Qt.Unchecked)
-                    cb.setText(f"{code}: {desc}")
+                    cb.checkbox.setTristate(False)
+                    cb.setChecked(False)
+                    cb.checkbox.setText(f"{code}: {desc}")
                 cb.blockSignals(False)
 
         # Load preview for the currently focused row
@@ -728,7 +746,7 @@ class RenamerApp(QWidget):
         if not rows:
             return
         self.table_widget.setSortingEnabled(False)
-        checkbox_states = {code: cb.checkState() for code, cb in self.tag_panel.checkbox_map.items()}
+        checkbox_states = {code: cb.checkbox.checkState() for code, cb in self.tag_panel.checkbox_map.items()}
         for row in rows:
             item0 = self.table_widget.item(row, 1)
             settings: ItemSettings = item0.data(ROLE_SETTINGS)

@@ -1,7 +1,7 @@
 # ui/components.py
 
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QCheckBox
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QCheckBox, QWidget, QVBoxLayout, QLabel
+from PySide6.QtCore import Qt, Signal
 import os
 
 from ..logic.settings import ItemSettings
@@ -57,3 +57,61 @@ class EnterToggleCheckBox(QCheckBox):
             event.accept()
         else:
             super().keyPressEvent(event)
+
+
+class TagBox(QWidget):
+    """A custom widget that displays a tag with a checkbox in a styled box."""
+
+    toggled = Signal(bool)
+
+    def __init__(self, code: str, description: str, parent=None):
+        super().__init__(parent)
+        self.code = code
+        self.description = description
+        self.is_checked = False
+        self._preselected = False
+
+        self.setContentsMargins(0, 0, 0, 0)
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(5, 5, 5, 5)
+        layout.setSpacing(2)
+
+        self.checkbox = EnterToggleCheckBox(f"{code}: {description}")
+        self.checkbox.toggled.connect(self._update_style)
+        self.checkbox.toggled.connect(self.toggled)
+
+        layout.addWidget(self.checkbox)
+
+        self._update_style(self.is_checked)
+        self.setToolTip(f"{self.code}: {self.description}")
+
+    def set_preselected(self, preselected: bool):
+        if self._preselected != preselected:
+            self._preselected = preselected
+            self._update_style(self.is_checked)
+
+    def _update_style(self, checked):
+        self.is_checked = checked
+        if self._preselected:
+            self.setProperty("class", "tag-box-preselected")
+        elif checked:
+            self.setProperty("class", "tag-box-checked")
+        else:
+            self.setProperty("class", "tag-box")
+
+        self.style().unpolish(self)
+        self.style().polish(self)
+
+    def mousePressEvent(self, event):
+        self.checkbox.toggle()
+        event.accept()
+
+    def setChecked(self, checked):
+        self.checkbox.setChecked(checked)
+
+    def isChecked(self):
+        return self.checkbox.isChecked()
+
+    def toggle(self):
+        self.checkbox.toggle()

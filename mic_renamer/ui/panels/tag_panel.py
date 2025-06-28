@@ -1,8 +1,10 @@
 """Panel showing available tags as checkboxes."""
-from PySide6.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QLabel
-from ..components import EnterToggleCheckBox
-from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit
+from PySide6.QtCore import Signal, Qt, QTimer
+from PySide6.QtGui import QKeyEvent
+from ..components import TagBox
 from ..constants import DEFAULT_MARGIN, DEFAULT_SPACING
+from ..flow_layout import FlowLayout
 import logging
 
 from ...logic.tag_loader import load_tags
@@ -18,21 +20,79 @@ class TagPanel(QWidget):
     def __init__(self, parent=None, tags_info: dict | None = None):
         super().__init__(parent)
         self._log = logging.getLogger(__name__)
+        self._preselected_tag = None
         layout = QVBoxLayout(self)
         layout.setContentsMargins(
             DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
         )
         layout.setSpacing(DEFAULT_SPACING)
+
+        self.search_bar = QLineEdit()
+        self.search_bar.setPlaceholderText(tr("search_tags"))
+        self.search_bar.textChanged.connect(self._filter_tags)
+        self.search_bar.keyPressEvent = self._handle_search_key_press
+        layout.addWidget(self.search_bar)
+
         self.checkbox_container = QWidget()
-        self.tag_layout = QGridLayout(self.checkbox_container)
+        self.tag_layout = FlowLayout(self.checkbox_container)
         self.tag_layout.setContentsMargins(
             DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
         )
         self.tag_layout.setSpacing(DEFAULT_SPACING)
         layout.addWidget(self.checkbox_container)
-        self.checkbox_map: dict[str, EnterToggleCheckBox] = {}
+        self.checkbox_map: dict[str, TagBox] = {}
         self.tags_info: dict[str, str] | None = tags_info
         self.rebuild()
+
+    def _handle_search_key_press(self, event: QKeyEvent):
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            if self._preselected_tag:
+                self._preselected_tag.toggle()
+            event.accept()
+        elif event.key() == Qt.Key_Down:
+            self._move_preselection(1)
+            event.accept()
+        elif event.key() == Qt.Key_Up:
+            self._move_preselection(-1)
+            event.accept()
+        else:
+            QLineEdit.keyPressEvent(self.search_bar, event)
+
+    def _move_preselection(self, direction: int):
+        visible_tags = [cb for cb in self.checkbox_map.values() if cb.isVisible()]
+        if not visible_tags:
+            return
+
+        current_index = -1
+        if self._preselected_tag and self._preselected_tag in visible_tags:
+            current_index = visible_tags.index(self._preselected_tag)
+
+        new_index = (current_index + direction) % len(visible_tags)
+        self._update_preselection(visible_tags[new_index])
+
+    def _update_preselection(self, new_tag: TagBox | None):
+        if self._preselected_tag:
+            self._preselected_tag.set_preselected(False)
+        
+        self._preselected_tag = new_tag
+        
+        if self._preselected_tag:
+            self._preselected_tag.set_preselected(True)
+
+    def _filter_tags(self, text: str):
+        """Filter checkboxes based on search text."""
+        text = text.lower()
+        first_visible = None
+        for code, checkbox in self.checkbox_map.items():
+            description = self.tags_info.get(code.lower(), "")
+            if text in code.lower() or text in description.lower():
+                checkbox.show()
+                if first_visible is None:
+                    first_visible = checkbox
+            else:
+                checkbox.hide()
+        
+        self._update_preselection(first_visible)
 
     def rebuild(self, language: str | None = None):
         while self.tag_layout.count():
@@ -48,24 +108,21 @@ class TagPanel(QWidget):
             tags = {}
         self.tags_info = tags
         if not self.tags_info:
-            self.tag_layout.addWidget(QLabel(tr("no_tags_configured")), 0, 0)
+            self.tag_layout.addWidget(QLabel(tr("no_tags_configured")))
             return
         usage = load_counts()
         sorted_tags = sorted(
             self.tags_info.items(), key=lambda kv: usage.get(kv[0], 0), reverse=True
         )
-        columns = 5
-        rows = (len(sorted_tags) + columns - 1) // columns
-        for idx, (code, desc) in enumerate(sorted_tags):
-            row = idx % rows
-            col = idx // rows
-            cb = EnterToggleCheckBox(f"{code.upper()}: {desc}")
-            cb.setProperty("code", code.upper())
-            cb.stateChanged.connect(
+        
+        for code, desc in sorted_tags:
+            cb = TagBox(code.upper(), desc)
+            cb.toggled.connect(
                 lambda state, c=code: self.tagToggled.emit(c.upper(), state)
             )
-            self.tag_layout.addWidget(cb, row, col)
+            self.tag_layout.addWidget(cb)
             self.checkbox_map[code.upper()] = cb
 
     def retranslate_ui(self, language: str | None = None):
+        self.search_bar.setPlaceholderText(tr("search_tags"))
         self.rebuild(language=language)

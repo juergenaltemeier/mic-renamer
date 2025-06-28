@@ -154,6 +154,7 @@ TRANSLATIONS = {
                 <li><b>Settings:</b> Customize application settings, such as language and accepted file types.</li>
             </ul>
         """
+        , 'search_tags': 'Search tags...'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -308,6 +309,7 @@ TRANSLATIONS = {
                 <li><b>Einstellungen:</b> Passen Sie die Anwendungseinstellungen an, wie z. B. die Sprache und die akzeptierten Dateitypen.</li>
             </ul>
         """
+        , 'search_tags': 'Tags suchen...'
     }
 }
 

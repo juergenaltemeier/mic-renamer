@@ -9,7 +9,7 @@ import sys
 from importlib import resources
 
 from .ui.main_window import RenamerApp
-from .ui.theme import apply_dark_theme
+from .ui.theme import apply_dark_theme, apply_tag_box_style
 from .utils.state_manager import StateManager
 from . import config_manager
 
@@ -57,6 +57,7 @@ class Application:
             pass
         self.app = QApplication(sys.argv)
         apply_dark_theme(self.app)
+        apply_tag_box_style(self.app)
         logo = resources.files("mic_renamer") / "favicon.png"
         if logo.is_file():
             icon = QIcon(str(logo))

@@ -52,3 +52,44 @@ def resource_icon(name: str) -> QIcon:
     """Load an icon from the bundled resources folder."""
     path = resources.files("mic_renamer.resources.icons") / name
     return QIcon(str(path))
+
+
+def apply_tag_box_style(app: QApplication) -> None:
+    app.setStyleSheet(app.styleSheet() + """
+        .tag-box {
+            border: 1px solid #555;
+            border-radius: 12px; /* More rounded corners */
+            background-color: #444; /* Darker filled background */
+            padding: 10px 15px; /* Medium size padding */
+        }
+        .tag-box:hover {
+            border: 1px solid #009ee0;
+            background-color: #555; /* Slightly lighter on hover */
+        }
+        .tag-box-checked {
+            border: 1px solid #009ee0;
+            border-radius: 12px;
+            background-color: #009ee0; /* Solid blue for active */
+            padding: 10px 15px;
+        }
+        .tag-box-checked:hover {
+            border: 1px solid #00b8ff;
+            background-color: #008bd4; /* Slightly darker blue on hover */
+        }
+        .tag-box-preselected {
+            border: 2px solid #00b8ff; /* Bright blue border for pre-selection */
+            border-radius: 12px;
+            background-color: #444;
+            padding: 10px 15px;
+        }
+        TagBox QLabel {
+            color: #ccc;
+        }
+        TagBox QCheckBox {
+            color: #eee;
+            font-weight: bold;
+        }
+        .tag-box-checked QLabel, .tag-box-checked QCheckBox {
+            color: #ffffff; /* White text for checked state */
+        }
+    """)
