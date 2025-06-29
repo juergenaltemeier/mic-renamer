@@ -1,6 +1,6 @@
 # ui/components.py
 
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QCheckBox, QWidget, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QCheckBox, QWidget, QVBoxLayout
 from PySide6.QtCore import Qt, Signal
 import os
 

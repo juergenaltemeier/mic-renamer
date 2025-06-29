@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-"""A toolbar widget that wraps its tool buttons using :class:`FlowLayout`."""
-
 from typing import Iterable
 
 from PySide6.QtWidgets import QWidget, QToolButton, QFrame
@@ -10,6 +8,8 @@ from PySide6.QtCore import Qt, QSize
 
 from .flow_layout import FlowLayout
 from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
+
+"""A toolbar widget that wraps its tool buttons using :class:`FlowLayout`."""
 
 
 class WrapToolBar(QWidget):

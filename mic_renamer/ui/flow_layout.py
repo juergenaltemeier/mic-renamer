@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-"""A simple flow layout that arranges child widgets horizontally and wraps."""
-
 from PySide6.QtWidgets import QLayout, QWidgetItem, QWidget
 from PySide6.QtCore import QRect, QSize, Qt
 
 from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
+
+"""A simple flow layout that arranges child widgets horizontally and wraps."""
 
 
 class FlowLayout(QLayout):

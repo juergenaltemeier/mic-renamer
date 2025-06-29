@@ -1,8 +1,8 @@
 import os
 import pytest
 from PySide6.QtWidgets import QApplication, QMessageBox
-from PySide6.QtCore import Qt, QThread, QTimer
-from PySide6.QtTest import QSignalSpy
+from PySide6.QtCore import Qt
+
 
 from mic_renamer.ui.main_window import RenamerApp
 

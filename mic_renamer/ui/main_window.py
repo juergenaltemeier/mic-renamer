@@ -5,12 +5,12 @@ import json
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
     QPushButton, QFileDialog, QMessageBox,
-    QApplication, QLabel, QComboBox,
-    QProgressDialog, QDialog, QDialogButtonBox,
-    QTableWidget, QTableWidgetItem,
-    QMenu, QToolButton, QSizePolicy, QToolBar, QAbstractItemView
+    QApplication, QLabel,
+     QProgressDialog, QDialog, QDialogButtonBox,
+     QTableWidget, QTableWidgetItem,
+     QMenu, QToolButton, QSizePolicy, QToolBar
 )
-from PySide6.QtGui import QColor, QAction, QIcon, QPixmap, QPixmapCache, QImage, QKeySequence
+from PySide6.QtGui import QColor, QAction, QPixmap, QPixmapCache, QImage
 from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot
 
 from .. import config_manager
@@ -31,7 +31,7 @@ from ..logic.renamer import Renamer
 from ..logic.image_compressor import ImageCompressor
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
-from ..utils.workers import Worker, PreviewLoader
+from ..utils.workers import PreviewLoader
 from datetime import datetime
 
 
@@ -193,7 +193,7 @@ class RenamerApp(QWidget):
         table_layout.setSpacing(DEFAULT_SPACING)
 
         self.mode_tabs = ModeTabs()
-        self.table_widget: DragDropTableWidget = self.mode_tabs.current_table()
+        self.table_widget: QTableWidget = self.mode_tabs.current_table()
         self.mode_tabs.tabs.currentChanged.connect(self.on_tab_changed)
 
         self._ignore_table_changes = False
@@ -1158,6 +1158,10 @@ class RenamerApp(QWidget):
                 item0.setData(ROLE_SETTINGS, settings)
             settings.original_path = path
             if self.rename_mode == MODE_NORMAL:
+                cell_tags = self.table_widget.item(row, 2)
+                if cell_tags:
+                    new_tags_text = cell_tags.text().strip()
+                    settings.tags = {t.strip() for t in new_tags_text.split(',') if t.strip()}
                 cell_date = self.table_widget.item(row, 3)
                 if cell_date:
                     settings.date = cell_date.text().strip()
@@ -1284,6 +1288,7 @@ class RenamerApp(QWidget):
         self.update_status()
 
     def execute_rename_with_progress(self, table_mapping, compress: bool = False):
+        self.image_viewer.clear_media()
         self.set_status_message(tr("renaming_files"))
         self.table_widget.setSortingEnabled(False)
         total = len(table_mapping)

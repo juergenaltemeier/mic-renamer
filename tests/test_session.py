@@ -1,11 +1,10 @@
 import os
-import json
+
 import pytest
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import Qt
 
 from mic_renamer.ui.main_window import RenamerApp
-from mic_renamer.logic.settings import ItemSettings
 from mic_renamer import config_manager
 
 @pytest.fixture

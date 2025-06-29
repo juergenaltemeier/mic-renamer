@@ -16,9 +16,8 @@ from PySide6.QtGui import QPalette, QAction, QDesktopServices
 from PySide6.QtCore import (
     Qt,
     QTimer,
-    QItemSelectionModel,
     QItemSelection,
-    QEvent,
+     QEvent,
     Signal,
     QUrl,
 )
@@ -63,10 +62,11 @@ class DragDropTableWidget(QTableWidget):
         self.setAcceptDrops(True)
         self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
         self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self.verticalHeader().setDefaultSectionSize(24)
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
+        self.cellChanged.connect(self._on_cell_changed)
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
 
@@ -369,6 +369,22 @@ class DragDropTableWidget(QTableWidget):
                     QTimer.singleShot(0, lambda idx=index: self.edit(idx))
         return super().eventFilter(source, event)
 
+    def _on_cell_changed(self, row: int, column: int) -> None:
+        item = self.item(row, 1)  # Filename item holds the ItemSettings
+        if not item:
+            return
+        settings: ItemSettings = item.data(ROLE_SETTINGS)
+        if not settings:
+            return
+
+        if column == 2:  # Tags column
+            new_tags_text = self.item(row, column).text()
+            settings.tags = {t.strip() for t in new_tags_text.split(',') if t.strip()}
+        elif column == 3:  # Date column
+            settings.date = self.item(row, column).text().strip()
+        elif column == 4:  # Suffix column
+            settings.suffix = self.item(row, column).text().strip()
+
     def on_header_double_clicked(self, index: int):
         header = self.horizontalHeader()
         new_width = header.sizeHintForColumn(index)
@@ -523,11 +539,12 @@ class DragDropTableWidget(QTableWidget):
             if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
                 row_before = index.row()
                 col = index.column()
-                super().keyPressEvent(event)
+                # Do not call super().keyPressEvent(event) here to avoid interfering with editing
                 if self.currentRow() == row_before and row_before < self.rowCount() - 1:
                     next_row = row_before + 1
                     self.setCurrentCell(next_row, col)
                     self.selectRow(next_row)
+                    QTimer.singleShot(0, lambda: self.edit(self.currentIndex()))
                 return
 
             if self.state() != QAbstractItemView.State.EditingState and event.text():

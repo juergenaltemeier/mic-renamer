@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-"""Application wide theme utilities."""
-
 from importlib import resources
 
 from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtWidgets import QApplication, QStyle
 from PySide6.QtCore import Qt
+
+"""Application wide theme utilities."""
 
 # guessed brand colors from micavac.com
 BRAND_PRIMARY = QColor("#009ee0")

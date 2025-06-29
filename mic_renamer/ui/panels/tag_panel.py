@@ -1,6 +1,6 @@
 """Panel showing available tags as checkboxes."""
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit
-from PySide6.QtCore import Signal, Qt, QTimer
+from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QKeyEvent
 from ..components import TagBox
 from ..constants import DEFAULT_MARGIN, DEFAULT_SPACING
@@ -84,7 +84,7 @@ class TagPanel(QWidget):
         text = text.lower()
         first_visible = None
         for code, checkbox in self.checkbox_map.items():
-            description = self.tags_info.get(code.lower(), "")
+            description = self.tags_info.get(code, "")
             if text in code.lower() or text in description.lower():
                 checkbox.show()
                 if first_visible is None:
@@ -110,9 +110,14 @@ class TagPanel(QWidget):
         if not self.tags_info:
             self.tag_layout.addWidget(QLabel(tr("no_tags_configured")))
             return
+        
         usage = load_counts()
+        
+        # Ensure tags_info is a dictionary before sorting
+        tags_info_items = self.tags_info.items() if isinstance(self.tags_info, dict) else []
+        
         sorted_tags = sorted(
-            self.tags_info.items(), key=lambda kv: usage.get(kv[0], 0), reverse=True
+            tags_info_items, key=lambda kv: usage.get(kv[0], 0), reverse=True
         )
         
         for code, desc in sorted_tags:

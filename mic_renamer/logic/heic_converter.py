@@ -1,12 +1,26 @@
 from __future__ import annotations
 
-"""Utilities for converting HEIC images to common formats."""
-
 from pathlib import Path
+
 from PIL import Image
 from pillow_heif import register_heif_opener
 
+from ..utils.i18n import tr
+
+"""Utilities for converting HEIC images to common formats."""
+
 register_heif_opener()
+
+
+def heic_to_jpeg(heic_path: Path) -> Path:
+    """Convert a HEIC file to JPEG and return the new path."""
+    jpeg_path = heic_path.with_suffix(".jpeg")
+    try:
+        img = Image.open(heic_path)
+        img.save(jpeg_path, "jpeg")
+    except Exception as e:
+        raise OSError(tr("heic_conversion_error").format(path=heic_path, error=e)) from e
+    return jpeg_path
 
 
 def convert_to_jpeg(path: str) -> str:

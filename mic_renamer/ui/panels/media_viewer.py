@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-"""Combined image and video preview widgets."""
-
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl
@@ -19,6 +17,8 @@ from PySide6.QtMultimediaWidgets import QVideoWidget
 
 from .image_preview import ImageViewer
 from ..constants import DEFAULT_MARGIN
+
+"""Combined image and video preview widgets."""
 
 
 class VideoPlayer(QWidget):
@@ -95,6 +95,12 @@ class MediaViewer(QWidget):
         self.stack = QStackedLayout(self)
         self.stack.addWidget(self.image_viewer)
         self.stack.addWidget(self.video_player)
+
+    def clear_media(self) -> None:
+        """Clear any loaded media and stop playback."""
+        self.video_player.player.stop()
+        self.video_player.player.setSource(QUrl()) # Clear the media source
+        self.image_viewer.load_image("") # Clear image viewer
 
     def load_path(self, path: str) -> None:
         if not path:
