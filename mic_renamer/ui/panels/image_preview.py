@@ -193,7 +193,7 @@ class AspectRatioWidget(QWidget):
         if not self._widget:
             return super().resizeEvent(event)
         if self.aspect_ratio is None:
-            self._widget.setGeometry(self.rect())
+            super().resizeEvent(event)
             return
         w = self.width()
         h = self.height()
