@@ -79,9 +79,11 @@ class ImageViewer(QGraphicsView):
         self.scene().clear()
         self.pixmap_item = self.scene().addPixmap(pixmap)
         self.pixmap_item.setTransformationMode(Qt.SmoothTransformation)
-        self.scene().setSceneRect(self.pixmap_item.boundingRect())
+        self.scene().setSceneRect(self.current_pixmap.rect())
         self._rotation = 0
-        self.zoom_fit()
+        self._zoom_pct = 100 # Reset zoom when new image is loaded
+        self.fitInView(self.pixmap_item, Qt.KeepAspectRatio)
+        self._update_zoom_pct() # Update zoom percentage after fitInView
 
     def reset_transform(self):
         self.resetTransform()
@@ -139,27 +141,21 @@ class ImageViewer(QGraphicsView):
     def apply_transformations(self):
         if not self.pixmap_item:
             return
-        scene_rect = self.scene().sceneRect()
-        if scene_rect.isEmpty() or scene_rect.width() == 0 or scene_rect.height() == 0:
-            return
-        view_rect = self.viewport().rect()
-        if view_rect.isEmpty():
-            return
-        x_scale = view_rect.width() / scene_rect.width()
-        y_scale = view_rect.height() / scene_rect.height()
-        base_factor = min(x_scale, y_scale)
-        zoom_factor = self._zoom_pct / 100.0
-        final_factor = base_factor * zoom_factor
+        # Reset transformations before applying new ones
         self.resetTransform()
+        # Apply rotation
         if self._rotation != 0:
             self.rotate(self._rotation)
-        self.scale(final_factor, final_factor)
+        # Apply zoom percentage
+        zoom_factor = self._zoom_pct / 100.0
+        self.scale(zoom_factor, zoom_factor)
 
     def zoom_fit(self):
         if not self.pixmap_item:
             return
         self._zoom_pct = 100
-        self.apply_transformations()
+        self.fitInView(self.pixmap_item, Qt.KeepAspectRatio)
+        self._update_zoom_pct() # Update zoom percentage after fitInView
         try:
             self.horizontalScrollBar().setValue(0)
             self.verticalScrollBar().setValue(0)

@@ -1239,8 +1239,18 @@ class RenamerApp(QWidget):
         dlg_layout.addWidget(btns)
 
         btn_cancel.clicked.connect(dlg.reject)
-        btn_all.clicked.connect(lambda: (dlg.accept(), self.direct_rename()))
-        btn_sel.clicked.connect(lambda: (dlg.accept(), self.direct_rename_selected()))
+        btn_all.clicked.connect(
+            lambda: (
+                dlg.accept(),
+                self.direct_rename(table_mapping),
+            )
+        )
+        btn_sel.clicked.connect(
+            lambda: (
+                dlg.accept(),
+                self.direct_rename_selected(table_mapping),
+            )
+        )
 
         dlg.exec()
         if self.state_manager:
@@ -1248,39 +1258,52 @@ class RenamerApp(QWidget):
             self.state_manager.set("preview_height", dlg.height())
             self.state_manager.save()
 
-    def direct_rename(self):
-        self.rename_with_options(None)
+    def direct_rename(self, table_mapping: list):
+        self.rename_with_options(table_mapping, all_items=True)
 
-    def direct_rename_selected(self):
-        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
-        self.rename_with_options(rows)
+    def direct_rename_selected(self, table_mapping: list):
+        selected_rows = {
+            idx.row() for idx in self.table_widget.selectionModel().selectedRows()
+        }
+        selected_mapping = [
+            item for item in table_mapping if item[0] in selected_rows
+        ]
+        self.rename_with_options(selected_mapping, all_items=False)
 
-    def choose_save_directory_and_rename(self, rows: list[int] | None):
+    def choose_save_directory_and_rename(
+        self, table_mapping: list, all_items: bool
+    ):
         dlg = RenameOptionsDialog(self)
         if dlg.exec() != QDialog.DialogCode.Accepted:
             return
         dest = dlg.directory
         compress = dlg.compress_after
-        config_manager.set('compress_after_rename', compress)
+        config_manager.set("compress_after_rename", compress)
         if dest:
-            config_manager.set('default_save_directory', dest)
-        if rows is None:
+            config_manager.set("default_save_directory", dest)
+
+        if all_items:
             rows = list(range(self.table_widget.rowCount()))
+        else:
+            rows = [item[0] for item in table_mapping]
+
         mapping = self.build_rename_mapping(dest, rows)
         if mapping is None:
             return
-        table_mapping = []
-        for settings, orig, new in mapping:
-            new_name = os.path.basename(new)
-            for row in rows:
-                item0 = self.table_widget.item(row, 1)
-                if item0.data(int(Qt.ItemDataRole.UserRole)) == orig:
-                    table_mapping.append((row, orig, new_name, new))
-                    break
-        self.execute_rename_with_progress(table_mapping, compress=compress)
 
-    def rename_with_options(self, rows: list[int] | None):
-        self.choose_save_directory_and_rename(rows)
+        # Create a new table_mapping with the updated destination paths
+        final_table_mapping = []
+        for _, orig, new_dest_path in mapping:
+            for row, orig_path, _, _ in table_mapping:
+                if orig_path == orig:
+                    final_table_mapping.append(
+                        (row, orig, os.path.basename(new_dest_path), new_dest_path)
+                    )
+                    break
+        self.execute_rename_with_progress(final_table_mapping, compress=compress)
+
+    def rename_with_options(self, table_mapping: list, all_items: bool = True):
+        self.choose_save_directory_and_rename(table_mapping, all_items)
 
     def set_status_message(self, message: str | None) -> None:
         """Display an additional message in the status bar."""
