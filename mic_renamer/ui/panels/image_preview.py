@@ -82,7 +82,7 @@ class ImageViewer(QGraphicsView):
         self.scene().setSceneRect(self.current_pixmap.rect())
         self._rotation = 0
         self._zoom_pct = 100 # Reset zoom when new image is loaded
-        self.fitInView(self.pixmap_item, Qt.KeepAspectRatio)
+        self.fitInView(self.pixmap_item, Qt.AspectRatioMode.KeepAspectRatio)
         self._update_zoom_pct() # Update zoom percentage after fitInView
 
     def reset_transform(self):
@@ -154,7 +154,7 @@ class ImageViewer(QGraphicsView):
         if not self.pixmap_item:
             return
         self._zoom_pct = 100
-        self.fitInView(self.pixmap_item, Qt.KeepAspectRatio)
+        self.fitInView(self.pixmap_item, Qt.AspectRatioMode.KeepAspectRatio)
         self._update_zoom_pct() # Update zoom percentage after fitInView
         try:
             self.horizontalScrollBar().setValue(0)

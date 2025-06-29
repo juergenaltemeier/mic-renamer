@@ -74,3 +74,36 @@ def test_rename_updates_sorted_rows(app, monkeypatch, tmp_path):
     assert os.path.exists(new_d)
     win.close()
 
+
+def test_rename_with_tags(app, monkeypatch, tmp_path):
+    img_a = tmp_path / "a.jpg"
+    img_a.write_bytes(b"x")
+
+    win = RenamerApp()
+    win.table_widget.add_paths([str(img_a)])
+    app.processEvents()
+
+    # Add a tag to the item
+    item = win.table_widget.get_item_by_row(0)
+    item.tags.add("test_tag")
+
+    # Set project number
+    win.project_input.setText("PROJ1")
+
+    # Trigger rename for selected items
+    monkeypatch.setattr("mic_renamer.ui.main_window.QProgressDialog", DummyProgress)
+    monkeypatch.setattr(QMessageBox, "warning", lambda *a, **k: None)
+    monkeypatch.setattr(QMessageBox, "information", lambda *a, **k: None)
+
+    win.rename_selected()
+    while win._rename_thread and win._rename_thread.isRunning():
+        app.processEvents()
+
+    # Verify the new filename includes the tag
+    new_filename = win.table_widget.item(0, 1).text()
+    assert "PROJ1" in new_filename
+    assert "test_tag" in new_filename
+    assert new_filename.endswith(".jpg")
+
+    win.close()
+

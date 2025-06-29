@@ -16,6 +16,7 @@ class TagPanel(QWidget):
     """Panel showing available tags as checkboxes."""
 
     tagToggled = Signal(str, int)
+    arrowKeyPressed = Signal(int)
 
     def __init__(self, parent=None, tags_info: dict | None = None):
         super().__init__(parent)
@@ -50,10 +51,10 @@ class TagPanel(QWidget):
                 self._preselected_tag.toggle()
             event.accept()
         elif event.key() == Qt.Key_Down:
-            self._move_preselection(1)
+            self.arrowKeyPressed.emit(Qt.Key_Down)
             event.accept()
         elif event.key() == Qt.Key_Up:
-            self._move_preselection(-1)
+            self.arrowKeyPressed.emit(Qt.Key_Up)
             event.accept()
         else:
             QLineEdit.keyPressEvent(self.search_bar, event)

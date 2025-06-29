@@ -58,15 +58,15 @@ class Renamer:
 
         groups: dict[str, list[tuple[ItemSettings, list[str]]]] = defaultdict(list)
         for item in self.items:
-            ordered_tags = sorted(item.tags)
+            ordered_tags = sorted(list(item.tags))
             base = item.build_base_name(self.project, ordered_tags, self.config)
             groups[base].append((item, ordered_tags))
 
         mapping = []
-        for base, items in groups.items():
-            use_index = len(items) > 1
+        for base, items_in_group in groups.items():
+            use_index = len(items_in_group) > 1
             counter = self.config.start_index
-            for item, ordered_tags in items:
+            for item, ordered_tags in items_in_group:
                 new_basename = item.build_new_name(
                     self.project,
                     counter,

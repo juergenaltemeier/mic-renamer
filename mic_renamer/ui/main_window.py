@@ -230,6 +230,7 @@ class RenamerApp(QWidget):
         # Tag container spanning both columns with manual toggle
         self.tag_panel = TagPanel()
         self.tag_panel.tagToggled.connect(self.on_tag_toggled)
+        self.tag_panel.arrowKeyPressed.connect(self.on_tag_panel_arrow_key)
         self.btn_toggle_tags = QPushButton()
         self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
 
@@ -307,6 +308,12 @@ class RenamerApp(QWidget):
         self.tag_panel.search_bar.setFocus()
         self.tag_panel.search_bar.selectAll()
 
+    def on_tag_panel_arrow_key(self, key):
+        if key == Qt.Key_Up:
+            self.goto_previous_item()
+        elif key == Qt.Key_Down:
+            self.goto_next_item()
+
     def on_change_made(self):
         if not self._session_recording_started:
             return
@@ -360,11 +367,24 @@ class RenamerApp(QWidget):
         act_add_folder_recursive.triggered.connect(self.add_folder_with_subdirectories)
         self.menu_actions.append(act_add_folder_recursive)
 
+        act_add_untagged = QAction(icon_add_folder, tr("add_untagged_folder"), self)
+        act_add_untagged.setToolTip(tr("tip_add_untagged_folder"))
+        act_add_untagged.triggered.connect(self.add_untagged_from_folder)
+        self.menu_actions.append(act_add_untagged)
+
+        act_add_untagged_recursive = QAction(icon_add_folder, tr("add_untagged_folder_recursive"), self)
+        act_add_untagged_recursive.setToolTip(tr("tip_add_untagged_folder_recursive"))
+        act_add_untagged_recursive.triggered.connect(self.add_untagged_from_folder_recursive)
+        self.menu_actions.append(act_add_untagged_recursive)
+
         # create drop-down menu button for adding items
         self.menu_add = QMenu(tr("add_menu"), self)
         self.menu_add.addAction(act_add_files)
         self.menu_add.addAction(act_add_folder)
         self.menu_add.addAction(act_add_folder_recursive)
+        self.menu_add.addSeparator()
+        self.menu_add.addAction(act_add_untagged)
+        self.menu_add.addAction(act_add_untagged_recursive)
         self.menu_add.addSeparator()
         act_set_import_dir = QAction(tr("set_import_directory"), self)
         act_set_import_dir.triggered.connect(self.set_import_directory)
@@ -535,10 +555,10 @@ class RenamerApp(QWidget):
         # Update "Add" menu actions
         menu_actions = self.menu_actions
         menu_labels = [
-            "add_files", "add_folder", "add_folder_recursive", "set_import_directory"
+            "add_files", "add_folder", "add_folder_recursive", "add_untagged_folder", "add_untagged_folder_recursive", "set_import_directory"
         ]
         menu_tips = [
-            "tip_add_files", "tip_add_folder", "tip_add_folder_recursive", ""
+            "tip_add_files", "tip_add_folder", "tip_add_folder_recursive", "tip_add_untagged_folder", "tip_add_untagged_folder_recursive", ""
         ]
         for action, key, tip in zip(menu_actions, menu_labels, menu_tips):
             action.setText(tr(key))
@@ -645,6 +665,47 @@ class RenamerApp(QWidget):
                         paths.append(os.path.join(root, name))
             if paths:
                 self._import_paths(paths)
+
+    def add_untagged_from_folder(self):
+        self._add_untagged_files(recursive=False)
+
+    def add_untagged_from_folder_recursive(self):
+        self._add_untagged_files(recursive=True)
+
+    def _add_untagged_files(self, recursive: bool):
+        folder = QFileDialog.getExistingDirectory(
+            self,
+            tr("add_folder"),
+            config_manager.get('default_import_directory', '')
+        )
+        if not folder:
+            return
+
+        all_tags = set(self.tag_panel.tags_info.keys())
+        paths = []
+        if recursive:
+            for root, _, files in os.walk(folder):
+                for name in files:
+                    if self._is_untagged_file(name, all_tags):
+                        paths.append(os.path.join(root, name))
+        else:
+            for name in os.listdir(folder):
+                if os.path.isfile(os.path.join(folder, name)) and self._is_untagged_file(name, all_tags):
+                    paths.append(os.path.join(folder, name))
+        
+        if paths:
+            self._import_paths(paths)
+
+    def _is_untagged_file(self, filename: str, all_tags: set[str]) -> bool:
+        base, ext = os.path.splitext(filename)
+        if ext.lower() not in ItemSettings.ACCEPT_EXTENSIONS:
+            return False
+        
+        parts = base.split('_')
+        for part in parts:
+            if part in all_tags:
+                return False
+        return True
 
     def _import_paths(self, paths: list[str]) -> None:
         """Import given file paths into the table with a progress dialog."""
@@ -1151,29 +1212,13 @@ class RenamerApp(QWidget):
         items = []
         for row in row_iter:
             item0 = self.table_widget.item(row, 1)
-            path = item0.data(int(Qt.ItemDataRole.UserRole))
             settings: ItemSettings = item0.data(ROLE_SETTINGS)
             if settings is None:
+                path = item0.data(int(Qt.ItemDataRole.UserRole))
                 settings = ItemSettings(path)
                 item0.setData(ROLE_SETTINGS, settings)
-            settings.original_path = path
-            if self.rename_mode == MODE_NORMAL:
-                cell_tags = self.table_widget.item(row, 2)
-                if cell_tags:
-                    new_tags_text = cell_tags.text().strip()
-                    settings.tags = {t.strip() for t in new_tags_text.split(',') if t.strip()}
-                cell_date = self.table_widget.item(row, 3)
-                if cell_date:
-                    settings.date = cell_date.text().strip()
-            elif self.rename_mode == MODE_POSITION:
-                cell_pos = self.table_widget.item(row, 2)
-                if cell_pos:
-                    settings.position = cell_pos.text().strip()
-            elif self.rename_mode == MODE_PA_MAT:
-                cell_mat = self.table_widget.item(row, 2)
-                if cell_mat:
-                    settings.pa_mat = cell_mat.text().strip()
             items.append(settings)
+
         renamer = Renamer(project, items, dest_dir=dest_dir, mode=self.rename_mode)
         mapping = renamer.build_mapping()
         return mapping
