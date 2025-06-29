@@ -36,7 +36,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='mic-renamer',
+    name='MIC-ImageRenamer',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
