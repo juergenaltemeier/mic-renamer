@@ -602,6 +602,8 @@ class RenamerApp(QWidget):
         self.mode_tabs.tabs.setTabText(0, tr("mode_normal"))
         self.mode_tabs.tabs.setTabText(1, tr("mode_position"))
         self.mode_tabs.tabs.setTabText(2, tr("mode_pa_mat"))
+        if hasattr(self, "tag_panel"):
+            self.tag_panel.retranslate_ui(language)
         self.update_status()
 
     def apply_toolbar_style(self, style: str) -> None:

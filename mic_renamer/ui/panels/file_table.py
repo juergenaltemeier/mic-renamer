@@ -457,7 +457,7 @@ class DragDropTableWidget(QTableWidget):
                 tags = set()
             suffix = ""
             try:
-                suffix = extract_suffix_from_name(path, tags_info.keys())
+                suffix = extract_suffix_from_name(path, tags_info.keys(), mode=self.mode)
             except Exception:
                 suffix = ""
             date = get_capture_date(path)
