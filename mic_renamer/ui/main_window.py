@@ -209,6 +209,10 @@ class RenamerApp(QWidget):
         (self.mode_tabs.position_tab).remove_selected_requested.connect(self.remove_selected_items)
         (self.mode_tabs.pa_mat_tab).remove_selected_requested.connect(self.remove_selected_items)
 
+        (self.mode_tabs.normal_tab).delete_selected_requested.connect(self.delete_selected_files)
+        (self.mode_tabs.position_tab).delete_selected_requested.connect(self.delete_selected_files)
+        (self.mode_tabs.pa_mat_tab).delete_selected_requested.connect(self.delete_selected_files)
+
         (self.mode_tabs.normal_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
         (self.mode_tabs.position_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
         (self.mode_tabs.pa_mat_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
@@ -581,10 +585,10 @@ class RenamerApp(QWidget):
         if hasattr(self, "menu_edit_actions"):
             menu_edit_actions = self.menu_edit_actions
             menu_edit_labels = [
-                "compress", "convert_heic", "undo_rename", "remove_selected", "clear_suffix", "clear_list", "restore_session"
+                "compress", "convert_heic", "undo_rename", "remove_selected", "delete_selected_files", "clear_suffix", "clear_list", "restore_session"
             ]
             menu_edit_tips = [
-                "tip_compress", "tip_convert_heic", "tip_undo_rename", "tip_remove_selected", "tip_clear_suffix", "tip_clear_list", "tip_restore_session"
+                "tip_compress", "tip_convert_heic", "tip_undo_rename", "tip_remove_selected", "tip_delete_selected_files", "tip_clear_suffix", "tip_clear_list", "tip_restore_session"
             ]
             for action, key, tip in zip(menu_edit_actions, menu_edit_labels, menu_edit_tips):
                 action.setText(tr(key))
@@ -1071,6 +1075,39 @@ class RenamerApp(QWidget):
             self.table_widget.selectRow(new_row)
         self.update_status()
         self._session_save_timer.start()
+
+    def delete_selected_files(self):
+        rows = sorted({idx.row() for idx in self.table_widget.selectionModel().selectedRows()})
+        if not rows:
+            return
+
+        reply = QMessageBox.question(
+            self,
+            tr("delete_files_title"),
+            tr("delete_files_msg").format(count=len(rows)),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+
+        if reply == QMessageBox.StandardButton.No:
+            return
+
+        for row in reversed(rows):
+            item = self.table_widget.item(row, 1)
+            if not item:
+                continue
+
+            path = item.data(int(Qt.ItemDataRole.UserRole))
+            try:
+                os.remove(path)
+                self.logger.info(f"Deleted file: {path}")
+            except OSError as e:
+                self.logger.error(f"Error deleting file {path}: {e}")
+                QMessageBox.warning(
+                    self, tr("delete_failed_title"), tr("delete_failed_msg").format(path=path, error=e)
+                )
+
+        self.remove_selected_items()
 
     def clear_selected_suffixes(self):
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]

@@ -50,6 +50,9 @@ class ConfigManager:
         # load defaults via importlib.resources so PyInstaller bundles work
         self.defaults_path = resources.files(__package__) / "defaults.yaml"
 
+    def get_defaults_path(self) -> Path:
+        return self.defaults_path
+
     def load(self) -> dict:
         """Load configuration from disk merging with defaults."""
         if self._config is not None:

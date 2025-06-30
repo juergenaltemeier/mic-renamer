@@ -159,6 +159,12 @@ TRANSLATIONS = {
             </ul>
         """
         , 'search_tags': 'Search tags...'
+        , 'delete_selected_files': 'Delete Files'
+        , 'tip_delete_selected_files': 'Delete selected files from disk'
+        , 'delete_files_title': 'Delete Files'
+        , 'delete_files_msg': 'Are you sure you want to delete {count} selected files from disk? This action cannot be undone.'
+        , 'delete_failed_title': 'Delete Failed'
+        , 'delete_failed_msg': 'Failed to delete {path}: {error}'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -318,6 +324,12 @@ TRANSLATIONS = {
             </ul>
         """
         , 'search_tags': 'Tags suchen...'
+        , 'delete_selected_files': 'Dateien löschen'
+        , 'tip_delete_selected_files': 'Ausgewählte Dateien von der Festplatte löschen'
+        , 'delete_files_title': 'Dateien löschen'
+        , 'delete_files_msg': 'Möchten Sie {count} ausgewählte Dateien von der Festplatte löschen? Diese Aktion kann nicht rückgängig gemacht werden.'
+        , 'delete_failed_title': 'Löschen fehlgeschlagen'
+        , 'delete_failed_msg': 'Fehler beim Löschen von {path}: {error}'
     }
 }
 

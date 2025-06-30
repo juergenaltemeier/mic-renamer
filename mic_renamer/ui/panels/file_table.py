@@ -39,6 +39,7 @@ class DragDropTableWidget(QTableWidget):
 
     pathsAdded = Signal(int)
     remove_selected_requested = Signal()
+    delete_selected_requested = Signal()
     clear_suffix_requested = Signal()
     clear_list_requested = Signal()
 
@@ -111,6 +112,11 @@ class DragDropTableWidget(QTableWidget):
         menu.addAction(set_suffix_action)
 
         menu.addSeparator()
+
+        delete_selected_action = QAction(tr("delete_selected_files"), self)
+        delete_selected_action.triggered.connect(self.delete_selected_requested.emit)
+        delete_selected_action.setEnabled(has_selection)
+        menu.addAction(delete_selected_action)
 
         remove_selected_action = QAction(tr("remove_selected"), self)
         remove_selected_action.triggered.connect(self.remove_selected_requested.emit)
