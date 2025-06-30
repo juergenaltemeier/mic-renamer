@@ -42,7 +42,7 @@ def save_counts(counts: dict[str, int]) -> None:
 def increment_tags(tags: Iterable[str]) -> None:
     counts = load_counts()
     for tag in tags:
-        counts[tag] = counts.get(tag, 0) + 1
+        counts[tag.upper()] = counts.get(tag.upper(), 0) + 1
     save_counts(counts)
 
 

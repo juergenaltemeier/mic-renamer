@@ -919,7 +919,7 @@ class RenamerApp(QWidget):
         if settings is None:
             return
         if self.rename_mode == MODE_NORMAL and col == 2:
-            raw_tags = {t.strip() for t in item.text().split(',') if t.strip()}
+            raw_tags = {t.strip().upper() for t in item.text().split(',') if t.strip()}
             valid_tags = {t for t in raw_tags if t in self.tag_panel.tags_info}
             invalid = raw_tags - valid_tags
             if invalid:

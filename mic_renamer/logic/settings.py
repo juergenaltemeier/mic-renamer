@@ -50,7 +50,7 @@ class ItemSettings:
     def from_dict(cls, data):
         return cls(
             original_path=data["original_path"],
-            tags=set(data.get("tags", [])),
+            tags={tag.upper() for tag in data.get("tags", [])},
             suffix=data.get("suffix", ""),
             date=data.get("date", ""),
             position=data.get("position", ""),

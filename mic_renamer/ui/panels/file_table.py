@@ -148,7 +148,7 @@ class DragDropTableWidget(QTableWidget):
         )
 
         if ok and text:
-            new_tags_to_add = {t.strip() for t in text.split(",") if t.strip()}
+            new_tags_to_add = {t.strip().upper() for t in text.split(",") if t.strip()}
             for index in selected_rows:
                 row = index.row()
                 item = self.item(row, 1)
@@ -202,7 +202,7 @@ class DragDropTableWidget(QTableWidget):
         )
 
         if ok and text:
-            tags_to_remove = {t.strip() for t in text.split(",") if t.strip()}
+            tags_to_remove = {t.strip().upper() for t in text.split(",") if t.strip()}
             log.debug(f"Removing specific tags: {tags_to_remove}")
             for index in selected_rows:
                 row = index.row()

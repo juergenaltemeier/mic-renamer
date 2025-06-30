@@ -24,8 +24,8 @@ def extract_tags_from_name(name: str, valid_tags: Iterable[str]) -> set[str]:
     base = os.path.basename(name)
     base, _ = os.path.splitext(base)
     tokens = re.split(r"[^A-Za-z0-9]+", base)
-    codes = set(valid_tags)
-    return {t for t in tokens if t in codes}
+    codes = {t.upper() for t in valid_tags}
+    return {t.upper() for t in tokens if t.upper() in codes}
 
 
 def extract_suffix_from_name(name: str, valid_tags: Iterable[str]) -> str:
@@ -78,7 +78,7 @@ def extract_suffix_from_name(name: str, valid_tags: Iterable[str]) -> str:
     # Join remaining tokens as suffix
     suffix = "_".join(suffix_tokens)
     # If the suffix is exactly a known tag code, treat as no suffix
-    codes = set(valid_tags)
-    if len(suffix_tokens) == 1 and suffix in codes:
+    codes = {t.upper() for t in valid_tags}
+    if len(suffix_tokens) == 1 and suffix.upper() in codes:
         return ""
     return suffix

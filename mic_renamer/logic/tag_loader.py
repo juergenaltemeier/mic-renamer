@@ -101,10 +101,11 @@ def load_tags(file_path: str | None = None, language: str | None = None) -> dict
     lang = language or config_manager.get("language", "en")
     result = {}
     for code, value in raw.items():
+        upper_code = code.upper()
         if isinstance(value, str):
-            result[code] = value
+            result[upper_code] = value
         elif isinstance(value, dict):
-            result[code] = value.get(lang) or next(iter(value.values()), "")
+            result[upper_code] = value.get(lang) or next(iter(value.values()), "")
     return result
 
 
