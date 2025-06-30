@@ -1,0 +1,169 @@
+
+# Mic-Renamer Application Description
+
+This document provides a detailed description of the `mic-renamer` application, including its purpose, user interface (UI), functionality, and internal logic. It is intended to be used by an AI agent to understand the application's architecture and behavior, enabling it to be rebuilt in a different framework.
+
+## 1. Project Purpose
+
+`mic-renamer` is a desktop application designed for renaming image and video files. The core functionality allows users to construct new filenames using a combination of a project number, descriptive tags, and optional suffixes. The application provides a graphical user interface (GUI) for file selection, tag management, and previewing changes before applying them.
+
+## 2. Key Technologies
+
+- **Language:** Python 3
+- **UI Framework:** PySide6 (Qt for Python)
+- **Dependencies:**
+    - `PySide6`: For the GUI.
+    - `appdirs`: For managing user-specific configuration file locations.
+    - `PyYAML`: For reading and writing configuration files.
+    - `Pillow`: For image manipulation.
+    - `pillow-heif`: For HEIC image support.
+
+## 3. Codebase Structure
+
+The application is organized into the following main packages:
+
+- **`mic_renamer/`**: The main application package.
+    - **`__main__.py`**: Entry point of the application.
+    - **`app.py`**: Bootstraps the Qt application and main window.
+    - **`config/`**: Manages application configuration.
+    - **`logic/`**: Core business logic (renaming, compression, etc.).
+    - **`ui/`**: All UI components.
+    - **`utils/`**: Utility modules.
+- **`tests/`**: Unit and integration tests.
+
+## 4. User Interface (UI) Description
+
+The application consists of a main window with several key components.
+
+### 4.1. Main Window (`RenamerApp`)
+
+The main window is divided into two main sections by a horizontal splitter: a media viewer on the left and a file table on the right.
+
+#### 4.1.1. Toolbar
+
+A toolbar at the top of the window provides quick access to the following functions:
+
+- **Add Menu:**
+    - **Add Files:** Opens a file dialog to select and add individual files.
+    - **Add Folder:** Adds all supported files from a selected folder.
+    - **Add Folder and Subfolders:** Recursively adds all supported files from a folder and its subdirectories.
+    - **Add Untagged Files:** Adds files from a folder that do not already have tags in their filenames.
+- **Edit Menu:**
+    - **Compress:** Compresses selected images.
+    - **Convert to JPEG:** Converts selected HEIC files to JPEG.
+    - **Undo Rename:** Reverts the last rename operation.
+    - **Remove Selected:** Removes the selected files from the list.
+    - **Clear Suffix:** Clears the suffix for the selected files.
+    - **Clear List:** Removes all files from the list.
+    - **Restore Session:** Restores the last saved session.
+- **Preview Rename:** Opens a dialog to preview the proposed filename changes.
+- **Settings:** Opens the settings dialog.
+- **Help:** Opens a help dialog.
+- **Project Number Input:** A text field for entering the project number (e.g., `C123456`).
+
+#### 4.1.2. Media Viewer (`MediaViewer`)
+
+- Displays a preview of the selected image or video file.
+- Provides controls for zooming, rotating, and navigating between previous/next items.
+
+#### 4.1.3. File Table (`ModeTabs`)
+
+- A tabbed widget with three modes: "Normal", "Pos Mode Andi", and "PA_MAT Mode Andi".
+- Each tab contains a table that lists the files to be renamed.
+- The table columns are:
+    - **(Checkbox):** For selecting files.
+    - **File Name:** The original filename.
+    - **Tags/Position/PA_MAT:** An editable field for tags (in Normal mode), position (in Pos mode), or PA_MAT (in PA_MAT mode).
+    - **Date:** The date associated with the file (editable).
+    - **Suffix:** An optional, user-defined suffix for the filename.
+
+#### 4.1.4. Tag Panel (`TagPanel`)
+
+- A panel below the file table that displays available tags as checkboxes.
+- Can be shown or hidden using a toggle button.
+- Includes a search bar to filter tags.
+- Tag checkboxes support three states:
+    - **Checked:** The tag is applied to all selected files.
+    - **Unchecked:** The tag is not applied to any selected files.
+    - **Partially Checked:** The tag is applied to some, but not all, of the selected files.
+
+### 4.2. Settings Dialog (`SettingsDialog`)
+
+The settings dialog is a tabbed window with two tabs: "Settings" and "Compression".
+
+#### 4.2.1. General Settings Tab
+
+- **Configuration Path:** Displays the path to the configuration folder.
+- **Accepted File Extensions:** A comma-separated list of file extensions that the application will accept.
+- **Default Save Directory:** The default directory for saving renamed files.
+- **Language:** A dropdown to select the UI language (English or German).
+- **Toolbar Style:** A checkbox to switch between icon-based and text-based toolbars.
+- **Tags Table:** A table to view, add, and remove tags and their descriptions.
+
+#### 4.2.2. Compression Settings Tab
+
+- **Max Size (KB):** The target maximum file size after compression.
+- **JPEG Quality:** The quality of JPEG compression (1-100).
+- **Reduce Resolution:** A checkbox to allow resolution reduction if necessary to meet the target size.
+- **Resize Only:** A checkbox to only resize images without recompressing them.
+- **Max Width/Height:** The maximum width and height for resized images.
+
+### 4.3. Other Dialogs
+
+- **Help Dialog:** Displays instructions on how to use the application.
+- **Rename Options Dialog:** Appears before renaming, allowing the user to choose a save directory and whether to compress files after renaming.
+- **Preview Dialog:** Shows a preview of the current and proposed new filenames.
+- **Compression Dialog:** Shows a preview of the compression results before applying them.
+
+## 5. Core Functionality
+
+### 5.1. Renaming Logic (`Renamer`)
+
+The renaming process follows these steps:
+
+1.  **Build Mapping:** The `Renamer` class constructs a mapping between the original and new filenames based on the selected mode.
+2.  **Normal Mode:**
+    - Filenames are constructed as: `{project}_{tags}_{date}_{index}_{suffix}.{ext}`.
+    - The `index` is added only if multiple files have the same base name.
+3.  **Position Mode:**
+    - Filenames are constructed as: `{project}_pos_{suffix}.{ext}`.
+4.  **PA_MAT Mode:**
+    - Filenames are constructed as: `{project}_PA_MAT_{date}_{index}_{suffix}.{ext}`.
+    - Files are grouped by date, and the `index` is added if there are multiple files with the same date.
+5.  **Preview:** The user can preview the changes before applying them.
+6.  **Execution:** The files are renamed on the filesystem.
+
+### 5.2. Tag Management (`TagService`, `TagLoader`)
+
+- Tags are loaded from a `tags.json` file in the user's configuration directory.
+- The `TagService` provides functions for extracting tags and suffixes from filenames.
+- The `TagPanel` displays the tags and allows the user to apply them to files.
+
+### 5.3. Configuration Management (`ConfigManager`)
+
+- The `ConfigManager` handles loading and saving application settings.
+- Default settings are stored in `defaults.yaml` and are merged with the user's settings.
+- User settings are stored in `app_settings.yaml` in a user-specific configuration directory.
+
+### 5.4. Internationalization (i18n)
+
+- The application supports English and German languages.
+- UI strings are managed in the `i18n.py` module, which contains a dictionary of translations for each language.
+- The `tr()` function is used to retrieve the translated string for a given key.
+
+### 5.5. Image Compression and Conversion
+
+- The `ImageCompressor` class handles image compression based on the settings defined in the settings dialog.
+- The `HEICConverter` class converts HEIC files to JPEG format.
+
+### 5.6. Undo Functionality
+
+- The `UndoManager` keeps a history of rename operations.
+- The user can undo the last rename operation, which will revert the filenames on the filesystem.
+
+### 5.7. Session Management
+
+- The application automatically saves the current session (project number and file list) to a `session.json` file.
+- If the application crashes, it will prompt the user to restore the previous session on the next launch.
+
+This comprehensive description should provide a solid foundation for an AI agent to understand and rebuild the `mic-renamer` application in a different framework.
