@@ -723,9 +723,11 @@ class RenamerApp(QWidget):
         for idx, path in enumerate(paths, start=1):
             if progress.wasCanceled():
                 break
-            self.mode_tabs.normal_tab.add_paths([path])
-            self.mode_tabs.position_tab.add_paths([path])
-            self.mode_tabs.pa_mat_tab.add_paths([path])
+            # Normalize the path to use forward slashes for consistency
+            normalized_path = path.replace("\\", "/")
+            self.mode_tabs.normal_tab.add_paths([normalized_path])
+            self.mode_tabs.position_tab.add_paths([normalized_path])
+            self.mode_tabs.pa_mat_tab.add_paths([normalized_path])
             progress.setValue(idx)
             QApplication.processEvents()
         progress.close()

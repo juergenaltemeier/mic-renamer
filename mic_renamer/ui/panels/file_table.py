@@ -406,7 +406,7 @@ class DragDropTableWidget(QTableWidget):
         if event.mimeData().hasUrls():
             paths = []
             for url in event.mimeData().urls():
-                path = url.toLocalFile()
+                path = self.normalize_path(url.toLocalFile())
                 if os.path.isfile(path):
                     ext = os.path.splitext(path)[1].lower()
                     if ext in ItemSettings.ACCEPT_EXTENSIONS:
@@ -424,7 +424,7 @@ class DragDropTableWidget(QTableWidget):
             tags_info = {}
         added = 0
         for path in paths:
-            path = convert_heic(path)
+            path = self.normalize_path(convert_heic(path))
             duplicate = False
             for row in range(self.rowCount()):
                 item = self.item(row, 1)
@@ -483,6 +483,9 @@ class DragDropTableWidget(QTableWidget):
         if added:
             self.sortByColumn(1, Qt.AscendingOrder)
             self.pathsAdded.emit(added)
+
+    def normalize_path(self, path: str) -> str:
+        return path.replace("\\", "/")
 
     def on_selection_changed(
         self, selected: QItemSelection, deselected: QItemSelection
