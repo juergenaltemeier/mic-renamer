@@ -6,13 +6,12 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
-    QApplication,
     QAbstractItemView,
     QMenu,
     QInputDialog,
     QMessageBox,
 )
-from PySide6.QtGui import QPalette, QAction, QDesktopServices
+from PySide6.QtGui import QAction, QDesktopServices
 from PySide6.QtCore import (
     Qt,
     QTimer,
@@ -21,7 +20,6 @@ from PySide6.QtCore import (
     Signal,
     QUrl,
 )
-from importlib import resources
 
 from ...logic.settings import ItemSettings
 from ...logic.tag_loader import load_tags
@@ -73,16 +71,6 @@ class DragDropTableWidget(QTableWidget):
 
         # allow intercepting clicks for single-click editing
         self.viewport().installEventFilter(self)
-
-        logo = resources.files("mic_renamer") / "favicon.png"
-        if logo.is_file():
-            style = (
-                "QTableWidget::viewport{"
-                f"background-image:url('{str(logo)}');"
-                "background-repeat:no-repeat;"
-                "background-position:center;}"
-            )
-            self.setStyleSheet(style)
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
@@ -446,9 +434,6 @@ class DragDropTableWidget(QTableWidget):
             check_item.setCheckState(Qt.CheckState.Unchecked)
             fname_item = QTableWidgetItem(os.path.basename(path))
             fname_item.setData(Qt.ItemDataRole.UserRole, path)
-            palette = QApplication.palette()
-            fname_item.setBackground(palette.color(QPalette.ColorRole.Base))
-            fname_item.setForeground(palette.color(QPalette.ColorRole.Text))
 
             tags = set()
             try:

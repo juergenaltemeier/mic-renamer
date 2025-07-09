@@ -4,13 +4,13 @@ import logging
 import json
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
-    QPushButton, QFileDialog, QMessageBox,
+    QFileDialog, QMessageBox,
     QApplication, QLabel,
      QProgressDialog, QDialog, QDialogButtonBox,
      QTableWidget, QTableWidgetItem,
      QMenu, QToolButton, QSizePolicy, QToolBar
 )
-from PySide6.QtGui import QColor, QAction, QPixmap, QPixmapCache, QImage
+from PySide6.QtGui import QAction, QPixmap, QPixmapCache, QImage
 from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot
 
 from .. import config_manager
@@ -235,7 +235,9 @@ class RenamerApp(QWidget):
         self.tag_panel = TagPanel()
         self.tag_panel.tagToggled.connect(self.on_tag_toggled)
         self.tag_panel.arrowKeyPressed.connect(self.on_tag_panel_arrow_key)
-        self.btn_toggle_tags = QPushButton()
+        self.btn_toggle_tags = QToolButton()
+        self.btn_toggle_tags.setIcon(resource_icon("eye.svg"))
+        self.btn_toggle_tags.setCheckable(True)
         self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
 
         # timer for debouncing heavy selection updates
@@ -271,7 +273,8 @@ class RenamerApp(QWidget):
 
         visible = config_manager.get("tag_panel_visible", False)
         self.tag_panel.setVisible(visible)
-        self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
+        self.btn_toggle_tags.setChecked(visible)
+        self.btn_toggle_tags.setToolTip(tr("hide_tags") if visible else tr("show_tags"))
         
         # Initial deaktivieren
         self.set_item_controls_enabled(False)
@@ -337,12 +340,10 @@ class RenamerApp(QWidget):
         if sizes:
             self.splitter.setSizes(sizes)
 
-    def toggle_tag_panel(self):
-        visible = self.tag_panel.isVisible()
-        new_visible = not visible
-        self.tag_panel.setVisible(new_visible)
-        self.btn_toggle_tags.setText(tr("hide_tags") if new_visible else tr("show_tags"))
-        config_manager.set("tag_panel_visible", new_visible)
+    def toggle_tag_panel(self, checked: bool):
+        self.tag_panel.setVisible(checked)
+        self.btn_toggle_tags.setToolTip(tr("hide_tags") if checked else tr("show_tags"))
+        config_manager.set("tag_panel_visible", checked)
 
     def rebuild_tag_checkboxes(self):
         self.tag_panel.rebuild()
@@ -595,10 +596,7 @@ class RenamerApp(QWidget):
                 action.setToolTip(tr(tip))
                 
         # update form labels
-        if self.tag_panel.isVisible():
-            self.btn_toggle_tags.setText(tr("hide_tags"))
-        else:
-            self.btn_toggle_tags.setText(tr("show_tags"))
+        self.btn_toggle_tags.setToolTip(tr("hide_tags") if self.tag_panel.isVisible() else tr("show_tags"))
         self.mode_tabs.tabs.setTabText(0, tr("mode_normal"))
         self.mode_tabs.tabs.setTabText(1, tr("mode_position"))
         self.mode_tabs.tabs.setTabText(2, tr("mode_pa_mat"))
@@ -891,20 +889,7 @@ class RenamerApp(QWidget):
         self._session_save_timer.start()
 
     def update_row_background(self, row: int, settings: ItemSettings):
-        for col in range(self.table_widget.columnCount()):
-            item = self.table_widget.item(row, col)
-            if not item:
-                continue
-            has_info = settings and (
-                settings.suffix or
-                (settings.tags if self.rename_mode == MODE_NORMAL else settings.position)
-            )
-            if has_info:
-                item.setBackground(QColor(40, 60, 40))
-                item.setForeground(QColor(220, 220, 220))
-            else:
-                item.setBackground(QColor(30, 30, 30))
-                item.setForeground(QColor(220, 220, 220))
+        pass
 
     def on_table_item_changed(self, item: QTableWidgetItem):
         if self._ignore_table_changes:

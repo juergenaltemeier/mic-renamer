@@ -93,3 +93,11 @@ def apply_tag_box_style(app: QApplication) -> None:
             color: #ffffff; /* White text for checked state */
         }
     """)
+
+
+def apply_shadcn_style(app: QApplication) -> None:
+    """Apply shadcn-like stylesheet to the application."""
+    app.setStyle("Fusion")
+    qss_path = resources.files("mic_renamer.ui.styles") / "shadcn_style.qss"
+    with qss_path.open("r") as f:
+        app.setStyleSheet(f.read())

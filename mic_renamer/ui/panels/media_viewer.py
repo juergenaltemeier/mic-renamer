@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl
@@ -11,6 +12,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QPushButton,
     QSlider,
+    QLabel,
 )
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtMultimediaWidgets import QVideoWidget
@@ -26,11 +28,24 @@ class VideoPlayer(QWidget):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self._log = logging.getLogger(__name__)
         self.player = QMediaPlayer(self)
         self.audio = QAudioOutput(self)
         self.player.setAudioOutput(self.audio)
         self.video_widget = QVideoWidget()
+        self.video_widget.setStyleSheet("background-color: #f4f4f5;")
         self.player.setVideoOutput(self.video_widget)
+
+        self.error_label = QLabel(
+            "Cannot play video. The format may not be supported or required codecs are missing."
+        )
+        self.error_label.setWordWrap(True)
+        self.error_label.setAlignment(Qt.AlignCenter)
+        self.error_label.setStyleSheet("background-color: #f4f4f5;")
+
+        self.video_stack = QStackedLayout()
+        self.video_stack.addWidget(self.video_widget)
+        self.video_stack.addWidget(self.error_label)
 
         self.btn_play = QPushButton("▶")
         self.btn_play.setCheckable(True)
@@ -43,18 +58,26 @@ class VideoPlayer(QWidget):
         self.player.positionChanged.connect(self._on_position_changed)
         self.player.durationChanged.connect(self._on_duration_changed)
         self.player.playbackStateChanged.connect(self._sync_button)
+        self.player.errorOccurred.connect(self._on_error)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(
             DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
         )
-        layout.addWidget(self.video_widget)
+        layout.addLayout(self.video_stack)
         controls = QHBoxLayout()
         controls.addWidget(self.btn_play)
         controls.addWidget(self.position_slider)
         layout.addLayout(controls)
 
+    def _on_error(self, error):
+        self._log.error("MediaPlayer Error: %s", self.player.errorString())
+        self.video_stack.setCurrentWidget(self.error_label)
+
     def toggle_playback(self, playing: bool) -> None:
+        if self.video_stack.currentWidget() == self.error_label:
+            self.btn_play.setChecked(False)
+            return
         if playing:
             self.player.play()
         else:
@@ -72,6 +95,7 @@ class VideoPlayer(QWidget):
         self.position_slider.setRange(0, dur)
 
     def load_video(self, path: str) -> None:
+        self.video_stack.setCurrentWidget(self.video_widget)
         url = QUrl.fromLocalFile(str(path))
         try:
             self.player.setSource(url)  # newer PySide6
@@ -148,4 +172,3 @@ class MediaViewer(QWidget):
     def rotate_right(self) -> None:
         if self.stack.currentWidget() == self.image_viewer:
             self.image_viewer.rotate_right()
-

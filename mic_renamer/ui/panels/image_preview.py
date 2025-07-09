@@ -1,6 +1,6 @@
 """Widgets for image preview and zooming."""
 from PySide6.QtWidgets import QWidget, QGraphicsView, QGraphicsScene
-from PySide6.QtGui import QPixmap, QPainter, QImage, QImageReader
+from PySide6.QtGui import QPixmap, QPainter, QImage, QImageReader, QColor
 from PySide6.QtCore import Qt
 import logging
 
@@ -28,9 +28,9 @@ class ImageViewer(QGraphicsView):
         """Return a simple cross-hatch placeholder pixmap."""
         size = 200
         pix = QPixmap(size, size)
-        pix.fill(Qt.lightGray)
+        pix.fill(QColor("#f4f4f5"))
         painter = QPainter(pix)
-        painter.setPen(Qt.darkGray)
+        painter.setPen(QColor("#d4d4d8"))
         painter.drawLine(0, 0, size, size)
         painter.drawLine(0, size, size, 0)
         painter.end()
