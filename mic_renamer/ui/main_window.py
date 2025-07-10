@@ -117,7 +117,7 @@ class RenamerApp(QWidget):
 
         self.toolbar = QToolBar()
         self.toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.toolbar.setIconSize(QSize(24, 24))
+        self.toolbar.setIconSize(QSize(20, 20))
         self.setup_toolbar()
         main_layout.addWidget(self.toolbar)
 
@@ -135,7 +135,7 @@ class RenamerApp(QWidget):
         self.viewer_actions: list[QAction] = []
         self.viewer_buttons: list[QToolButton] = []
         viewer_toolbar = QHBoxLayout()
-        icon_size = self.toolbar.iconSize()
+        icon_size = QSize(20, 20)
 
         act_zoom_fit = QAction(resource_icon("zoom-fit.svg"), "Fit", self)
         act_zoom_fit.triggered.connect(self.image_viewer.zoom_fit)
@@ -398,6 +398,7 @@ class RenamerApp(QWidget):
 
         self.icon_add_menu = resource_icon("file-plus.svg")
         self.btn_add_menu = QToolButton()
+        self.btn_add_menu.setIconSize(self.toolbar.iconSize())
         self.btn_add_menu.setMenu(self.menu_add)
         self.btn_add_menu.setIcon(self.icon_add_menu)
         self.btn_add_menu.setText(tr("add_menu"))
@@ -466,6 +467,7 @@ class RenamerApp(QWidget):
 
         self.icon_edit_menu = resource_icon("edit-blue.svg")
         self.btn_edit_menu = QToolButton()
+        self.btn_edit_menu.setIconSize(self.toolbar.iconSize())
         self.btn_edit_menu.setMenu(self.menu_edit)
         self.btn_edit_menu.setIcon(self.icon_edit_menu)
         self.btn_edit_menu.setText(tr("edit_menu"))
@@ -526,6 +528,12 @@ class RenamerApp(QWidget):
             cfg = config_manager.load()
             language = cfg.get("language", "en")
             set_language(language)
+            
+            # Re-apply theme
+            from .theme import apply_styles
+            theme = cfg.get("theme", "dark")
+            apply_styles(QApplication.instance(), theme)
+            
             self.update_translations(language=language)
             style = cfg.get("toolbar_style", "icons")
             self.apply_toolbar_style(style)

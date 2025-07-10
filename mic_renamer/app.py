@@ -9,7 +9,7 @@ import sys
 from importlib import resources
 
 from .ui.main_window import RenamerApp
-from .ui.theme import apply_shadcn_style
+from .ui.theme import apply_styles
 from .utils.state_manager import StateManager
 from . import config_manager
 
@@ -56,7 +56,10 @@ class Application:
         except Exception:
             pass
         self.app = QApplication(sys.argv)
-        apply_shadcn_style(self.app)
+        
+        theme = config_manager.get("theme", "dark")
+        apply_styles(self.app, theme)
+        
         logo = resources.files("mic_renamer") / "favicon.png"
         if logo.is_file():
             icon = QIcon(str(logo))

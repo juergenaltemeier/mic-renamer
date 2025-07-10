@@ -76,6 +76,20 @@ class SettingsDialog(QDialog):
         hl.addWidget(self.combo_lang)
         gen_layout.addLayout(hl)
 
+        hl_theme = QHBoxLayout()
+        lbl_theme = QLabel(tr("theme_label"))
+        lbl_theme.setToolTip(tr("theme_desc"))
+        hl_theme.addWidget(lbl_theme)
+        self.combo_theme = QComboBox()
+        self.combo_theme.addItems(["dark", "light"])
+        self.combo_theme.setToolTip(tr("theme_desc"))
+        current_theme = self.cfg.get("theme", "dark")
+        index = self.combo_theme.findText(current_theme)
+        if index >= 0:
+            self.combo_theme.setCurrentIndex(index)
+        hl_theme.addWidget(self.combo_theme)
+        gen_layout.addLayout(hl_theme)
+
         self.chk_toolbar_text = QCheckBox(tr("use_text_menu"))
         self.chk_toolbar_text.setToolTip(tr("use_text_menu_desc"))
         self.chk_toolbar_text.setChecked(
@@ -137,6 +151,7 @@ class SettingsDialog(QDialog):
         self.cfg['accepted_extensions'] = exts
         # save language
         self.cfg['language'] = self.combo_lang.currentText()
+        self.cfg['theme'] = self.combo_theme.currentText()
         self.cfg['default_save_directory'] = self.edit_save_dir.text().strip()
         style = 'text' if self.chk_toolbar_text.isChecked() else 'icons'
         self.cfg['toolbar_style'] = style
