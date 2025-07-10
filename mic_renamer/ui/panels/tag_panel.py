@@ -96,6 +96,8 @@ class TagPanel(QWidget):
         self._update_preselection(first_visible)
 
     def rebuild(self, language: str | None = None):
+        # clear any existing preselection to avoid operating on deleted widgets
+        self._preselected_tag = None
         while self.tag_layout.count():
             item = self.tag_layout.takeAt(0)
             w = item.widget()
