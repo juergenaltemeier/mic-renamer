@@ -25,7 +25,7 @@ from .panels import (
     TagPanel,
 )
 from .rename_options_dialog import RenameOptionsDialog
-from .project_number_input import ProjectNumberInput
+from .otp_input import OtpInput
 from ..logic.settings import ItemSettings
 from ..logic.renamer import Renamer
 from ..logic.image_compressor import ImageCompressor
@@ -503,11 +503,12 @@ class RenamerApp(QWidget):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         tb.addWidget(spacer)
 
-        self.input_project = ProjectNumberInput()
+        self.input_project = OtpInput()
         self.input_project.setText(config_manager.get("last_project_number", ""))
         self.input_project.textChanged.connect(self.save_last_project_number)
-        
         tb.addWidget(self.input_project)
+
+        
 
 
     def on_tab_changed(self, index):
@@ -1650,4 +1651,3 @@ class RenamerApp(QWidget):
             os.remove(session_file)
             
         super().closeEvent(event)
-
