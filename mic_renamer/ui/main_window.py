@@ -443,6 +443,13 @@ class RenamerApp(QWidget):
         self.act_remove_sel.triggered.connect(self.remove_selected_items)
         self.menu_edit.addAction(self.act_remove_sel)
         self.menu_edit_actions.append(self.act_remove_sel)
+        # delete selected files from disk
+        icon_delete_sel = resource_icon("trash-2.svg")
+        act_delete_sel = QAction(icon_delete_sel, tr("delete_selected_files"), self)
+        act_delete_sel.setToolTip(tr("tip_delete_selected_files"))
+        act_delete_sel.triggered.connect(self.delete_selected_files)
+        self.menu_edit.addAction(act_delete_sel)
+        self.menu_edit_actions.append(act_delete_sel)
 
         icon_clear_suffix = resource_icon("suffix-clear.svg")
         self.act_clear_suffix = QAction(icon_clear_suffix, tr("clear_suffix"), self)
