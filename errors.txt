@@ -1,36 +1,11 @@
-[av1 @ 0xb9ce13100] Your platform doesn't support hardware accelerated AV1 decoding.
-[av1 @ 0xb9ce13100] Failed to get pixel format.
-[av1 @ 0xb9ce13100] Get current frame error
-[av1 @ 0xb9ce13100] Your platform doesn't support hardware accelerated AV1 decoding.
-[av1 @ 0xb9ce13100] Failed to get pixel format.
-[av1 @ 0xb9ce13100] Get current frame error
-[av1 @ 0xb9ce13100] Your platform doesn't support hardware accelerated AV1 decoding.
-[av1 @ 0xb9ce13100] Failed to get pixel format.
-[av1 @ 0xb9ce13100] Get current frame error
-2025-07-15 14:18:03,115 - mic_renamer.ui.main_window - DEBUG - Applying selection change.
-2025-07-15 14:18:03,116 - mic_renamer.ui.main_window - DEBUG - Request to load preview for: /Users/jurgenrolfaltemeier/Library/CloudStorage/OneDrive-MicavacAG/C230105_250619_Noise_PreparationPhase.mp4
-2025-07-15 14:18:03,116 - mic_renamer.utils.media_utils - DEBUG - Using imageio_ffmpeg binary: /Users/jurgenrolfaltemeier/mic-renamer/venv/lib/python3.13/site-packages/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1
-Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/Users/jurgenrolfaltemeier/Library/CloudStorage/OneDrive-MicavacAG/C230105_250619_Noise_PreparationPhase.mp4':
-  Metadata:
-    major_brand     : mp42
-    minor_version   : 512
-    compatible_brands: mp42iso2avc1mp41
-    creation_time   : 2025-06-19T10:14:16.000000Z
-    encoder         : HandBrake 1.9.2 2025022300
-  Duration: 00:05:24.61, start: 0.000000, bitrate: 3928 kb/s
-  Stream #0:0[0x1](und): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt2020nc/bt2020/arib-std-b67, progressive), 1080x720 [SAR 3:8 DAR 9:16], 3759 kb/s, 29.86 fps, 29.83 tbr, 90k tbn (default)
-      Metadata:
-        creation_time   : 2025-06-19T10:14:16.000000Z
-        handler_name    : VideoHandler
-        vendor_id       : [0][0][0][0]
-      Side data:
-        Ambient Viewing Environment, ambient_illuminance=314.000000, ambient_light_x=0.312700, ambient_light_y=0.329000
-  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 160 kb/s (default)
-      Metadata:
-        creation_time   : 2025-06-19T10:14:16.000000Z
-        handler_name    : Stereo
-        vendor_id       : [0][0][0][0]
-2025-07-15 14:18:05,012 - mic_renamer.ui.main_window - INFO - Saving session...
-2025-07-15 14:18:05,014 - mic_renamer.ui.main_window - INFO - Session saved successfully.
-2025-07-15 14:18:11,734 - mic_renamer.ui.main_window - INFO - Close event triggered.
-2025-07-15 14:18:12,020 - mic_renamer.app - INFO - Application finished with exit code 0.
+venvjurgenrolfaltemeier@Jurgens-MacBook-Pro mic-renamer % pip install -r requirements.txt
+Requirement already satisfied: PySide6 in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 1)) (6.9.1)
+Requirement already satisfied: appdirs in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 2)) (1.4.4)
+Requirement already satisfied: PyYAML in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 3)) (6.0.2)
+Requirement already satisfied: Pillow in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 4)) (11.3.0)
+Requirement already satisfied: pillow-heif in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 5)) (1.0.0)
+Requirement already satisfied: pytest in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 6)) (8.4.1)
+Requirement already satisfied: pytest-qt in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 7)) (4.5.0)
+ERROR: Could not find a version that satisfies the requirement imageio-ffmpeg>=0.7.0 (from versions: 0.1.1, 0.2.0, 0.3.0, 0.4.0, 0.4.1, 0.4.2, 0.4.3, 0.4.4, 0.4.5, 0.4.6, 0.4.7, 0.4.8, 0.4.9, 0.5.0, 0.5.1, 0.6.0)
+ERROR: No matching distribution found for imageio-ffmpeg>=0.7.0
+venvjurgenrolfaltemeier@Jurgens-MacBook-Pro mic-renamer % 
