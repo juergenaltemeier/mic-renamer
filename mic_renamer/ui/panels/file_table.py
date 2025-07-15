@@ -427,7 +427,12 @@ class DragDropTableWidget(QTableWidget):
             row = self.rowCount()
             self.insertRow(row)
             check_item = QTableWidgetItem()
-            check_item.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+            # enable checkable, selectable, and enabled so clicking selects the row
+            check_item.setFlags(
+                Qt.ItemFlag.ItemIsUserCheckable |
+                Qt.ItemFlag.ItemIsSelectable |
+                Qt.ItemFlag.ItemIsEnabled
+            )
             check_item.setCheckState(Qt.CheckState.Unchecked)
             fname_item = QTableWidgetItem(os.path.basename(path))
             fname_item.setData(Qt.ItemDataRole.UserRole, path)
