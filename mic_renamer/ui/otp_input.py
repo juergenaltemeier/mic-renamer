@@ -104,6 +104,8 @@ class OtpInput(QWidget):
             }
         '''
         )
+        # lock width to content size to avoid extra gaps when toolbar expands
+        self.setMaximumWidth(self.sizeHint().width())
 
     def _on_text_changed(self, text):
         sender = self.sender()
