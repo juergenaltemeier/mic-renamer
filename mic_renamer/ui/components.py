@@ -1,6 +1,6 @@
 # ui/components.py
 
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QCheckBox, QWidget, QVBoxLayout
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QCheckBox, QWidget, QVBoxLayout, QHBoxLayout, QLabel
 from PySide6.QtCore import Qt, Signal
 import os
 
@@ -73,16 +73,28 @@ class TagBox(QWidget):
 
         self.setContentsMargins(0, 0, 0, 0)
 
-        layout = QVBoxLayout(self)
+        layout = QHBoxLayout(self)
         layout.setContentsMargins(5, 5, 5, 5)
-        layout.setSpacing(2)
+        layout.setSpacing(8)
 
-        self.checkbox = EnterToggleCheckBox(f"{code}: {description}")
+        # checkbox indicator
+        self.checkbox = EnterToggleCheckBox()
         self.checkbox.toggled.connect(self._update_style)
         self.checkbox.toggled.connect(self.toggled)
-
         layout.addWidget(self.checkbox)
 
+        # tag code label (bold)
+        self.code_label = QLabel(code.upper())
+        self.code_label.setObjectName("TagCode")
+        layout.addWidget(self.code_label)
+
+        # description label (lighter text)
+        self.desc_label = QLabel(description)
+        self.desc_label.setObjectName("TagDesc")
+        layout.addWidget(self.desc_label)
+
+        layout.addStretch()
+        # initial style update
         self._update_style(self.is_checked)
         self.setToolTip(f"{self.code}: {self.description}")
 

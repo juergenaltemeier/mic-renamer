@@ -53,15 +53,19 @@ def apply_tag_box_style(app: QApplication) -> None:
                 background-color: #444;
                 padding: 10px 15px;
             }
-            TagBox QLabel {
+            /* description label styling */
+            TagBox QLabel#TagDesc {
                 color: #ccc;
             }
-            TagBox QCheckBox {
-                color: #eee;
+            /* code label styling */
+            TagBox QLabel#TagCode {
+                color: palette(text);
                 font-weight: bold;
             }
-            .tag-box-checked QLabel, .tag-box-checked QCheckBox {
-                color: #ffffff; /* White text for checked state */
+            /* checked state styling */
+            .tag-box-checked QLabel#TagDesc,
+            .tag-box-checked QLabel#TagCode {
+                color: #ffffff;
             }
         """)
     else:
@@ -92,14 +96,18 @@ def apply_tag_box_style(app: QApplication) -> None:
                 background-color: #f0f0f0;
                 padding: 10px 15px;
             }
-            TagBox QLabel {
+            /* description label styling */
+            TagBox QLabel#TagDesc {
                 color: #333;
             }
-            TagBox QCheckBox {
-                color: #111;
+            /* code label styling */
+            TagBox QLabel#TagCode {
+                color: palette(text);
                 font-weight: bold;
             }
-            .tag-box-checked QLabel, .tag-box-checked QCheckBox {
+            /* checked state styling */
+            .tag-box-checked QLabel#TagDesc,
+            .tag-box-checked QLabel#TagCode {
                 color: #ffffff;
             }
         """)
