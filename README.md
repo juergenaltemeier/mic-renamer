@@ -78,6 +78,14 @@ The resulting build directory is written to ``dist/mic-renamer``. If you prefer
 a single-file executable you can call PyInstaller directly on the entry module
 and pass ``--onefile``.
 
+## FFmpeg Dependency for Video Thumbnails
+
+To provide static thumbnails for video formats not supported by Qt Multimedia (such as AV1), mic-renamer invokes the FFmpeg CLI to extract the first frame. Ensure that:
+1. An `ffmpeg` executable is available on the system `PATH`, or
+2. You bundle a platform-specific FFmpeg binary in `mic_renamer/resources/ffmpeg/<platform>/ffmpeg` (or `ffmpeg.exe` on Windows).
+ 
+With FFmpeg accessible, unsupported videos will display a still-frame preview instead of a black screen.
+
 ### Custom Executable Icon
 
 To give the application and generated executable a custom icon, create your own

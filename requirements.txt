@@ -10,3 +10,4 @@ appdirs>=1.4
 PyYAML>=5.3
 Pillow>=9.0
 pillow-heif>=0.14
+imageio-ffmpeg>=0.7.0

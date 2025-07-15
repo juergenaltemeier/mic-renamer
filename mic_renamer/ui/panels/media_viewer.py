@@ -19,6 +19,7 @@ from PySide6.QtMultimediaWidgets import QVideoWidget
 
 from .image_preview import ImageViewer
 from ..constants import DEFAULT_MARGIN
+from mic_renamer.utils.media_utils import get_video_codec, get_video_thumbnail
 
 """Combined image and video preview widgets."""
 
@@ -161,6 +162,12 @@ class MediaViewer(QWidget):
             self.image_viewer.load_image(path)
             self.stack.setCurrentWidget(self.image_viewer)
         elif ext in self.VIDEO_EXTS:
+            codec = get_video_codec(path)
+            if codec == 'av1':
+                pixmap = get_video_thumbnail(path)
+                if not pixmap.isNull():
+                    self.show_pixmap(pixmap)
+                    return
             self.video_player.load_video(path)
             self.stack.setCurrentWidget(self.video_player)
         else:
