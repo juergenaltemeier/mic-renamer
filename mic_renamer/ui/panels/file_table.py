@@ -118,7 +118,8 @@ class DragDropTableWidget(QTableWidget):
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(28)
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
-        self.cellChanged.connect(self._on_cell_changed)
+        # removed internal cellChanged handler to avoid double state updates and conflicts
+        # self.cellChanged.connect(self._on_cell_changed)
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
 
@@ -416,21 +417,7 @@ class DragDropTableWidget(QTableWidget):
                     QTimer.singleShot(0, lambda idx=index: self.edit(idx))
         return super().eventFilter(source, event)
 
-    def _on_cell_changed(self, row: int, column: int) -> None:
-        item = self.item(row, 1)  # Filename item holds the ItemSettings
-        if not item:
-            return
-        settings: ItemSettings = item.data(ROLE_SETTINGS)
-        if not settings:
-            return
-
-        if column == 2:  # Tags column
-            new_tags_text = self.item(row, column).text()
-            settings.tags = {t.strip() for t in new_tags_text.split(',') if t.strip()}
-        elif column == 3:  # Date column
-            settings.date = self.item(row, column).text().strip()
-        elif column == 4:  # Suffix column
-            settings.suffix = self.item(row, column).text().strip()
+    # Removed internal cellChanged handler; on_table_item_changed in main_window now handles edits
 
     def on_header_double_clicked(self, index: int):
         header = self.horizontalHeader()
