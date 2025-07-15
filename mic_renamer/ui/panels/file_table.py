@@ -28,6 +28,8 @@ from ...logic.heic_converter import convert_heic
 from ...utils.i18n import tr
 from ...utils.meta_utils import get_capture_date
 
+from PySide6.QtWidgets import QStyledItemDelegate, QLineEdit
+
 ROLE_SETTINGS = Qt.UserRole + 1
 log = logging.getLogger(__name__)
 
@@ -43,6 +45,61 @@ class DragDropTableWidget(QTableWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # delegate to pad editors
+        class PaddedDelegate(QStyledItemDelegate):
+            def createEditor(self, parent, option, index):
+                editor = super().createEditor(parent, option, index)
+                if isinstance(editor, QLineEdit):
+                    editor.setFrame(False)
+                    editor.setContentsMargins(0, 0, 0, 0)
+                    editor.setStyleSheet(
+                        'QLineEdit { background: transparent; border: none; padding: 2px 4px; }'
+                    )
+                return editor
+        self.setItemDelegate(PaddedDelegate(self))
+        # modern styling with palette-aware colors for light/dark mode
+        self.setStyleSheet('''
+            QTableWidget {
+                background-color: palette(base);
+                alternate-background-color: palette(alternate-base);
+                gridline-color: palette(midlight);
+                border: none;
+                color: palette(text);
+            }
+            QTableWidget::item {
+                padding: 4px 8px;
+            }
+            QTableWidget::item:selected {
+                background-color: palette(highlight);
+                color: palette(highlighted-text);
+            }
+            QHeaderView::section {
+                background-color: palette(button);
+                color: palette(button-text);
+                border: none;
+                padding: 4px;
+            }
+            QTableView::indicator:unchecked {
+                width: 20px;
+                height: 20px;
+                border: 1px solid palette(midlight);
+                background: palette(base);
+                border-radius: 4px;
+            }
+            QTableView::indicator:checked {
+                width: 20px;
+                height: 20px;
+                border: 1px solid palette(midlight);
+                background: palette(highlight);
+                border-radius: 4px;
+            }
+        ''')
+        # adjust row height for better spacing
+        self.verticalHeader().setDefaultSectionSize(28)
+        # set first column (checkbox) to fixed width
+        from PySide6.QtWidgets import QHeaderView
+        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
+        self.setColumnWidth(0, 24)
         self._updating_checks = False
         self.mode = "normal"
         self.setColumnCount(5)
@@ -63,7 +120,9 @@ class DragDropTableWidget(QTableWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
         self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
-        self.verticalHeader().setDefaultSectionSize(24)
+        # ensure consistent row height
+        self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.verticalHeader().setDefaultSectionSize(28)
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
         self.cellChanged.connect(self._on_cell_changed)
         self._initial_columns = False
