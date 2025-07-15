@@ -45,49 +45,6 @@ class DragDropTableWidget(QTableWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        # modern styling with palette-aware colors for light/dark mode
-        self.setStyleSheet('''
-            QTableWidget {
-                background-color: palette(base);
-                alternate-background-color: palette(alternate-base);
-                gridline-color: palette(midlight);
-                border: none;
-                color: palette(text);
-            }
-            QTableWidget::item {
-                padding: 4px 8px;
-            }
-            QTableWidget::item:selected {
-                background-color: palette(highlight);
-                color: palette(highlighted-text);
-            }
-            QHeaderView::section {
-                background-color: palette(button);
-                color: palette(button-text);
-                border: none;
-                padding: 4px;
-            }
-            QTableView::indicator:unchecked {
-                width: 20px;
-                height: 20px;
-                border: 1px solid palette(midlight);
-                background: palette(base);
-                border-radius: 4px;
-            }
-            QTableView::indicator:checked {
-                width: 20px;
-                height: 20px;
-                border: 1px solid palette(midlight);
-                background: palette(highlight);
-                border-radius: 4px;
-            }
-            /* in-cell editor: opaque background to hide underlying text */
-            QTableWidget QLineEdit {
-                border: none;
-                background-color: palette(base);
-                padding: 2px 4px;
-            }
-        ''')
         # adjust row height for better spacing
         self.verticalHeader().setDefaultSectionSize(28)
         # set first column (checkbox) to fixed width
