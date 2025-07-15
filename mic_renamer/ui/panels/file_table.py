@@ -28,7 +28,7 @@ from ...logic.heic_converter import convert_heic
 from ...utils.i18n import tr
 from ...utils.meta_utils import get_capture_date
 
-from PySide6.QtWidgets import QStyledItemDelegate, QLineEdit
+from PySide6.QtWidgets import QLineEdit
 
 ROLE_SETTINGS = Qt.UserRole + 1
 log = logging.getLogger(__name__)
@@ -45,18 +45,6 @@ class DragDropTableWidget(QTableWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        # delegate to pad editors
-        class PaddedDelegate(QStyledItemDelegate):
-            def createEditor(self, parent, option, index):
-                editor = super().createEditor(parent, option, index)
-                if isinstance(editor, QLineEdit):
-                    editor.setFrame(False)
-                    editor.setContentsMargins(0, 0, 0, 0)
-                    editor.setStyleSheet(
-                        'QLineEdit { background: transparent; border: none; padding: 2px 4px; }'
-                    )
-                return editor
-        self.setItemDelegate(PaddedDelegate(self))
         # modern styling with palette-aware colors for light/dark mode
         self.setStyleSheet('''
             QTableWidget {
@@ -92,6 +80,12 @@ class DragDropTableWidget(QTableWidget):
                 border: 1px solid palette(midlight);
                 background: palette(highlight);
                 border-radius: 4px;
+            }
+            /* in-cell editor: opaque background to hide underlying text */
+            QTableWidget QLineEdit {
+                border: none;
+                background-color: palette(base);
+                padding: 2px 4px;
             }
         ''')
         # adjust row height for better spacing

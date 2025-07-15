@@ -927,22 +927,28 @@ class RenamerApp(QWidget):
         if settings is None:
             return
         if self.rename_mode == MODE_NORMAL and col == 2:
-            raw_tags = {t.strip().upper() for t in item.text().split(',') if t.strip()}
-            valid_tags = {t for t in raw_tags if t in self.tag_panel.tags_info}
-            invalid = raw_tags - valid_tags
-            if invalid:
-                QMessageBox.warning(
-                    self,
-                    tr("invalid_tags_title"),
-                    tr("invalid_tags_msg").format(tags=", ".join(sorted(invalid)))
-                )
-            settings.tags = valid_tags
-            text = ",".join(sorted(valid_tags))
-            if text != item.text():
-                self._ignore_table_changes = True
-                item.setText(text)
-                self._ignore_table_changes = False
-            item.setToolTip(text)
+            try:
+                raw_tags = {t.strip().upper() for t in item.text().split(',') if t.strip()}
+                valid_tags = {t for t in raw_tags if t in self.tag_panel.tags_info}
+                invalid = raw_tags - valid_tags
+                if invalid:
+                    QMessageBox.warning(
+                        self,
+                        tr("invalid_tags_title"),
+                        tr("invalid_tags_msg").format(tags=", ".join(sorted(invalid)))
+                    )
+                settings.tags = valid_tags
+                text = ",".join(sorted(valid_tags))
+                if text != item.text():
+                    self._ignore_table_changes = True
+                    item.setText(text)
+                    self._ignore_table_changes = False
+                item.setToolTip(text)
+            except Exception as e:
+                logging.getLogger(__name__).error(f"Error validating tags: {e}")
+            # skip preview update to avoid crash during editing
+            self._session_save_timer.start()
+            return
         elif self.rename_mode == MODE_NORMAL and col == 3:
             text = item.text().strip()
             formatted_date = _validate_and_format_date(text)
