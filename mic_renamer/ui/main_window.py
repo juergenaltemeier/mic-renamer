@@ -750,9 +750,9 @@ class RenamerApp(QWidget):
                 break
             # Normalize the path to use forward slashes for consistency
             normalized_path = path.replace("\\", "/")
-            self.mode_tabs.normal_tab.add_paths([normalized_path])
-            self.mode_tabs.position_tab.add_paths([normalized_path])
-            self.mode_tabs.pa_mat_tab.add_paths([normalized_path])
+            # import into active mode tab only
+            target = self.mode_tabs.current_table()
+            target.add_paths([normalized_path])
             progress.setValue(idx)
             QApplication.processEvents()
         progress.close()
@@ -1269,6 +1269,36 @@ class RenamerApp(QWidget):
         renamer = Renamer(project, items, dest_dir=dest_dir, mode=self.rename_mode)
         mapping = renamer.build_mapping()
         return mapping
+    
+    def build_full_rename_mapping(self, dest_dir: str | None = None):
+        """Build rename mapping for all items in all mode tabs."""
+        project = self.input_project.text().strip()
+        if not re.fullmatch(r"C\d{6}", project):
+            QMessageBox.warning(self, tr("missing_project"), tr("missing_project_msg"))
+            return None
+        full = []
+        # iterate through each mode tab
+        for mode, table in [(MODE_NORMAL, self.mode_tabs.normal_tab),
+                            (MODE_POSITION, self.mode_tabs.position_tab),
+                            (MODE_PA_MAT, self.mode_tabs.pa_mat_tab)]:
+            # collect item settings for this mode
+            items = []
+            for row in range(table.rowCount()):
+                item0 = table.item(row, 1)
+                if not item0:
+                    continue
+                settings: ItemSettings = item0.data(ROLE_SETTINGS)
+                if settings is None:
+                    path = item0.data(int(Qt.ItemDataRole.UserRole))
+                    settings = ItemSettings(path)
+                items.append(settings)
+            if not items:
+                continue
+            renamer = Renamer(project, items, dest_dir=dest_dir, mode=mode)
+            mapping = renamer.build_mapping()
+            for settings, orig, new in mapping:
+                full.append((mode, settings, orig, new))
+        return full
 
     def choose_save_directory(self) -> str | None:
         reply = QMessageBox.question(
@@ -1289,16 +1319,19 @@ class RenamerApp(QWidget):
         return directory or None
 
     def preview_rename(self):
-        mapping = self.build_rename_mapping()
+        # build full mapping across all tabs
+        mapping = self.build_full_rename_mapping()
         if mapping is None:
             return
-        table_mapping = []
-        for settings, orig, new in mapping:
+        # prepare mapping entries: (mode, row, orig_path, new_name, new_path)
+        table_mapping: list[tuple[str,int,str,str,str]] = []
+        for mode, settings, orig, new in mapping:
             new_name = os.path.basename(new)
-            for row in range(self.table_widget.rowCount()):
-                item0 = self.table_widget.item(row, 1)
-                if item0.data(int(Qt.ItemDataRole.UserRole)) == orig:
-                    table_mapping.append((row, orig, new_name, new))
+            table = getattr(self.mode_tabs, f"{mode}_tab")
+            for row in range(table.rowCount()):
+                item0 = table.item(row, 1)
+                if item0 and item0.data(int(Qt.ItemDataRole.UserRole)) == orig:
+                    table_mapping.append((mode, row, orig, new_name, new))
                     break
         dlg = QDialog(self)
         dlg.setWindowTitle(tr("preview_rename"))
@@ -1307,8 +1340,10 @@ class RenamerApp(QWidget):
             h = self.state_manager.get("preview_height", 400)
             dlg.resize(w, h)
         dlg_layout = QVBoxLayout(dlg)
-        tbl = QTableWidget(len(table_mapping), 2, dlg)
+        # preview table: Mode, Current Name, Proposed New Name
+        tbl = QTableWidget(len(table_mapping), 3, dlg)
         tbl.setHorizontalHeaderLabels([
+            "Mode",
             tr("current_name"),
             tr("proposed_new_name"),
         ])
@@ -1316,33 +1351,26 @@ class RenamerApp(QWidget):
         tbl.setEditTriggers(QTableWidget.NoEditTriggers)
         tbl.setSelectionMode(QTableWidget.NoSelection)
         tbl.setFocusPolicy(Qt.NoFocus)
-        for i, (row, orig, new_name, new_path) in enumerate(table_mapping):
-            tbl.setItem(i, 0, QTableWidgetItem(os.path.basename(orig)))
-            tbl.setItem(i, 1, QTableWidgetItem(new_name))
+        for i, (mode, row, orig, new_name, new_path) in enumerate(table_mapping):
+            # mode column
+            tbl.setItem(i, 0, QTableWidgetItem(tr(f"mode_{mode}")))
+            # original name
+            tbl.setItem(i, 1, QTableWidgetItem(os.path.basename(orig)))
+            # proposed new name
+            tbl.setItem(i, 2, QTableWidgetItem(new_name))
         tbl.resizeColumnsToContents()
         tbl.resizeRowsToContents()
         tbl.setMinimumWidth(600)
         dlg_layout.addWidget(tbl)
 
-        btns = QDialogButtonBox(parent=dlg)
-        btn_all = btns.addButton(tr("rename_all"), QDialogButtonBox.AcceptRole)
-        btn_sel = btns.addButton(tr("rename_selected"), QDialogButtonBox.AcceptRole)
-        btn_cancel = btns.addButton(QDialogButtonBox.StandardButton.Cancel)
+        # rename all or cancel
+        btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, parent=dlg)
+        # rename all
+        ok_btn = btns.button(QDialogButtonBox.Ok)
+        ok_btn.setText(tr("rename_all"))
         dlg_layout.addWidget(btns)
-
-        btn_cancel.clicked.connect(dlg.reject)
-        btn_all.clicked.connect(
-            lambda: (
-                dlg.accept(),
-                self.direct_rename(table_mapping),
-            )
-        )
-        btn_sel.clicked.connect(
-            lambda: (
-                dlg.accept(),
-                self.direct_rename_selected(table_mapping),
-            )
-        )
+        btns.rejected.connect(dlg.reject)
+        btns.accepted.connect(lambda: (dlg.accept(), self._execute_full_rename(table_mapping)))
 
         dlg.exec()
         if self.state_manager:
@@ -1396,6 +1424,33 @@ class RenamerApp(QWidget):
 
     def rename_with_options(self, table_mapping: list, all_items: bool = True):
         self.choose_save_directory_and_rename(table_mapping, all_items)
+
+    def _execute_full_rename(self, table_mapping: list[tuple[str,int,str,str,str]]) -> None:
+        """Perform file renames for all mappings across all tabs."""
+        total = len(table_mapping)
+        done = 0
+        for mode, row, orig, new_name, new_path in table_mapping:
+            try:
+                os.rename(orig, new_path)
+                done += 1
+                # update table item
+                table = getattr(self.mode_tabs, f"{mode}_tab")
+                item0 = table.item(row, 1)
+                if item0:
+                    item0.setData(int(Qt.ItemDataRole.UserRole), new_path)
+                    item0.setText(new_name)
+                    settings: ItemSettings = item0.data(ROLE_SETTINGS)
+                    if settings:
+                        settings.original_path = new_path
+            except Exception as e:
+                logging.getLogger(__name__).error(f"Error renaming {orig} to {new_path}: {e}")
+                QMessageBox.warning(self, tr("rename_failed"), f"{orig} -> {new_name}")
+        # show result
+        if done < total:
+            QMessageBox.information(self, tr("partial_rename"), tr("partial_rename_msg").format(done=done, total=total))
+        else:
+            QMessageBox.information(self, tr("done"), tr("rename_done"))
+        self._session_save_timer.start()
 
     def set_status_message(self, message: str | None) -> None:
         """Display an additional message in the status bar."""
