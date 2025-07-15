@@ -75,6 +75,13 @@ class Application:
         width = self.state.get("width", config_manager.get("window_width", 1200))
         height = self.state.get("height", config_manager.get("window_height", 800))
         self.window.resize(width, height)
+        # center window on primary screen
+        screen = self.app.primaryScreen()
+        if screen:
+            geom = screen.availableGeometry()
+            x = geom.x() + (geom.width() - self.window.width()) // 2
+            y = geom.y() + (geom.height() - self.window.height()) // 2
+            self.window.move(x, y)
         sizes = self.state.get("splitter_sizes")
         if sizes:
             self.window.set_splitter_sizes(sizes)
