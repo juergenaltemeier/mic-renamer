@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Callable, Iterable, Any
 
-from PySide6.QtCore import QObject, Signal, Slot, QSize
+from PySide6.QtCore import QObject, Signal, Slot, QSize, Qt
 from PySide6.QtGui import QPixmapCache, QImageReader, QImage
 
 
@@ -53,9 +53,10 @@ class PreviewLoader(QObject):
             return
         reader = QImageReader(self._path)
         reader.setAutoTransform(True)
-        if self._target_size.isValid():
-            reader.setScaledSize(self._target_size)
         img = reader.read()
+        # scale image to fit target size while preserving aspect ratio
+        if not self._stop and self._target_size.isValid() and not img.isNull():
+            img = img.scaled(self._target_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         if not self._stop:
             self.finished.emit(self._path, img)
 
