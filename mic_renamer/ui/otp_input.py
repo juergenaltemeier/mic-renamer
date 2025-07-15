@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QFrame,
     QApplication,
+    QSizePolicy,
 )
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeyEvent, QIcon
@@ -28,6 +29,8 @@ class OtpInput(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # keep project code input at fixed width
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
         self.setObjectName("OtpInput")
 
         container_layout = QHBoxLayout(self)
