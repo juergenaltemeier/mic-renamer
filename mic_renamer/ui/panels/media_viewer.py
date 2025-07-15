@@ -70,11 +70,33 @@ class VideoPlayer(QWidget):
         controls.addWidget(self.position_slider)
         layout.addLayout(controls)
 
-    def _on_error(self, error):
-        self._log.error("MediaPlayer Error: %s", self.player.errorString())
+    def _on_error(self, error, error_string):
+        self._log.error("MediaPlayer Error: %s", error_string)
+        self.error_label.setText(
+            '<html><body style="color: #333; background-color: #f4f4f5; padding: 10px;">'
+            '<p><b>Cannot play video</b></p>'
+            '<p>The format may not be supported or required codecs are missing.</p>'
+            '<p>For the best experience, we recommend installing the K-Lite Codec Pack. It includes support for a wide range of video formats, including AV1.</p>'
+            '<p><a href="https://codecguide.com/download_kl.htm" style="color: #0078d4;">Download K-Lite Codec Pack</a></p>'
+            f'<p style="font-size: 9px; color: #666;">Details: {error_string}</p>'
+            '</body></html>'
+        )
         self.video_stack.setCurrentWidget(self.error_label)
 
+    def _check_services(self):
+        if self.player.isAvailable():
+            return True
+        
+        self._on_error(
+            self.player.error(),
+            "Multimedia services are not available. Please install a codec pack."
+        )
+        return False
+
     def toggle_playback(self, playing: bool) -> None:
+        if not self._check_services():
+            self.btn_play.setChecked(False)
+            return
         if self.video_stack.currentWidget() == self.error_label:
             self.btn_play.setChecked(False)
             return
@@ -95,6 +117,8 @@ class VideoPlayer(QWidget):
         self.position_slider.setRange(0, dur)
 
     def load_video(self, path: str) -> None:
+        if not self._check_services():
+            return
         self.video_stack.setCurrentWidget(self.video_widget)
         url = QUrl.fromLocalFile(str(path))
         try:

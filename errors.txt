@@ -1,0 +1,355 @@
+PS D:\mic-renamer> python -m mic_renamer
+2025-07-15 12:04:46,503 - mic_renamer.app - INFO - Application starting...
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1.1 LGPL version 2.1 or later
+2025-07-15 12:04:47,328 - mic_renamer.app - INFO - Showing main window.
+2025-07-15 12:04:55,564 - PIL.Image - DEBUG - Importing AvifImagePlugin
+2025-07-15 12:04:55,565 - PIL.Image - DEBUG - Importing BlpImagePlugin
+2025-07-15 12:04:55,566 - PIL.Image - DEBUG - Importing BmpImagePlugin
+2025-07-15 12:04:55,566 - PIL.Image - DEBUG - Importing BufrStubImagePlugin
+2025-07-15 12:04:55,567 - PIL.Image - DEBUG - Importing CurImagePlugin
+2025-07-15 12:04:55,568 - PIL.Image - DEBUG - Importing DcxImagePlugin
+2025-07-15 12:04:55,580 - PIL.Image - DEBUG - Importing DdsImagePlugin
+2025-07-15 12:04:55,583 - PIL.Image - DEBUG - Importing EpsImagePlugin
+2025-07-15 12:04:55,585 - PIL.Image - DEBUG - Importing FitsImagePlugin
+2025-07-15 12:04:55,589 - PIL.Image - DEBUG - Importing FliImagePlugin
+2025-07-15 12:04:55,590 - PIL.Image - DEBUG - Importing FpxImagePlugin
+2025-07-15 12:04:55,591 - PIL.Image - DEBUG - Image: failed to import FpxImagePlugin: No module named 'olefile'
+2025-07-15 12:04:55,592 - PIL.Image - DEBUG - Importing FtexImagePlugin
+2025-07-15 12:04:55,592 - PIL.Image - DEBUG - Importing GbrImagePlugin
+2025-07-15 12:04:55,593 - PIL.Image - DEBUG - Importing GifImagePlugin
+2025-07-15 12:04:55,593 - PIL.Image - DEBUG - Importing GribStubImagePlugin
+2025-07-15 12:04:55,594 - PIL.Image - DEBUG - Importing Hdf5StubImagePlugin
+2025-07-15 12:04:55,595 - PIL.Image - DEBUG - Importing IcnsImagePlugin
+2025-07-15 12:04:55,596 - PIL.Image - DEBUG - Importing IcoImagePlugin
+2025-07-15 12:04:55,597 - PIL.Image - DEBUG - Importing ImImagePlugin
+2025-07-15 12:04:55,598 - PIL.Image - DEBUG - Importing ImtImagePlugin
+2025-07-15 12:04:55,599 - PIL.Image - DEBUG - Importing IptcImagePlugin
+2025-07-15 12:04:55,600 - PIL.Image - DEBUG - Importing JpegImagePlugin
+2025-07-15 12:04:55,600 - PIL.Image - DEBUG - Importing Jpeg2KImagePlugin
+2025-07-15 12:04:55,600 - PIL.Image - DEBUG - Importing McIdasImagePlugin
+2025-07-15 12:04:55,601 - PIL.Image - DEBUG - Importing MicImagePlugin
+2025-07-15 12:04:55,602 - PIL.Image - DEBUG - Image: failed to import MicImagePlugin: No module named 'olefile'
+2025-07-15 12:04:55,602 - PIL.Image - DEBUG - Importing MpegImagePlugin
+2025-07-15 12:04:55,602 - PIL.Image - DEBUG - Importing MpoImagePlugin
+2025-07-15 12:04:55,612 - PIL.Image - DEBUG - Importing MspImagePlugin
+2025-07-15 12:04:55,612 - PIL.Image - DEBUG - Importing PalmImagePlugin
+2025-07-15 12:04:55,613 - PIL.Image - DEBUG - Importing PcdImagePlugin
+2025-07-15 12:04:55,614 - PIL.Image - DEBUG - Importing PcxImagePlugin
+2025-07-15 12:04:55,614 - PIL.Image - DEBUG - Importing PdfImagePlugin
+2025-07-15 12:04:55,620 - PIL.Image - DEBUG - Importing PixarImagePlugin
+2025-07-15 12:04:55,626 - PIL.Image - DEBUG - Importing PngImagePlugin
+2025-07-15 12:04:55,626 - PIL.Image - DEBUG - Importing PpmImagePlugin
+2025-07-15 12:04:55,626 - PIL.Image - DEBUG - Importing PsdImagePlugin
+2025-07-15 12:04:55,627 - PIL.Image - DEBUG - Importing QoiImagePlugin
+2025-07-15 12:04:55,628 - PIL.Image - DEBUG - Importing SgiImagePlugin
+2025-07-15 12:04:55,628 - PIL.Image - DEBUG - Importing SpiderImagePlugin
+2025-07-15 12:04:55,629 - PIL.Image - DEBUG - Importing SunImagePlugin
+2025-07-15 12:04:55,629 - PIL.Image - DEBUG - Importing TgaImagePlugin
+2025-07-15 12:04:55,630 - PIL.Image - DEBUG - Importing TiffImagePlugin
+2025-07-15 12:04:55,630 - PIL.Image - DEBUG - Importing WebPImagePlugin
+2025-07-15 12:04:55,631 - PIL.Image - DEBUG - Importing WmfImagePlugin
+2025-07-15 12:04:55,632 - PIL.Image - DEBUG - Importing XbmImagePlugin
+2025-07-15 12:04:55,633 - PIL.Image - DEBUG - Importing XpmImagePlugin
+2025-07-15 12:04:55,634 - PIL.Image - DEBUG - Importing XVThumbImagePlugin
+2025-07-15 12:04:55,742 - mic_renamer.ui.main_window - DEBUG - Applying selection change.
+2025-07-15 12:04:55,743 - mic_renamer.ui.main_window - DEBUG - Request to load preview for: D:/C230105 Bilder/VIDEOS COMPRESSED/C230105_250619_Noise.mp4
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'D:/C230105 Bilder/VIDEOS COMPRESSED/C230105_250619_Noise.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 512
+    compatible_brands: mp42iso2avc1mp41
+    creation_time   : 2025-06-19T10:08:57.000000Z
+    encoder         : HandBrake 1.9.2 2025022300
+  Duration: 00:11:57.58, start: 0.000000, bitrate: 3429 kb/s
+  Stream #0:0[0x1](und): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt2020nc/bt2020/arib-std-b67, progressive), 1080x720 [SAR 3:8 DAR 9:16], 3260 kb/s, 29.86 fps, 29.83 tbr, 90k tbn (default)
+      Metadata:
+        creation_time   : 2025-06-19T10:08:57.000000Z
+        handler_name    : VideoHandler
+        vendor_id       : [0][0][0][0]
+      Side data:
+        Ambient Viewing Environment, ambient_illuminance=314.000000, ambient_light_x=0.312700, ambient_light_y=0.329000
+  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 160 kb/s (default)
+      Metadata:
+        creation_time   : 2025-06-19T10:08:57.000000Z
+        handler_name    : Stereo
+        vendor_id       : [0][0][0][0]
+2025-07-15 12:04:57,092 - mic_renamer.ui.main_window - DEBUG - Applying selection change.
+2025-07-15 12:04:57,094 - mic_renamer.ui.main_window - DEBUG - Request to load preview for: D:/C230105 Bilder/VIDEOS COMPRESSED/C230105_250623_Noise_Areation_1.mp4
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'D:/C230105 Bilder/VIDEOS COMPRESSED/C230105_250623_Noise_Areation_1.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 512
+    compatible_brands: mp42av01iso2mp41
+    creation_time   : 2025-06-23T07:59:25.000000Z
+    encoder         : HandBrake 1.9.2 2025022300
+  Duration: 00:08:27.09, start: 0.000000, bitrate: 2687 kb/s
+  Stream #0:0[0x1](und): Video: av1 (Main) (av01 / 0x31307661), yuv420p(tv, bt2020nc/bt2020/arib-std-b67), 1080x720, 2519 kb/s, SAR 3:8 DAR 9:16, 29.96 fps, 29.97 tbr, 90k tbn (default)
+      Metadata:
+        creation_time   : 2025-06-23T07:59:25.000000Z
+        handler_name    : VideoHandler
+        vendor_id       : [0][0][0][0]
+      Side data:
+        Ambient Viewing Environment, ambient_illuminance=314.000000, ambient_light_x=0.312700, ambient_light_y=0.329000
+  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 160 kb/s (default)
+      Metadata:
+        creation_time   : 2025-06-23T07:59:25.000000Z
+        handler_name    : Stereo
+        vendor_id       : [0][0][0][0]
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+[av1 @ 000001CA8DECC2C0] Failed setup for format d3d11: hwaccel initialisation returned error.
+[av1 @ 000001CA8DECC2C0] Your platform doesn't support hardware accelerated AV1 decoding.
+[av1 @ 000001CA8DECC2C0] Failed to get pixel format.
+[av1 @ 000001CA8DECC2C0] Get current frame error
+2025-07-15 12:04:58,983 - mic_renamer.ui.main_window - INFO - Saving session...
+2025-07-15 12:04:58,986 - mic_renamer.ui.main_window - INFO - Session saved successfully.
