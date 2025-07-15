@@ -62,6 +62,8 @@ class DragDropTableWidget(QTableWidget):
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
         header.setStretchLastSection(True)
+        # hide first (checkbox) column when selections are made by row clicks only
+        self.setColumnHidden(0, True)
         header.sectionDoubleClicked.connect(self.on_header_double_clicked)
         self.setSortingEnabled(True)
         self.sortByColumn(1, Qt.SortOrder.AscendingOrder)
