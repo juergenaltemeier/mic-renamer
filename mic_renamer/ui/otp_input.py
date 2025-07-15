@@ -37,13 +37,17 @@ class OtpInput(QWidget):
         frame = QFrame(self)
         frame.setObjectName("OtpFrame")
         container_layout.addWidget(frame)
+        container_layout.setAlignment(frame, Qt.AlignVCenter)
 
         layout = QHBoxLayout(frame)
-        layout.setContentsMargins(5, 2, 5, 2)
-        layout.setSpacing(4)
+        # adjust padding/spacing for toolbar alignment
+        layout.setContentsMargins(6, 2, 6, 2)
+        layout.setSpacing(8)
 
         self.prefix_label = QLabel("C", self)
         self.prefix_label.setObjectName("OtpPrefix")
+        self.prefix_label.setFixedSize(20, 20)
+        self.prefix_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.prefix_label)
 
         self.line_edits = []
@@ -74,28 +78,26 @@ class OtpInput(QWidget):
         self.setStyleSheet(
             '''
             #OtpFrame {
-              border: 1px solid #CCCCCC;
-              border-radius: 6px;
+                border: 1px solid palette(midlight);
+                border-radius: 6px;
             }
             #OtpPrefix {
                 font-weight: bold;
                 font-size: 14px;
-                padding-left: 2px;
             }
-            QLineEdit {
-              border: none;
-              background-color: transparent;
-              font-size: 16px;
+            QLineEdit#OtpLineEdit {
+                border: 1px solid palette(midlight);
+                border-radius: 3px;
+                qproperty-alignment: 'AlignCenter';
             }
-            QLineEdit:focus {
-              background-color: #E0E0E0;
-              border-radius: 3px;
+            QLineEdit#OtpLineEdit:focus {
+                border: 1px solid palette(highlight);
             }
             #OtpClearButton {
                 border: none;
             }
             #OtpClearButton:pressed {
-                background-color: #E0E0E0;
+                background-color: palette(midlight);
             }
         '''
         )
