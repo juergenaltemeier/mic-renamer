@@ -27,87 +27,93 @@ def apply_tag_box_style(app: QApplication) -> None:
     
     if is_dark:
         app.setStyleSheet(app.styleSheet() + """
-            .tag-box {
+            /* base tag box style */
+            *[class=\"tag-box\"] {
                 border: 1px solid #555;
-                border-radius: 12px; /* More rounded corners */
-                background-color: #444; /* Darker filled background */
-                padding: 10px 15px; /* Medium size padding */
-            }
-            .tag-box:hover {
-                border: 1px solid #009ee0;
-                background-color: #555; /* Slightly lighter on hover */
-            }
-            .tag-box-checked {
-                border: 1px solid #009ee0;
-                border-radius: 12px;
-                background-color: #009ee0; /* Solid blue for active */
-                padding: 10px 15px;
-            }
-            .tag-box-checked:hover {
-                border: 1px solid #00b8ff;
-                background-color: #008bd4; /* Slightly darker blue on hover */
-            }
-            .tag-box-preselected {
-                border: 2px solid #00b8ff; /* Bright blue border for pre-selection */
                 border-radius: 12px;
                 background-color: #444;
                 padding: 10px 15px;
             }
-            /* description label styling */
-            TagBox QLabel#TagDesc {
-                color: #ccc;
-            }
-            /* code label styling */
-            TagBox QLabel#TagCode {
-                color: palette(text);
-                font-weight: bold;
-            }
-            /* checked state styling */
-            .tag-box-checked QLabel#TagDesc,
-            .tag-box-checked QLabel#TagCode {
-                color: #ffffff;
-            }
-        """)
-    else:
-        app.setStyleSheet(app.styleSheet() + """
-            .tag-box {
-                border: 1px solid #ccc;
-                border-radius: 12px;
-                background-color: #f0f0f0;
-                padding: 10px 15px;
-            }
-            .tag-box:hover {
+            *[class=\"tag-box\"]:hover {
                 border: 1px solid #009ee0;
-                background-color: #e0e0e0;
+                background-color: #555;
             }
-            .tag-box-checked {
+            /* checked tag box style */
+            *[class=\"tag-box-checked\"] {
                 border: 1px solid #009ee0;
                 border-radius: 12px;
                 background-color: #009ee0;
                 padding: 10px 15px;
             }
-            .tag-box-checked:hover {
+            *[class=\"tag-box-checked\"]:hover {
                 border: 1px solid #00b8ff;
                 background-color: #008bd4;
             }
-            .tag-box-preselected {
+            /* preselected tag box style */
+            *[class=\"tag-box-preselected\"] {
+                border: 2px solid #00b8ff;
+                border-radius: 12px;
+                background-color: #444;
+                padding: 10px 15px;
+            }
+            /* description label styling */
+            *[class=\"tag-box\"] QLabel#TagDesc {
+                color: #ccc;
+            }
+            /* code label styling */
+            *[class=\"tag-box\"] QLabel#TagCode {
+                color: palette(text);
+                font-weight: bold;
+            }
+            /* checked state styling */
+            *[class=\"tag-box-checked\"] QLabel#TagDesc,
+            *[class=\"tag-box-checked\"] QLabel#TagCode {
+                color: #ffffff;
+            }
+        """)
+    else:
+        app.setStyleSheet(app.styleSheet() + """
+            /* base tag box style */
+            *[class=\"tag-box\"] {
+                border: 1px solid #ccc;
+                border-radius: 12px;
+                background-color: #f0f0f0;
+                padding: 10px 15px;
+            }
+            *[class=\"tag-box\"]:hover {
+                border: 1px solid #009ee0;
+                background-color: #e0e0e0;
+            }
+            /* checked tag box style */
+            *[class=\"tag-box-checked\"] {
+                border: 1px solid #009ee0;
+                border-radius: 12px;
+                background-color: #009ee0;
+                padding: 10px 15px;
+            }
+            *[class=\"tag-box-checked\"]:hover {
+                border: 1px solid #00b8ff;
+                background-color: #008bd4;
+            }
+            /* preselected tag box style */
+            *[class=\"tag-box-preselected\"] {
                 border: 2px solid #00b8ff;
                 border-radius: 12px;
                 background-color: #f0f0f0;
                 padding: 10px 15px;
             }
             /* description label styling */
-            TagBox QLabel#TagDesc {
+            *[class=\"tag-box\"] QLabel#TagDesc {
                 color: #333;
             }
             /* code label styling */
-            TagBox QLabel#TagCode {
+            *[class=\"tag-box\"] QLabel#TagCode {
                 color: palette(text);
                 font-weight: bold;
             }
             /* checked state styling */
-            .tag-box-checked QLabel#TagDesc,
-            .tag-box-checked QLabel#TagCode {
+            *[class=\"tag-box-checked\"] QLabel#TagDesc,
+            *[class=\"tag-box-checked\"] QLabel#TagCode {
                 color: #ffffff;
             }
         """)
