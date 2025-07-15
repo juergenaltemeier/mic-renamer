@@ -350,6 +350,10 @@ class RenamerApp(QWidget):
 
     def setup_toolbar(self):
         tb = self.toolbar
+        # unify spacing between toolbar items
+        lt = tb.layout()
+        if lt:
+            lt.setSpacing(6)
         self.toolbar_actions = []
         self.toolbar_action_icons = []
         self.menu_actions = []
@@ -500,16 +504,17 @@ class RenamerApp(QWidget):
 
         tb.addActions(self.toolbar_actions)
 
+        # help button
         self.act_help = QAction(resource_icon("help-blue.svg"), tr("help_title"), self)
         self.act_help.setToolTip(tr("tip_help"))
         self.act_help.triggered.connect(self.show_help)
         tb.addAction(self.act_help)
-
-        # add spacer to push the project number input to the right
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        # insert fixed gap before project code input
+        spacer = QWidget(self)
+        spacer.setFixedWidth(12)
+        spacer.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
         tb.addWidget(spacer)
-
+        # project code input
         self.input_project = OtpInput()
         self.input_project.setText(config_manager.get("last_project_number", ""))
         self.input_project.textChanged.connect(self.save_last_project_number)

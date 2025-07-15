@@ -1,11 +1,21 @@
-venvjurgenrolfaltemeier@Jurgens-MacBook-Pro mic-renamer % pip install -r requirements.txt
-Requirement already satisfied: PySide6 in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 1)) (6.9.1)
-Requirement already satisfied: appdirs in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 2)) (1.4.4)
-Requirement already satisfied: PyYAML in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 3)) (6.0.2)
-Requirement already satisfied: Pillow in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 4)) (11.3.0)
-Requirement already satisfied: pillow-heif in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 5)) (1.0.0)
-Requirement already satisfied: pytest in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 6)) (8.4.1)
-Requirement already satisfied: pytest-qt in ./venv/lib/python3.13/site-packages (from -r requirements.txt (line 7)) (4.5.0)
-ERROR: Could not find a version that satisfies the requirement imageio-ffmpeg>=0.7.0 (from versions: 0.1.1, 0.2.0, 0.3.0, 0.4.0, 0.4.1, 0.4.2, 0.4.3, 0.4.4, 0.4.5, 0.4.6, 0.4.7, 0.4.8, 0.4.9, 0.5.0, 0.5.1, 0.6.0)
-ERROR: No matching distribution found for imageio-ffmpeg>=0.7.0
+venvjurgenrolfaltemeier@Jurgens-MacBook-Pro mic-renamer % python -m mic_renamer
+2025-07-15 15:07:58,626 - mic_renamer.app - INFO - Application starting...
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/__main__.py", line 23, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/__main__.py", line 18, in main
+    app = Application()
+  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/app.py", line 69, in __init__
+    self.window = RenamerApp(state_manager=self.state)
+                  ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/ui/main_window.py", line 121, in __init__
+    self.setup_toolbar()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/ui/main_window.py", line 514, in setup_toolbar
+    lt.addSpacing(12)
+    ^^^^^^^^^^^^^
+AttributeError: 'PySide6.QtWidgets.QLayout' object has no attribute 'addSpacing'. Did you mean: 'setSpacing'?
 venvjurgenrolfaltemeier@Jurgens-MacBook-Pro mic-renamer % 
