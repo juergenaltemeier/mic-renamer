@@ -1,21 +1,10 @@
-venvjurgenrolfaltemeier@Jurgens-MacBook-Pro mic-renamer % python -m mic_renamer
-2025-07-15 15:07:58,626 - mic_renamer.app - INFO - Application starting...
+Unhandled exception in script
+O
+Failed to execute script '_main_' due to unhandled exception: [Errno 2] No such file or directory:
 Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/__main__.py", line 23, in <module>
-    raise SystemExit(main())
-                     ~~~~^^
-  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/__main__.py", line 18, in main
-    app = Application()
-  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/app.py", line 69, in __init__
-    self.window = RenamerApp(state_manager=self.state)
-                  ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/ui/main_window.py", line 121, in __init__
-    self.setup_toolbar()
-    ~~~~~~~~~~~~~~~~~~^^
-  File "/Users/jurgenrolfaltemeier/mic-renamer/mic_renamer/ui/main_window.py", line 514, in setup_toolbar
-    lt.addSpacing(12)
-    ^^^^^^^^^^^^^
-AttributeError: 'PySide6.QtWidgets.QLayout' object has no attribute 'addSpacing'. Did you mean: 'setSpacing'?
-venvjurgenrolfaltemeier@Jurgens-MacBook-Pro mic-renamer % 
+File "mic_renamer\_main_.py", line 23, in <module>
+File "mic_renamer\_main_.py", line 18, in main
+File "mic_renamer\app.py", line 61, in _init_
+File "mic_renamer\ui\theme.py", line 132, in apply_styles
+File "pathlib\_local.py", line 537, in open
+FileNotFoundError: [Errno 2] No such file or directory:

@@ -96,60 +96,65 @@ TRANSLATIONS = {
         'use_original_directory': 'Use current folder?',
         'use_original_directory_msg': 'Save renamed files in their current folder?',
         'compress_after_rename': 'Compress images after renaming',
-        'current_name': 'Current Name'
-        , 'proposed_new_name': 'Proposed New Name'
-        , 'renaming_files': 'Renaming files...'
-        , 'compressing_files': 'Compressing files...'
-        , 'abort': 'Abort'
-        , 'no_tags_configured': 'No tags configured'
-        , 'undo_rename': 'Undo Rename'
-        , 'undo_nothing_title': 'Nothing to Undo'
-        , 'undo_nothing_msg': 'There are no renames to undo.'
-        , 'undo_done': 'Renames reverted.'
-        , 'mode_normal': 'Normal'
-        , 'mode_position': 'Pos Mode Andi'
-        , 'mode_pa_mat': 'PA_MAT Mode Andi'
-        , 'status_selected': '{current} of {total} selected'
-        , 'status_loading': 'Loading...'
-        , 'invalid_tags_title': 'Invalid Tags'
-        , 'invalid_tags_msg': 'Invalid tags: {tags}'
-        , 'invalid_date_title': 'Invalid Date'
-        , 'invalid_date_msg': 'Date must be YYMMDD'
-        , 'open_file': 'Open File'
-        , 'add_tags_for_selected': 'Add Tags for Selected'
-        , 'add_suffix_for_selected': 'Add Suffix for Selected'
-        , 'add_tags': 'Add Tags'
-        , 'enter_comma_separated_tags': 'Enter comma-separated tags:'
-        , 'add_suffix': 'Add Suffix'
-        , 'enter_suffix': 'Enter suffix:'
-        , 'remove_tags_for_selected': 'Remove Tags for Selected'
-        , 'remove_tags': 'Remove Tags'
-        , 'remove_tags_question': 'Do you want to remove specific tags or clear all tags?'
-        , 'remove_specific_tags': 'Remove Specific Tags'
-        , 'clear_all_tags': 'Clear All Tags'
-        , 'set_import_directory': 'Set Import Directory'
-        , 'restore_session_title': 'Restore Session'
-        , 'restore_session_msg': 'A previous session was found. Do you want to restore it?'
-        , 'session_saved': 'Session saved'
-        , 'session_not_saved': 'Session not saved'
-        , 'edit_menu': 'Edit'
-        , 'tip_restore_session': 'Restore the last saved session'
-        , 'no_session_to_restore': 'No session to restore.'
-        , 'session_restored_successfully': 'Session restored successfully.'
-        , 'session_restore_failed': 'Failed to restore session.'
-        , 'help_title': 'Help'
-        , 'tip_help': 'Show help'
-        , 'help_content_html': """
-            <h2>How to Use the Renamer</h2>
+        'current_name': 'Current Name',
+        'proposed_new_name': 'Proposed New Name',
+        'renaming_files': 'Renaming files...',
+        'compressing_files': 'Compressing files...',
+        'abort': 'Abort',
+        'no_tags_configured': 'No tags configured',
+        'undo_rename': 'Undo Rename',
+        'undo_nothing_title': 'Nothing to Undo',
+        'undo_nothing_msg': 'There are no renames to undo.',
+        'undo_done': 'Renames reverted.',
+        'mode_normal': 'Normal',
+        'mode_position': 'Pos Mode Andi',
+        'mode_pa_mat': 'PA_MAT Mode Andi',
+        'status_selected': '{current} of {total} selected',
+        'status_loading': 'Loading...',
+        'invalid_tags_title': 'Invalid Tags',
+        'invalid_tags_msg': 'Invalid tags: {tags}',
+        'invalid_date_title': 'Invalid Date',
+        'invalid_date_msg': 'Date must be YYMMDD',
+        'open_file': 'Open File',
+        'add_tags_for_selected': 'Add Tags for Selected',
+        'add_suffix_for_selected': 'Add Suffix for Selected',
+        'add_tags': 'Add Tags',
+        'enter_comma_separated_tags': 'Enter comma-separated tags:',
+        'add_suffix': 'Add Suffix',
+        'enter_suffix': 'Enter suffix:',
+        'remove_tags_for_selected': 'Remove Tags for Selected',
+        'remove_tags': 'Remove Tags',
+        'remove_tags_question': 'Do you want to remove specific tags or clear all tags?',
+        'remove_specific_tags': 'Remove Specific Tags',
+        'clear_all_tags': 'Clear All Tags',
+        'set_import_directory': 'Set Import Directory',
+        'restore_session_title': 'Restore Session',
+        'restore_session_msg': 'A previous session was found. Do you want to restore it?',
+        'session_saved': 'Session saved',
+        'session_not_saved': 'Session not saved',
+        'edit_menu': 'Edit',
+        'tip_restore_session': 'Restore the last saved session',
+        'no_session_to_restore': 'No session to restore.',
+        'session_restored_successfully': 'Session restored successfully.',
+        'session_restore_failed': 'Failed to restore session.',
+        'help_title': 'Help',
+        'tip_help': 'Show help',
+        'help_content_html': """            <h2>How to Use the Renamer</h2>
             <p>This application helps you rename image and video files based on a project number and descriptive tags.</p>
             <h3>Steps:</h3>
             <ol>
-                <li><b>Set Project Number:</b> Enter the project number (e.g., C123456) in the "MC-No." field.</li>
-                <li><b>Add Files:</b> Use the "Add" menu to add files or folders to the list.</li>
+                <li><b>Set Project Number:</b> Enter the project number (e.g., C123456) in the \"MC-No.\" field.</li>
+                <li><b>Add Files:</b> Use the \"Add\" menu to add files or folders to the list.</li>
                 <li><b>Select Tags:</b> For each file, select one or more tags that describe its content. You can also add a custom suffix.</li>
-                <li><b>Preview:</b> Click "Preview Rename" to see the proposed new filenames.</li>
-                <li><b>Rename:</b> Click "Rename All" or "Rename Selected" to perform the renaming.</li>
+                <li><b>Preview:</b> Click \"Preview Rename\" to see the proposed new filenames.</li>
+                <li><b>Rename:</b> Click \"Rename All\" or \"Rename Selected\" to perform the renaming.</li>
             </ol>
+            <h3>Modes:</h3>
+            <ul>
+                <li><b>Normal Mode:</b> In this mode, you can add tags to your files. The filename will be constructed using the project number, tags, and an optional suffix.</li>
+                <li><b>Position Mode:</b> This mode is designed for specific workflows where files are assigned a position. The filename will be constructed using the project number and the position.</li>
+                <li><b>PA MAT Mode:</b> This mode is for another specific workflow. The filename will be constructed using the project number and the PA_MAT value.</li>
+            </ul>
             <h3>Additional Features:</h3>
             <ul>
                 <li><b>Compression:</b> Compress images to reduce their file size.</li>
@@ -157,14 +162,15 @@ TRANSLATIONS = {
                 <li><b>Undo:</b> Revert the last renaming operation.</li>
                 <li><b>Settings:</b> Customize application settings, such as language and accepted file types.</li>
             </ul>
-        """
-        , 'search_tags': 'Search tags...'
-        , 'delete_selected_files': 'Delete Files'
-        , 'tip_delete_selected_files': 'Delete selected files from disk'
-        , 'delete_files_title': 'Delete Files'
-        , 'delete_files_msg': 'Are you sure you want to delete {count} selected files from disk? This action cannot be undone.'
-        , 'delete_failed_title': 'Delete Failed'
-        , 'delete_failed_msg': 'Failed to delete {path}: {error}'
+        """,
+        'search_tags': 'Search tags...',
+        'delete_selected_files': 'Delete Files',
+        'tip_delete_selected_files': 'Delete selected files from disk',
+        'delete_files_title': 'Delete Files',
+        'delete_files_msg': 'Are you sure you want to delete {count} selected files from disk? This action cannot be undone.',
+        'delete_failed_title': 'Delete Failed',
+        'delete_failed_msg': 'Failed to delete {path}: {error}',
+        'remove_suffix_for_selected': 'Remove Suffix for Selected'
     },
     'de': {
         'app_title': 'Micavac Renamer',
@@ -247,74 +253,79 @@ TRANSLATIONS = {
         'tip_settings': 'Einstellungen öffnen',
         'tip_add_menu': 'Dateien oder Ordner hinzufügen',
         'show_tags': 'Tags anzeigen',
-        'hide_tags': 'Tags ausblenden'
-        , 'current_name': 'Aktueller Name'
-        , 'proposed_new_name': 'Vorgeschlagener neuer Name'
-        , 'renaming_files': 'Dateien werden umbenannt...'
-        , 'compressing_files': 'Bilder werden komprimiert...'
-        , 'abort': 'Abbrechen'
-        , 'no_tags_configured': 'Keine Tags konfiguriert'
-        , 'undo_rename': 'Umbenennung rückgängig'
-        , 'undo_nothing_title': 'Nichts rückgängig'
-        , 'undo_nothing_msg': 'Keine Umbenennungen zum Rückgängigmachen.'
-        , 'undo_done': 'Umbenennungen zurückgesetzt.'
-        , 'config_path_label': 'Konfigurationsordner'
-        , 'config_path_desc': 'Speicherort der Konfigurationsdateien'
-        , 'default_save_dir_label': 'Standard-Speicherordner'
-        , 'default_save_dir_desc': 'Ordner zum Speichern umbenannter Dateien'
-        , 'default_import_dir_label': 'Standard-Importordner'
-        , 'default_import_dir_desc': 'Ordner zum Importieren von Dateien'
-        , 'use_import_dir': 'Standard-Importordner verwenden'
-        , 'use_import_dir_desc': 'Standard-Importordner automatisch öffnen'
-        , 'use_text_menu': 'Nur Text in der Werkzeugleiste'
-        , 'use_text_menu_desc': 'Nur Text statt Symbole in der Werkzeugleiste'
-        , 'use_original_directory': 'Aktuellen Ordner verwenden?'
-        , 'use_original_directory_msg': 'Umbenannte Dateien im aktuellen Ordner speichern?'
-        , 'compress_after_rename': 'Nach dem Umbenennen komprimieren'
-        , 'mode_normal': 'Normal'
-        , 'mode_position': 'Pos Modus Andi'
-        , 'mode_pa_mat': 'PA_MAT Mode Andi'
-        , 'status_selected': '{current} von {total} ausgewählt'
-        , 'status_loading': 'Laden...'
-        , 'invalid_tags_title': 'Ungültige Tags'
-        , 'invalid_tags_msg': 'Ungültige Tags: {tags}'
-        , 'invalid_date_title': 'Ungültiges Datum'
-        , 'invalid_date_msg': 'Datum muss JJMMTT sein'
-        , 'open_file': 'Datei öffnen'
-        , 'add_tags_for_selected': 'Tags für Auswahl hinzufügen'
-        , 'add_suffix_for_selected': 'Suffix für Auswahl hinzufügen'
-        , 'add_tags': 'Tags hinzufügen'
-        , 'enter_comma_separated_tags': 'Tags komma-getrennt eingeben:'
-        , 'add_suffix': 'Suffix hinzufügen'
-        , 'enter_suffix': 'Suffix eingeben:'
-        , 'remove_tags_for_selected': 'Tags von Auswahl entfernen'
-        , 'remove_tags': 'Tags entfernen'
-        , 'remove_tags_question': 'Möchten Sie bestimmte Tags entfernen oder alle Tags löschen?'
-        , 'remove_specific_tags': 'Bestimmte Tags entfernen'
-        , 'clear_all_tags': 'Alle Tags löschen'
-        , 'set_import_directory': 'Importverzeichnis festlegen'
-        , 'restore_session_title': 'Sitzung wiederherstellen'
-        , 'restore_session_msg': 'Eine vorherige Sitzung wurde gefunden. Möchten Sie sie wiederherstellen?'
-        , 'session_saved': 'Sitzung gespeichert'
-        , 'session_not_saved': 'Sitzung nicht gespeichert'
-        , 'edit_menu': 'Bearbeiten'
-        , 'tip_restore_session': 'Letzte gespeicherte Sitzung wiederherstellen'
-        , 'no_session_to_restore': 'Keine Sitzung zum Wiederherstellen vorhanden.'
-        , 'session_restored_successfully': 'Sitzung erfolgreich wiederhergestellt.'
-        , 'session_restore_failed': 'Fehler beim Wiederherstellen der Sitzung.'
-        , 'help_title': 'Hilfe'
-        , 'tip_help': 'Hilfe anzeigen'
-        , 'help_content_html': """
-            <h2>Anleitung zum Renamer</h2>
+        'hide_tags': 'Tags ausblenden',
+        'current_name': 'Aktueller Name',
+        'proposed_new_name': 'Vorgeschlagener neuer Name',
+        'renaming_files': 'Dateien werden umbenannt...',
+        'compressing_files': 'Bilder werden komprimiert...',
+        'abort': 'Abbrechen',
+        'no_tags_configured': 'Keine Tags konfiguriert',
+        'undo_rename': 'Umbenennung rückgängig',
+        'undo_nothing_title': 'Nichts rückgängig',
+        'undo_nothing_msg': 'Keine Umbenennungen zum Rückgängigmachen.',
+        'undo_done': 'Umbenennungen zurückgesetzt.',
+        'config_path_label': 'Konfigurationsordner',
+        'config_path_desc': 'Speicherort der Konfigurationsdateien',
+        'default_save_dir_label': 'Standard-Speicherordner',
+        'default_save_dir_desc': 'Ordner zum Speichern umbenannter Dateien',
+        'default_import_dir_label': 'Standard-Importordner',
+        'default_import_dir_desc': 'Ordner zum Importieren von Dateien',
+        'use_import_dir': 'Standard-Importordner verwenden',
+        'use_import_dir_desc': 'Standard-Importordner automatisch öffnen',
+        'use_text_menu': 'Nur Text in der Werkzeugleiste',
+        'use_text_menu_desc': 'Nur Text statt Symbole in der Werkzeugleiste',
+        'use_original_directory': 'Aktuellen Ordner verwenden?',
+        'use_original_directory_msg': 'Umbenannte Dateien im aktuellen Ordner speichern?',
+        'compress_after_rename': 'Nach dem Umbenennen komprimieren',
+        'mode_normal': 'Normal',
+        'mode_position': 'Pos Modus Andi',
+        'mode_pa_mat': 'PA_MAT Mode Andi',
+        'status_selected': '{current} von {total} ausgewählt',
+        'status_loading': 'Laden...',
+        'invalid_tags_title': 'Ungültige Tags',
+        'invalid_tags_msg': 'Ungültige Tags: {tags}',
+        'invalid_date_title': 'Ungültiges Datum',
+        'invalid_date_msg': 'Datum muss JJMMTT sein',
+        'open_file': 'Datei öffnen',
+        'add_tags_for_selected': 'Tags für Auswahl hinzufügen',
+        'add_suffix_for_selected': 'Suffix für Auswahl hinzufügen',
+        'add_tags': 'Tags hinzufügen',
+        'enter_comma_separated_tags': 'Tags komma-getrennt eingeben:',
+        'add_suffix': 'Suffix hinzufügen',
+        'enter_suffix': 'Suffix eingeben:',
+        'remove_tags_for_selected': 'Tags von Auswahl entfernen',
+        'remove_tags': 'Tags entfernen',
+        'remove_tags_question': 'Möchten Sie bestimmte Tags entfernen oder alle Tags löschen?',
+        'remove_specific_tags': 'Bestimmte Tags entfernen',
+        'clear_all_tags': 'Alle Tags löschen',
+        'set_import_directory': 'Importverzeichnis festlegen',
+        'restore_session_title': 'Sitzung wiederherstellen',
+        'restore_session_msg': 'Eine vorherige Sitzung wurde gefunden. Möchten Sie sie wiederherstellen?',
+        'session_saved': 'Sitzung gespeichert',
+        'session_not_saved': 'Sitzung nicht gespeichert',
+        'edit_menu': 'Bearbeiten',
+        'tip_restore_session': 'Letzte gespeicherte Sitzung wiederherstellen',
+        'no_session_to_restore': 'Keine Sitzung zum Wiederherstellen vorhanden.',
+        'session_restored_successfully': 'Sitzung erfolgreich wiederhergestellt.',
+        'session_restore_failed': 'Fehler beim Wiederherstellen der Sitzung.',
+        'help_title': 'Hilfe',
+        'tip_help': 'Hilfe anzeigen',
+        'help_content_html': """            <h2>Anleitung zum Renamer</h2>
             <p>Diese Anwendung hilft Ihnen, Bild- und Videodateien basierend auf einer Projektnummer und beschreibenden Tags umzubenennen.</p>
             <h3>Schritte:</h3>
             <ol>
-                <li><b>Projektnummer festlegen:</b> Geben Sie die Projektnummer (z. B. C123456) in das Feld "MC-Nr." ein.</li>
-                <li><b>Dateien hinzufügen:</b> Verwenden Sie das Menü "Hinzufügen", um Dateien oder Ordner zur Liste hinzuzufügen.</li>
+                <li><b>Projektnummer festlegen:</b> Geben Sie die Projektnummer (z. B. C123456) in das Feld \"MC-Nr.\" ein.</li>
+                <li><b>Dateien hinzufügen:</b> Verwenden Sie das Menü \"Hinzufügen\", um Dateien oder Ordner zur Liste hinzuzufügen.</li>
                 <li><b>Tags auswählen:</b> Wählen Sie für jede Datei ein oder mehrere Tags aus, die den Inhalt beschreiben. Sie können auch einen benutzerdefinierten Suffix hinzufügen.</li>
-                <li><b>Vorschau:</b> Klicken Sie auf "Umbenennen Vorschau", um die vorgeschlagenen neuen Dateinamen anzuzeigen.</li>
-                <li><b>Umbenennen:</b> Klicken Sie auf "Alle umbenennen" oder "Nur Auswahl umbenennen", um die Umbenennung durchzuführen.</li>
+                <li><b>Vorschau:</b> Klicken Sie auf \"Umbenennen Vorschau\", um die vorgeschlagenen neuen Dateinamen anzuzeigen.</li>
+                <li><b>Umbenennen:</b> Klicken Sie auf \"Alle umbenennen\" oder \"Nur Auswahl umbenennen\", um die Umbenennung durchzuführen.</li>
             </ol>
+            <h3>Modi:</h3>
+            <ul>
+                <li><b>Normal-Modus:</b> In diesem Modus können Sie Tags zu Ihren Dateien hinzufügen. Der Dateiname wird aus der Projektnummer, den Tags und einem optionalen Suffix zusammengesetzt.</li>
+                <li><b>Positions-Modus:</b> Dieser Modus ist für spezielle Arbeitsabläufe gedacht, bei denen Dateien eine Position zugewiesen wird. Der Dateiname wird aus der Projektnummer und der Position zusammengesetzt.</li>
+                <li><b>PA-MAT-Modus:</b> Dieser Modus ist für einen weiteren speziellen Arbeitsablauf vorgesehen. Der Dateiname wird aus der Projektnummer und dem PA_MAT-Wert zusammengesetzt.</li>
+            </ul>
             <h3>Zusätzliche Funktionen:</h3>
             <ul>
                 <li><b>Komprimierung:</b> Komprimieren Sie Bilder, um deren Dateigröße zu reduzieren.</li>
@@ -322,14 +333,15 @@ TRANSLATIONS = {
                 <li><b>Rückgängig:</b> Machen Sie die letzte Umbenennungsoperation rückgängig.</li>
                 <li><b>Einstellungen:</b> Passen Sie die Anwendungseinstellungen an, wie z. B. die Sprache und die akzeptierten Dateitypen.</li>
             </ul>
-        """
-        , 'search_tags': 'Tags suchen...'
-        , 'delete_selected_files': 'Dateien löschen'
-        , 'tip_delete_selected_files': 'Ausgewählte Dateien von der Festplatte löschen'
-        , 'delete_files_title': 'Dateien löschen'
-        , 'delete_files_msg': 'Möchten Sie {count} ausgewählte Dateien von der Festplatte löschen? Diese Aktion kann nicht rückgängig gemacht werden.'
-        , 'delete_failed_title': 'Löschen fehlgeschlagen'
-        , 'delete_failed_msg': 'Fehler beim Löschen von {path}: {error}'
+        """,
+        'search_tags': 'Tags suchen...',
+        'delete_selected_files': 'Dateien löschen',
+        'tip_delete_selected_files': 'Ausgewählte Dateien von der Festplatte löschen',
+        'delete_files_title': 'Dateien löschen',
+        'delete_files_msg': 'Möchten Sie {count} ausgewählte Dateien von der Festplatte löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+        'delete_failed_title': 'Löschen fehlgeschlagen',
+        'delete_failed_msg': 'Fehler beim Löschen von {path}: {error}',
+        'remove_suffix_for_selected': 'Suffix für Auswahl entfernen'
     }
 }
 
@@ -337,7 +349,6 @@ def set_language(lang: str):
     global current_language
     if lang in TRANSLATIONS:
         current_language = lang
-
 
 def tr(key: str) -> str:
     return TRANSLATIONS.get(current_language, {}).get(key, key)

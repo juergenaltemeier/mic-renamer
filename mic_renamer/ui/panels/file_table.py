@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QMenu,
     QInputDialog,
     QMessageBox,
+    QStyledItemDelegate,
 )
 from PySide6.QtGui import QAction, QDesktopServices
 from PySide6.QtCore import (
@@ -32,6 +33,27 @@ from PySide6.QtWidgets import QLineEdit
 
 ROLE_SETTINGS = Qt.UserRole + 1
 log = logging.getLogger(__name__)
+
+
+class CustomDelegate(QStyledItemDelegate):
+    def createEditor(self, parent, option, index):
+        editor = super().createEditor(parent, option, index)
+        if isinstance(editor, QLineEdit):
+            editor.setContextMenuPolicy(Qt.CustomContextMenu)
+            editor.customContextMenuRequested.connect(self.show_editor_context_menu)
+        return editor
+
+    def show_editor_context_menu(self, pos):
+        editor = self.sender()
+        if not isinstance(editor, QLineEdit):
+            return
+
+        table = self.parent()
+        if not isinstance(table, DragDropTableWidget):
+            return
+
+        menu = table._create_context_menu()
+        menu.exec_(editor.mapToGlobal(pos))
 
 
 class DragDropTableWidget(QTableWidget):
@@ -74,7 +96,6 @@ class DragDropTableWidget(QTableWidget):
         self.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
         self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         # ensure consistent row height
-        self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(28)
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
         # removed internal cellChanged handler to avoid double state updates and conflicts
@@ -82,10 +103,11 @@ class DragDropTableWidget(QTableWidget):
         self._initial_columns = False
         QTimer.singleShot(0, self.set_equal_column_widths)
 
+        self.setItemDelegate(CustomDelegate(self))
         # allow intercepting clicks for single-click editing
         self.viewport().installEventFilter(self)
 
-    def contextMenuEvent(self, event):
+    def _create_context_menu(self):
         menu = QMenu(self)
         has_selection = self.selectionModel().hasSelection()
 
@@ -112,6 +134,11 @@ class DragDropTableWidget(QTableWidget):
         set_suffix_action.setEnabled(has_selection)
         menu.addAction(set_suffix_action)
 
+        clear_suffix_action = QAction(tr("remove_suffix_for_selected"), self)
+        clear_suffix_action.triggered.connect(self.clear_suffix_requested.emit)
+        clear_suffix_action.setEnabled(has_selection)
+        menu.addAction(clear_suffix_action)
+
         menu.addSeparator()
 
         delete_selected_action = QAction(tr("delete_selected_files"), self)
@@ -124,17 +151,19 @@ class DragDropTableWidget(QTableWidget):
         remove_selected_action.setEnabled(has_selection)
         menu.addAction(remove_selected_action)
 
-        clear_suffix_action = QAction(tr("clear_suffix"), self)
-        clear_suffix_action.triggered.connect(self.clear_suffix_requested.emit)
-        clear_suffix_action.setEnabled(has_selection)
-        menu.addAction(clear_suffix_action)
-
         menu.addSeparator()
 
         clear_list_action = QAction(tr("clear_list"), self)
         clear_list_action.triggered.connect(self.clear_list_requested.emit)
         menu.addAction(clear_list_action)
 
+        return menu
+
+    def contextMenuEvent(self, event):
+        if self.state() == QAbstractItemView.EditingState:
+            return
+        
+        menu = self._create_context_menu()
         menu.exec_(event.globalPos())
 
     def set_tags_for_selected(self):

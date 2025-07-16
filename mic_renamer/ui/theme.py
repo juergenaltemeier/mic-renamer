@@ -4,6 +4,7 @@ from importlib import resources
 
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QStyle
+from . import styles
 from .. import config_manager
 
 
@@ -124,9 +125,9 @@ def apply_styles(app: QApplication, theme: str = "dark") -> None:
     app.setStyle("Fusion")
     
     if theme == "dark":
-        qss_path = resources.files("mic_renamer.ui.styles") / "dark_style.qss"
+        qss_path = resources.files(styles) / "dark_style.qss"
     else:
-        qss_path = resources.files("mic_renamer.ui.styles") / "shadcn_style.qss"
+        qss_path = resources.files(styles) / "shadcn_style.qss"
         
     with qss_path.open("r") as f:
         app.setStyleSheet(f.read())
