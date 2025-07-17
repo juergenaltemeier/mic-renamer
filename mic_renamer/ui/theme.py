@@ -73,6 +73,7 @@ def apply_tag_box_style(app: QApplication) -> None:
             }
         """)
     else:
+        # Light mode tag box styling
         app.setStyleSheet(app.styleSheet() + """
             /* base tag box style */
             *[class=\"tag-box\"] {
@@ -109,7 +110,7 @@ def apply_tag_box_style(app: QApplication) -> None:
             }
             /* code label styling */
             *[class=\"tag-box\"] QLabel#TagCode {
-                color: palette(text);
+                color: #09090b;
                 font-weight: bold;
             }
             /* checked state styling */

@@ -52,5 +52,6 @@
   "VU": {"en": "Vacuum unit", "de": "Vakuumeinheit"},
   "VU1": {"en": "Vaccum Unit Bottom", "de": "Vakuumeinheit unten"},
   "VU2": {"en": "Vaccum Unit Top", "de": "Vakuumeinheit oben"},
-  "WIRE": {"en": "Wiring and pneumatic", "de": "Verkabelung und Pneumatik"}
+  "WIRE": {"en": "Wiring and pneumatic", "de": "Verkabelung und Pneumatik"},
+  "FOUND": {"en": "Foundations", "de": "Fundamente"}
 }

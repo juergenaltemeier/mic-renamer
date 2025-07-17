@@ -45,7 +45,8 @@ BUNDLED_TAGS_JSON = """{  "AU": {"en": "Autoclave", "de": "Autoclave"},
   "TOOL": {"en": "Tools for ISO press", "de": "Tools for ISO press"},
   "VC": {"en": "Vacuum connection", "de": "Vacuum connection"},
   "VU": {"en": "Vacuum unit", "de": "Vacuum unit"},
-  "WIRE": {"en": "wiring and pneumatic", "de": "wiring and pneumatic"}
+  "WIRE": {"en": "wiring and pneumatic", "de": "wiring and pneumatic"},
+  "FOUND": {"en": "Foundations", "de": "Fundamente"}
 } """
 
 
