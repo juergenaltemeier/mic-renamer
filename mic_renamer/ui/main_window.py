@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
     QFileDialog, QInputDialog, QMessageBox,
     QApplication, QLabel,
-    QProgressDialog, QDialog, QDialogButtonBox,
+    QProgressDialog, QDialog, QDialogButtonBox, QComboBox,
     QTableWidget, QTableWidgetItem,
     QMenu, QToolButton, QSizePolicy, QToolBar
 )
@@ -105,6 +105,7 @@ class RenamerApp(QWidget):
         self.undo_manager = UndoManager()
         self.rename_mode = MODE_NORMAL
         self._preview_thread: QThread | None = None
+        self._rename_thread = None
         self._preview_loader: PreviewLoader | None = None
         self._session_recording_started = False
         self.setWindowTitle(tr("app_title"))
@@ -193,6 +194,13 @@ class RenamerApp(QWidget):
         table_layout.setSpacing(DEFAULT_SPACING)
 
         self.mode_tabs = ModeTabs()
+        # mode selection combobox
+        self.combo_mode = QComboBox()
+        self.combo_mode.addItem(tr("mode_normal"), MODE_NORMAL)
+        self.combo_mode.addItem(tr("mode_position"), MODE_POSITION)
+        self.combo_mode.addItem(tr("mode_pa_mat"), MODE_PA_MAT)
+        self.combo_mode.currentIndexChanged.connect(self.mode_tabs.tabs.setCurrentIndex)
+        self.toolbar.addWidget(self.combo_mode)
         self.table_widget: QTableWidget = self.mode_tabs.current_table()
         self.mode_tabs.tabs.currentChanged.connect(self.on_tab_changed)
 
@@ -527,6 +535,8 @@ class RenamerApp(QWidget):
         self.input_project.setText(config_manager.get("last_project_number", ""))
         self.input_project.textChanged.connect(self.save_last_project_number)
         tb.addWidget(self.input_project)
+        # alias for tests
+        self.project_input = self.input_project
 
         
 

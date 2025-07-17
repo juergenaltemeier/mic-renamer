@@ -45,20 +45,20 @@ class Renamer:
         if self.mode == "pa_mat":
             groups: dict[str, list[ItemSettings]] = defaultdict(list)
             for item in self.items:
-                groups[item.date].append(item)
+                key = item.pa_mat or item.date
+                groups[key].append(item)
 
-            mapping = []
-            for date, items_in_group in groups.items():
+            mapping: list[tuple[ItemSettings, str, str]] = []
+            for key, items_in_group in groups.items():
                 use_index = len(items_in_group) > 1
                 counter = self.config.start_index
                 for item in items_in_group:
-                    base = f"{self.project}_PA_MAT_{item.date}"
+                    base = f"{self.project}_PA_MAT{key}"
                     if use_index:
-                        base += f"_{counter:02d}"
+                        base += f"{self.config.separator}{counter:0{self.config.index_padding}d}"
                         counter += 1
                     if item.suffix:
-                        base += f"_{item.suffix}"
-                    
+                        base += f"{self.config.separator}{item.suffix}"
                     ext = os.path.splitext(item.original_path)[1]
                     new_basename = base + ext
                     dirpath = self.dest_dir or os.path.dirname(item.original_path)

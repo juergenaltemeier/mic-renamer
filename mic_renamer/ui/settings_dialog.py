@@ -189,26 +189,33 @@ class SettingsDialog(QDialog):
         reset_counts()
 
     def restore_defaults(self):
-        self.cfg = config_manager.restore_defaults()
-        from ..logic.tag_loader import restore_default_tags
-        restore_default_tags()
-        self.edit_ext.setText(", ".join(self.cfg.get("accepted_extensions", [])))
-        self.edit_save_dir.setText(self.cfg.get('default_save_directory', ''))
-        self.chk_toolbar_text.setChecked(
-            self.cfg.get("toolbar_style", "icons") == "text"
+        from PySide6.QtWidgets import QMessageBox, QApplication
+        import shutil
+        from pathlib import Path
+
+        title = tr("restore_defaults")
+        msg = (
+            "This will delete all application settings and reset to factory defaults. "
+            "The application will now close and must be restarted. Continue?"
         )
-        lang = self.cfg.get("language", "en")
-        idx = self.combo_lang.findText(lang)
-        if idx >= 0:
-            self.combo_lang.setCurrentIndex(idx)
-        tags = load_tags(BUNDLED_TAGS_FILE, language=lang)
-        self.tbl_tags.setRowCount(0)
-        for code, desc in tags.items():
-            row = self.tbl_tags.rowCount()
-            self.tbl_tags.insertRow(row)
-            self.tbl_tags.setItem(row, 0, QTableWidgetItem(code))
-            self.tbl_tags.setItem(row, 1, QTableWidgetItem(desc))
-        self.compression_panel.restore_defaults()
+        reply = QMessageBox.question(
+            self, title, msg, QMessageBox.Yes | QMessageBox.No
+        )
+        if reply != QMessageBox.Yes:
+            return
+        config_path = Path(config_manager.config_dir)
+        try:
+            if config_path.exists():
+                shutil.rmtree(config_path)
+        except Exception as e:
+            QMessageBox.warning(self, title, f"Failed to reset settings: {e}")
+            return
+        QMessageBox.information(
+            self,
+            title,
+            "Factory defaults restored. The application will now exit. Please restart.",
+        )
+        QApplication.instance().quit()
 
     def closeEvent(self, event):
         if self.state_manager:

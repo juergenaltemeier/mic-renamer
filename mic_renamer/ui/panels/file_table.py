@@ -519,6 +519,13 @@ class DragDropTableWidget(QTableWidget):
     def normalize_path(self, path: str) -> str:
         return path.replace("\\", "/")
 
+    def get_item_by_row(self, row: int) -> ItemSettings | None:
+        """Return the ItemSettings for the given table row."""
+        item0 = self.item(row, 1)
+        if not item0:
+            return None
+        return item0.data(ROLE_SETTINGS)
+
     def on_selection_changed(
         self, selected: QItemSelection, deselected: QItemSelection
     ) -> None:
