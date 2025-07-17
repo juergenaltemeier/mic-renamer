@@ -124,9 +124,9 @@ class RenamerApp(QWidget):
 
         # no separate selected file display
 
-        # main splitter between preview and table
+        # main splitter between preview and table; will be nested in a vertical splitter with tag panel
         self.splitter = QSplitter(Qt.Horizontal)
-        main_layout.addWidget(self.splitter, 1)
+        # placeholder: do not add to layout yet, will be added after tag panel is created
 
         viewer_widget = QWidget()
         viewer_layout = QVBoxLayout(viewer_widget)
@@ -266,13 +266,26 @@ class RenamerApp(QWidget):
         btn_layout.addWidget(self.btn_toggle_tags)
         btn_layout.addStretch()
         main_layout.addLayout(btn_layout)
-
+        # Tag panel container (will be in vertical splitter)
         self.tag_container = QWidget()
         tag_container_layout = QVBoxLayout(self.tag_container)
         tag_container_layout.setContentsMargins(0, 0, 0, 0)
+        tag_container_layout.setSpacing(0)
         tag_container_layout.addWidget(self.tag_panel)
-        self.tag_container.setMaximumHeight(200)  # Limit the height of the tag panel area
-        main_layout.addWidget(self.tag_container)
+        # Allow resizing: wrap horizontal splitter and tag container in a vertical splitter
+        self.tag_splitter = QSplitter(Qt.Vertical)
+        self.tag_splitter.addWidget(self.splitter)
+        self.tag_splitter.addWidget(self.tag_container)
+        # Restore saved sizes if available
+        sizes = config_manager.get("tag_panel_splitter_sizes", None)
+        if sizes:
+            try:
+                self.tag_splitter.setSizes(sizes)
+            except Exception:
+                pass
+        # Save sizes on user resize
+        self.tag_splitter.splitterMoved.connect(self._on_tag_splitter_moved)
+        main_layout.addWidget(self.tag_splitter, 1)
         
         status_layout = QHBoxLayout()
         self.lbl_status = QLabel()
@@ -288,7 +301,8 @@ class RenamerApp(QWidget):
         main_layout.addLayout(status_layout)
 
         visible = config_manager.get("tag_panel_visible", False)
-        self.tag_panel.setVisible(visible)
+        # initial visibility of tag container
+        self.tag_container.setVisible(visible)
         self.btn_toggle_tags.setChecked(visible)
         self.btn_toggle_tags.setToolTip(tr("hide_tags") if visible else tr("show_tags"))
         
@@ -357,9 +371,18 @@ class RenamerApp(QWidget):
             self.splitter.setSizes(sizes)
 
     def toggle_tag_panel(self, checked: bool):
-        self.tag_panel.setVisible(checked)
+        # Show/hide the tag panel container in the splitter
+        self.tag_container.setVisible(checked)
         self.btn_toggle_tags.setToolTip(tr("hide_tags") if checked else tr("show_tags"))
         config_manager.set("tag_panel_visible", checked)
+    
+    def _on_tag_splitter_moved(self, pos: int, index: int) -> None:
+        """Save vertical splitter sizes when user resizes tag panel."""
+        try:
+            sizes = self.tag_splitter.sizes()
+            config_manager.set("tag_panel_splitter_sizes", sizes)
+        except Exception:
+            pass
 
     def rebuild_tag_checkboxes(self):
         self.tag_panel.rebuild()
