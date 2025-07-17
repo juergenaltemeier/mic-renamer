@@ -165,27 +165,33 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
     background: none;
 }
 /* TagBox styling */
-QCheckBox[class="tag-box"],
-QCheckBox[class="tag-box-preselected"],
-QCheckBox[class="tag-box-checked"] {
+QCheckBox[class="tag-box"] {
     margin: 0px;
     padding: 0px;
-}
-QCheckBox[class="tag-box"]::indicator,
-QCheckBox[class="tag-box-preselected"]::indicator,
-QCheckBox[class="tag-box-checked"]::indicator {
-    width: 16px;
-    height: 16px;
-    margin: 0px;
-    padding: 0px;
+    border: 1px solid #333333;
+    background-color: #2b2b2b;
+    color: #f0f0f0;
 }
 QCheckBox[class="tag-box-preselected"] {
+    margin: 0px;
+    padding: 0px;
     border: 1px solid #ffa500;
     background-color: #555555;
     color: white;
 }
 QCheckBox[class="tag-box-checked"] {
+    margin: 0px;
+    padding: 0px;
     border: 1px solid #009ee0;
     background-color: #009ee0;
     color: white;
+}
+/* Hide the default checkbox indicator */
+QCheckBox[class="tag-box"]::indicator,
+QCheckBox[class="tag-box-preselected"]::indicator,
+QCheckBox[class="tag-box-checked"]::indicator {
+    width: 0px;
+    height: 0px;
+    margin: 0px;
+    padding: 0px;
 }

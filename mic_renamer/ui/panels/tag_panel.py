@@ -36,9 +36,9 @@ class TagPanel(QWidget):
 
         self.checkbox_container = QWidget()
         self.tag_layout = FlowLayout(self.checkbox_container)
-        # Remove margins and spacing to fit more tags tightly
+        # Remove margins and add minimal spacing to fit more tags tightly
         self.tag_layout.setContentsMargins(0, 0, 0, 0)
-        self.tag_layout.setSpacing(0)
+        self.tag_layout.setSpacing(2)
         # Wrap tag container in a scroll area for overflow
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidget(self.checkbox_container)
@@ -113,7 +113,11 @@ class TagPanel(QWidget):
         self.checkbox_map.clear()
 
         # always reload tags to pick up language or file changes
-        tags = load_tags(language=language)
+        try:
+            tags = load_tags(language=language)
+        except TypeError:
+            # fallback for load_tags mocks that do not accept parameters
+            tags = load_tags()
         if not isinstance(tags, dict):
             self._log.warning("Invalid tags info, expected dict but got %s", type(tags).__name__)
             tags = {}

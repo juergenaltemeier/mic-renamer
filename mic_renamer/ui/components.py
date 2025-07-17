@@ -94,3 +94,8 @@ class TagBox(EnterToggleCheckBox):
             self.setProperty("class", "tag-box")
         self.style().unpolish(self)
         self.style().polish(self)
+    
+    def setChecked(self, checked: bool) -> None:
+        # Ensure visual style updates even when toggled signals are blocked
+        super().setChecked(checked)
+        self._update_style(self.isChecked())
