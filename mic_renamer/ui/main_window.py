@@ -220,6 +220,10 @@ class RenamerApp(QWidget):
         (self.mode_tabs.normal_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
         (self.mode_tabs.position_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
         (self.mode_tabs.pa_mat_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
+        # Append suffix to selected rows via context menu
+        (self.mode_tabs.normal_tab).append_suffix_requested.connect(self.add_suffix_for_selected)
+        (self.mode_tabs.position_tab).append_suffix_requested.connect(self.add_suffix_for_selected)
+        (self.mode_tabs.pa_mat_tab).append_suffix_requested.connect(self.add_suffix_for_selected)
 
         (self.mode_tabs.normal_tab).clear_list_requested.connect(self.clear_all)
         (self.mode_tabs.position_tab).clear_list_requested.connect(self.clear_all)
@@ -1181,6 +1185,45 @@ class RenamerApp(QWidget):
                 finally:
                     self._ignore_table_changes = False
                 cell.setToolTip("")
+            self.update_row_background(row, settings)
+        self.table_widget.sync_check_column()
+        self.on_table_selection_changed()
+        self._session_save_timer.start()
+    
+    def add_suffix_for_selected(self) -> None:
+        """Prompt for a suffix and append it to all selected rows."""
+        text, ok = QInputDialog.getText(
+            self,
+            tr("add_suffix"),
+            tr("enter_suffix")
+        )
+        if not ok or not text:
+            return
+        suffix_to_append = text.strip()
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        if not rows:
+            return
+        self.table_widget.setSortingEnabled(False)
+        for row in rows:
+            item0 = self.table_widget.item(row, 1)
+            if not item0:
+                continue
+            settings: ItemSettings = item0.data(ROLE_SETTINGS)
+            if settings is None:
+                settings = ItemSettings(item0.data(int(Qt.ItemDataRole.UserRole)))
+                item0.setData(ROLE_SETTINGS, settings)
+            # Append suffix
+            settings.suffix += suffix_to_append
+            cell = self.table_widget.item(row, 4)
+            if not cell:
+                cell = QTableWidgetItem()
+                self.table_widget.setItem(row, 4, cell)
+            self._ignore_table_changes = True
+            try:
+                cell.setText(settings.suffix)
+                cell.setToolTip(settings.suffix)
+            finally:
+                self._ignore_table_changes = False
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         self.on_table_selection_changed()
