@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QMenu, QToolButton, QSizePolicy, QToolBar
 )
 from PySide6.QtGui import QAction, QPixmap, QPixmapCache, QImage
-from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot
+from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot, QItemSelectionModel
 
 from .. import config_manager
 from ..utils.i18n import tr, set_language
@@ -822,20 +822,15 @@ class RenamerApp(QWidget):
                 intersect &= st.tags
                 union |= st.tags
             for code, cb in self.tag_panel.checkbox_map.items():
-                desc = self.tag_panel.tags_info.get(code, "")
                 cb.blockSignals(True)
-                # clear any checkbox text to avoid duplication
-                cb.checkbox.setText("")
                 if code in intersect:
-                    cb.checkbox.setTristate(False)
-                    cb.checkbox.setCheckState(Qt.Checked)
+                    cb.set_preselected(False)
                     cb.setChecked(True)
                 elif code in union:
-                    cb.checkbox.setTristate(True)
-                    cb.checkbox.setCheckState(Qt.PartiallyChecked)
+                    cb.set_preselected(True)
+                    cb.setChecked(False)
                 else:
-                    cb.checkbox.setTristate(False)
-                    cb.checkbox.setCheckState(Qt.Unchecked)
+                    cb.set_preselected(False)
                     cb.setChecked(False)
                 cb.blockSignals(False)
 
@@ -967,6 +962,8 @@ class RenamerApp(QWidget):
     def on_table_item_changed(self, item: QTableWidgetItem):
         if self._ignore_table_changes:
             return
+        # preserve multi-row selection before edit
+        prev_rows = {idx.row() for idx in self.table_widget.selectionModel().selectedRows()}
         row = item.row()
         col = item.column()
         valid_cols = (2, 3, 4) if self.rename_mode == MODE_NORMAL else (2, 4)
@@ -1028,7 +1025,13 @@ class RenamerApp(QWidget):
             settings.suffix = new_suffix
             item.setToolTip(settings.suffix)
         self.update_row_background(row, settings)
-        if row in {idx.row() for idx in self.table_widget.selectionModel().selectedRows()}:
+        # restore multi-row selection to survive edits
+        sel_model = self.table_widget.selectionModel()
+        for r in prev_rows:
+            idx0 = self.table_widget.model().index(r, 0)
+            sel_model.select(idx0, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+        # update preview only if current row was edited
+        if row in prev_rows:
             self.on_table_selection_changed()
         self._session_save_timer.start()
 
@@ -1396,6 +1399,35 @@ class RenamerApp(QWidget):
             for settings, orig, new in mapping:
                 full.append((mode, settings, orig, new))
         return full
+    
+    def rename_selected(self):
+        """Rename only the selected files using current project and mode."""
+        rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        project = self.input_project.text().strip()
+        # collect settings for selected rows
+        items = []
+        for row in rows:
+            item0 = self.table_widget.item(row, 1)
+            if not item0:
+                continue
+            settings = item0.data(ROLE_SETTINGS)
+            if settings:
+                items.append(settings)
+        if not items:
+            return
+        # build rename mapping for selected items
+        renamer = Renamer(project, items, mode=self.rename_mode)
+        mapping = renamer.build_mapping()
+        # prepare final mapping with row indices
+        final_mapping = []
+        for settings, orig, new_path in mapping:
+            # find corresponding row
+            for row in rows:
+                item0 = self.table_widget.item(row, 1)
+                if item0 and item0.data(int(Qt.ItemDataRole.UserRole)) == orig:
+                    final_mapping.append((row, orig, os.path.basename(new_path), new_path))
+                    break
+        self.execute_rename_with_progress(final_mapping)
 
     def choose_save_directory(self) -> str | None:
         reply = QMessageBox.question(

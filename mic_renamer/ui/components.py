@@ -59,79 +59,38 @@ class EnterToggleCheckBox(QCheckBox):
             super().keyPressEvent(event)
 
 
-class TagBox(QWidget):
-    """A custom widget that displays a tag with a checkbox in a styled box."""
-
-    toggled = Signal(bool)
-
+class TagBox(EnterToggleCheckBox):
+    """A custom checkbox that displays a tag as rich text."""
     def __init__(self, code: str, description: str, parent=None):
         super().__init__(parent)
         self.code = code
         self.description = description
-        self.is_checked = False
         self._preselected = False
 
-        self.setContentsMargins(0, 0, 0, 0)
-
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(5, 5, 5, 5)
-        layout.setSpacing(8)
-
-        # checkbox indicator
-        self.checkbox = EnterToggleCheckBox()
-        self.checkbox.toggled.connect(self._update_style)
-        self.checkbox.toggled.connect(self.toggled)
-        layout.addWidget(self.checkbox)
-
-        # tag code label (bold)
-        self.code_label = QLabel(code.upper())
-        self.code_label.setObjectName("TagCode")
-        layout.addWidget(self.code_label)
-
-        # description label (lighter text)
-        self.desc_label = QLabel(description)
-        self.desc_label.setObjectName("TagDesc")
-        layout.addWidget(self.desc_label)
-
-        layout.addStretch()
-        # initial style update
-        self._update_style(self.is_checked)
-        self.setToolTip(f"{self.code}: {self.description}")
+        # display code on first line and description on second line
+        self.setText(f"{code.upper()}\n{description}")
+        self.setToolTip(f"{code}: {description}")
+        # style update on toggle
+        self.toggled.connect(self._update_style)
+        self._update_style(self.isChecked())
 
     def set_text(self, code: str, description: str):
-        """Update the text of the code and description labels."""
         self.code = code
         self.description = description
-        self.code_label.setText(code.upper())
-        self.desc_label.setText(description)
-        self.setToolTip(f"{self.code}: {self.description}")
+        self.setText(f"{code.upper()}\n{description}")
+        self.setToolTip(f"{code}: {description}")
 
     def set_preselected(self, preselected: bool):
         if self._preselected != preselected:
             self._preselected = preselected
-            self._update_style(self.is_checked)
+            self._update_style(self.isChecked())
 
-    def _update_style(self, checked):
-        self.is_checked = checked
+    def _update_style(self, checked: bool):
         if self._preselected:
             self.setProperty("class", "tag-box-preselected")
         elif checked:
             self.setProperty("class", "tag-box-checked")
         else:
             self.setProperty("class", "tag-box")
-
         self.style().unpolish(self)
         self.style().polish(self)
-
-    def mousePressEvent(self, event):
-        self.checkbox.toggle()
-        event.accept()
-
-    def setChecked(self, checked):
-        self.checkbox.setChecked(checked)
-
-    def isChecked(self):
-        return self.checkbox.isChecked()
-
-    def toggle(self):
-        self.checkbox.toggle()
