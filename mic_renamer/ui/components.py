@@ -98,6 +98,14 @@ class TagBox(QWidget):
         self._update_style(self.is_checked)
         self.setToolTip(f"{self.code}: {self.description}")
 
+    def set_text(self, code: str, description: str):
+        """Update the text of the code and description labels."""
+        self.code = code
+        self.description = description
+        self.code_label.setText(code.upper())
+        self.desc_label.setText(description)
+        self.setToolTip(f"{self.code}: {self.description}")
+
     def set_preselected(self, preselected: bool):
         if self._preselected != preselected:
             self._preselected = preselected

@@ -1,10 +1,19 @@
-Unhandled exception in script
-O
-Failed to execute script '_main_' due to unhandled exception: [Errno 2] No such file or directory:
+PS D:\mic-renamer> python -m mic_renamer
 Traceback (most recent call last):
-File "mic_renamer\_main_.py", line 23, in <module>
-File "mic_renamer\_main_.py", line 18, in main
-File "mic_renamer\app.py", line 61, in _init_
-File "mic_renamer\ui\theme.py", line 132, in apply_styles
-File "pathlib\_local.py", line 537, in open
-FileNotFoundError: [Errno 2] No such file or directory:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\mic-renamer\mic_renamer\__main__.py", line 7, in <module>
+    from mic_renamer.app import Application
+  File "D:\mic-renamer\mic_renamer\app.py", line 11, in <module>
+    from .ui.main_window import RenamerApp
+  File "D:\mic-renamer\mic_renamer\ui\main_window.py", line 19, in <module>
+    from .settings_dialog import SettingsDialog
+  File "D:\mic-renamer\mic_renamer\ui\settings_dialog.py", line 18, in <module>
+    from .panels import CompressionSettingsPanel
+  File "D:\mic-renamer\mic_renamer\ui\panels\__init__.py", line 3, in <module>
+    from .tag_panel import TagPanel
+  File "D:\mic-renamer\mic_renamer\ui\panels\tag_panel.py", line 5, in <module>
+    from ..components import TagBox
+  File "D:\mic-renamer\mic_renamer\ui\components.py", line 99
+    def set_text(self, code: str, description: str):
+IndentationError: unexpected indent

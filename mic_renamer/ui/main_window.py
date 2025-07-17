@@ -1324,11 +1324,36 @@ class RenamerApp(QWidget):
             config_manager.set('default_save_directory', directory)
         return directory or None
 
+    def _start_rename_from_preview(self, table_mapping: list[tuple[str, int, str, str, str]]):
+        """Handle the rename process after preview confirmation."""
+        dlg = RenameOptionsDialog(self)
+        if dlg.exec() != QDialog.Accepted:
+            return
+
+        dest_dir = dlg.directory
+        compress = dlg.compress_after
+        config_manager.set("compress_after_rename", compress)
+        if dest_dir:
+            config_manager.set("default_save_directory", dest_dir)
+
+        final_table_mapping = []
+        if dest_dir:
+            for mode, row, orig, new_name, old_new_path in table_mapping:
+                new_path = os.path.join(dest_dir, new_name)
+                final_table_mapping.append((row, orig, new_name, new_path))
+        else:
+            for mode, row, orig, new_name, new_path in table_mapping:
+                final_table_mapping.append((row, orig, new_name, new_path))
+        
+        self.execute_rename_with_progress(final_table_mapping, compress=compress)
+
     def preview_rename(self):
         # build full mapping across all tabs
         mapping = self.build_full_rename_mapping()
-        if mapping is None:
+        if not mapping:
+            QMessageBox.information(self, tr("no_files"), tr("no_files_msg"))
             return
+
         # prepare mapping entries: (mode, row, orig_path, new_name, new_path)
         table_mapping: list[tuple[str,int,str,str,str]] = []
         for mode, settings, orig, new in mapping:
@@ -1339,46 +1364,64 @@ class RenamerApp(QWidget):
                 if item0 and item0.data(int(Qt.ItemDataRole.UserRole)) == orig:
                     table_mapping.append((mode, row, orig, new_name, new))
                     break
+        
         dlg = QDialog(self)
         dlg.setWindowTitle(tr("preview_rename"))
         if self.state_manager:
-            w = self.state_manager.get("preview_width", 600)
-            h = self.state_manager.get("preview_height", 400)
+            w = self.state_manager.get("preview_width", 800)
+            h = self.state_manager.get("preview_height", 600)
             dlg.resize(w, h)
+        
         dlg_layout = QVBoxLayout(dlg)
+        
         # preview table: Mode, Current Name, Proposed New Name
         tbl = QTableWidget(len(table_mapping), 3, dlg)
         tbl.setHorizontalHeaderLabels([
-            "Mode",
+            tr("mode"),
             tr("current_name"),
             tr("proposed_new_name"),
         ])
         tbl.verticalHeader().setVisible(False)
         tbl.setEditTriggers(QTableWidget.NoEditTriggers)
-        tbl.setSelectionMode(QTableWidget.NoSelection)
-        tbl.setFocusPolicy(Qt.NoFocus)
+        tbl.setSelectionBehavior(QTableWidget.SelectRows)
+        tbl.setSelectionMode(QTableWidget.ExtendedSelection)
+
         for i, (mode, row, orig, new_name, new_path) in enumerate(table_mapping):
-            # mode column
             tbl.setItem(i, 0, QTableWidgetItem(tr(f"mode_{mode}")))
-            # original name
             tbl.setItem(i, 1, QTableWidgetItem(os.path.basename(orig)))
-            # proposed new name
             tbl.setItem(i, 2, QTableWidgetItem(new_name))
+
         tbl.resizeColumnsToContents()
         tbl.resizeRowsToContents()
         tbl.setMinimumWidth(600)
         dlg_layout.addWidget(tbl)
 
-        # rename all or cancel
-        btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, parent=dlg)
-        # rename all
-        ok_btn = btns.button(QDialogButtonBox.Ok)
-        ok_btn.setText(tr("rename_all"))
-        dlg_layout.addWidget(btns)
+        btns = QDialogButtonBox(parent=dlg)
+        btn_rename_all = btns.addButton(tr("rename_all"), QDialogButtonBox.AcceptRole)
+        btn_rename_selected = btns.addButton(tr("rename_selected"), QDialogButtonBox.ActionRole)
+        btns.addButton(QDialogButtonBox.Cancel)
+
+        def on_rename_all():
+            dlg.accept()
+            self._start_rename_from_preview(table_mapping)
+
+        def on_rename_selected():
+            selected_indices = {idx.row() for idx in tbl.selectionModel().selectedRows()}
+            if not selected_indices:
+                QMessageBox.information(self, tr("information"), tr("no_items_selected"))
+                return
+            
+            selected_mapping = [item for i, item in enumerate(table_mapping) if i in selected_indices]
+            dlg.accept()
+            self._start_rename_from_preview(selected_mapping)
+
+        btn_rename_all.clicked.connect(on_rename_all)
+        btn_rename_selected.clicked.connect(on_rename_selected)
         btns.rejected.connect(dlg.reject)
-        btns.accepted.connect(lambda: (dlg.accept(), self._execute_full_rename(table_mapping)))
+        dlg_layout.addWidget(btns)
 
         dlg.exec()
+
         if self.state_manager:
             self.state_manager.set("preview_width", dlg.width())
             self.state_manager.set("preview_height", dlg.height())

@@ -98,12 +98,15 @@ class TagPanel(QWidget):
     def rebuild(self, language: str | None = None):
         # clear any existing preselection to avoid operating on deleted widgets
         self._preselected_tag = None
-        while self.tag_layout.count():
-            item = self.tag_layout.takeAt(0)
-            w = item.widget()
-            if w:
-                w.deleteLater()
-        self.checkbox_map = {}
+        # Clear existing checkboxes from the layout and the map
+        for i in reversed(range(self.tag_layout.count())):
+            item = self.tag_layout.itemAt(i)
+            if item and item.widget():
+                widget = item.widget()
+                self.tag_layout.removeWidget(widget)
+                widget.deleteLater()
+        self.checkbox_map.clear()
+
         # always reload tags to pick up language or file changes
         tags = load_tags(language=language)
         if not isinstance(tags, dict):
@@ -124,12 +127,19 @@ class TagPanel(QWidget):
         )
         
         for code, desc in sorted_tags:
-            cb = TagBox(code.upper(), desc)
-            cb.toggled.connect(
-                lambda state, c=code: self.tagToggled.emit(c.upper(), state)
-            )
-            self.tag_layout.addWidget(cb)
-            self.checkbox_map[code.upper()] = cb
+            code_upper = code.upper()
+            if code_upper in self.checkbox_map:
+                # Update existing TagBox
+                cb = self.checkbox_map[code_upper]
+                cb.set_text(code_upper, desc)
+            else:
+                # Create new TagBox
+                cb = TagBox(code_upper, desc)
+                cb.toggled.connect(
+                    lambda state, c=code_upper: self.tagToggled.emit(c, state)
+                )
+                self.tag_layout.addWidget(cb)
+                self.checkbox_map[code_upper] = cb
 
     def retranslate_ui(self, language: str | None = None):
         self.search_bar.setPlaceholderText(tr("search_tags"))
