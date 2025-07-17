@@ -4,11 +4,11 @@ import logging
 import json
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
-    QFileDialog, QMessageBox,
+    QFileDialog, QInputDialog, QMessageBox,
     QApplication, QLabel,
-     QProgressDialog, QDialog, QDialogButtonBox,
-     QTableWidget, QTableWidgetItem,
-     QMenu, QToolButton, QSizePolicy, QToolBar
+    QProgressDialog, QDialog, QDialogButtonBox,
+    QTableWidget, QTableWidgetItem,
+    QMenu, QToolButton, QSizePolicy, QToolBar
 )
 from PySide6.QtGui import QAction, QPixmap, QPixmapCache, QImage
 from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot

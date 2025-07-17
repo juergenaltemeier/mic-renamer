@@ -58,12 +58,13 @@ class CustomDelegate(QStyledItemDelegate):
 
 class DragDropTableWidget(QTableWidget):
     """Table widget supporting drag-and-drop and multi-select."""
-
     pathsAdded = Signal(int)
     remove_selected_requested = Signal()
     delete_selected_requested = Signal()
     clear_suffix_requested = Signal()
     clear_list_requested = Signal()
+    # Signal to request appending a suffix to selected rows
+    append_suffix_requested = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -130,7 +131,8 @@ class DragDropTableWidget(QTableWidget):
             menu.addAction(remove_tags_action)
 
         set_suffix_action = QAction(tr("add_suffix_for_selected"), self)
-        set_suffix_action.triggered.connect(self.set_suffix_for_selected)
+        # delegate suffix-appending to main window for multi-row safety
+        set_suffix_action.triggered.connect(self.append_suffix_requested.emit)
         set_suffix_action.setEnabled(has_selection)
         menu.addAction(set_suffix_action)
 
