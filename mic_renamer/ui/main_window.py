@@ -806,18 +806,19 @@ class RenamerApp(QWidget):
             for code, cb in self.tag_panel.checkbox_map.items():
                 desc = self.tag_panel.tags_info.get(code, "")
                 cb.blockSignals(True)
+                # clear any checkbox text to avoid duplication
+                cb.checkbox.setText("")
                 if code in intersect:
                     cb.checkbox.setTristate(False)
+                    cb.checkbox.setCheckState(Qt.Checked)
                     cb.setChecked(True)
-                    cb.checkbox.setText(f"{code}: {desc}")
                 elif code in union:
                     cb.checkbox.setTristate(True)
-                    cb.setChecked(False) # TagBox handles partially checked state visually
-                    cb.checkbox.setText(f"[~] {code}: {desc}")
+                    cb.checkbox.setCheckState(Qt.PartiallyChecked)
                 else:
                     cb.checkbox.setTristate(False)
+                    cb.checkbox.setCheckState(Qt.Unchecked)
                     cb.setChecked(False)
-                    cb.checkbox.setText(f"{code}: {desc}")
                 cb.blockSignals(False)
 
         # Load preview for the currently focused row
@@ -898,12 +899,13 @@ class RenamerApp(QWidget):
                 settings.tags.discard(code)
             tags_str = ",".join(sorted(settings.tags))
             cell_tags = self.table_widget.item(row, 2)
-            self._ignore_table_changes = True
-            try:
-                cell_tags.setText(tags_str)
-            finally:
-                self._ignore_table_changes = False
-            cell_tags.setToolTip(tags_str)
+            if cell_tags:
+                self._ignore_table_changes = True
+                try:
+                    cell_tags.setText(tags_str)
+                    cell_tags.setToolTip(tags_str)
+                finally:
+                    self._ignore_table_changes = False
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         QTimer.singleShot(0, self.on_table_selection_changed)
