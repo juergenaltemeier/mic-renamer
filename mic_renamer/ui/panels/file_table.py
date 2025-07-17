@@ -160,9 +160,15 @@ class DragDropTableWidget(QTableWidget):
         return menu
 
     def contextMenuEvent(self, event):
+        # On right-click, select the row under cursor for context actions
         if self.state() == QAbstractItemView.EditingState:
             return
-        
+        pos = event.pos()
+        index = self.indexAt(pos)
+        if index.isValid():
+            # select only the clicked row if not already selected
+            if index.row() not in {r.row() for r in self.selectionModel().selectedRows()}:  # noqa: C408
+                self.selectRow(index.row())
         menu = self._create_context_menu()
         menu.exec_(event.globalPos())
 

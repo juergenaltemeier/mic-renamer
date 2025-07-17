@@ -202,8 +202,12 @@ class RenamerApp(QWidget):
         self.mode_tabs.pa_mat_tab.itemChanged.connect(self.on_table_item_changed)
 
         self.mode_tabs.normal_tab.pathsAdded.connect(lambda _: self.update_status())
+        # After adding new items, refresh tag, date, and suffix cells
+        self.mode_tabs.normal_tab.pathsAdded.connect(self._on_paths_added)
         self.mode_tabs.position_tab.pathsAdded.connect(lambda _: self.update_status())
+        self.mode_tabs.position_tab.pathsAdded.connect(self._on_paths_added)
         self.mode_tabs.pa_mat_tab.pathsAdded.connect(lambda _: self.update_status())
+        self.mode_tabs.pa_mat_tab.pathsAdded.connect(self._on_paths_added)
 
         (self.mode_tabs.normal_tab).remove_selected_requested.connect(self.remove_selected_items)
         (self.mode_tabs.position_tab).remove_selected_requested.connect(self.remove_selected_items)
@@ -916,7 +920,35 @@ class RenamerApp(QWidget):
         self._session_save_timer.start()
 
     def update_row_background(self, row: int, settings: ItemSettings):
-        pass
+        # Refresh cells for tags, date, and suffix based on current settings
+        # Tags column
+        if self.rename_mode == MODE_NORMAL:
+            cell_tags = self.table_widget.item(row, 2)
+            if cell_tags:
+                tags_str = ",".join(sorted(settings.tags))
+                cell_tags.setText(tags_str)
+                cell_tags.setToolTip(tags_str)
+            # Date column
+            cell_date = self.table_widget.item(row, 3)
+            if cell_date:
+                cell_date.setText(settings.date)
+                cell_date.setToolTip(settings.date)
+        # Suffix column (both modes)
+        cell_suffix = self.table_widget.item(row, 4)
+        if cell_suffix:
+            cell_suffix.setText(settings.suffix)
+            cell_suffix.setToolTip(settings.suffix)
+    
+    def _on_paths_added(self, count: int) -> None:
+        """Refresh display of tags, date, and suffix for all rows after import."""
+        for row in range(self.table_widget.rowCount()):
+            item0 = self.table_widget.item(row, 1)
+            if not item0:
+                continue
+            settings: ItemSettings = item0.data(ROLE_SETTINGS)
+            if not settings:
+                continue
+            self.update_row_background(row, settings)
 
     def on_table_item_changed(self, item: QTableWidgetItem):
         if self._ignore_table_changes:
@@ -1400,6 +1432,9 @@ class RenamerApp(QWidget):
         tbl.resizeColumnsToContents()
         tbl.resizeRowsToContents()
         tbl.setMinimumWidth(600)
+        # auto-select first row so Rename Selected has a target
+        if tbl.rowCount() > 0:
+            tbl.selectRow(0)
         dlg_layout.addWidget(tbl)
 
         btns = QDialogButtonBox(parent=dlg)
