@@ -58,6 +58,14 @@ class CustomDelegate(QStyledItemDelegate):
 
 class DragDropTableWidget(QTableWidget):
     """Table widget supporting drag-and-drop and multi-select."""
+    def mousePressEvent(self, event):
+        # Preserve multi-row selection when clicking on already-selected rows
+        if event.button() == Qt.LeftButton:
+            index = self.indexAt(event.pos())
+            if index.isValid() and self.selectionModel().isSelected(index):
+                # Do not clear existing selection; ignore selection change
+                return
+        super().mousePressEvent(event)
     pathsAdded = Signal(int)
     remove_selected_requested = Signal()
     delete_selected_requested = Signal()

@@ -1,5 +1,5 @@
 """Panel showing available tags as checkboxes."""
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QScrollArea
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QKeyEvent
 from ..components import TagBox
@@ -36,11 +36,16 @@ class TagPanel(QWidget):
 
         self.checkbox_container = QWidget()
         self.tag_layout = FlowLayout(self.checkbox_container)
-        self.tag_layout.setContentsMargins(
-            DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
-        )
-        self.tag_layout.setSpacing(DEFAULT_SPACING)
-        layout.addWidget(self.checkbox_container)
+        # Remove margins and spacing to fit more tags tightly
+        self.tag_layout.setContentsMargins(0, 0, 0, 0)
+        self.tag_layout.setSpacing(0)
+        # Wrap tag container in a scroll area for overflow
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidget(self.checkbox_container)
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        layout.addWidget(self.scroll_area)
         self.checkbox_map: dict[str, TagBox] = {}
         self.tags_info: dict[str, str] | None = tags_info
         self.rebuild()

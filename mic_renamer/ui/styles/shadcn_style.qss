@@ -160,3 +160,28 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
     border: none;
     background: none;
 }
+/* TagBox styling */
+QCheckBox[class="tag-box"],
+QCheckBox[class="tag-box-preselected"],
+QCheckBox[class="tag-box-checked"] {
+    margin: 0px;
+    padding: 0px;
+}
+QCheckBox[class="tag-box"]::indicator,
+QCheckBox[class="tag-box-preselected"]::indicator,
+QCheckBox[class="tag-box-checked"]::indicator {
+    width: 16px;
+    height: 16px;
+    margin: 0px;
+    padding: 0px;
+}
+QCheckBox[class="tag-box-preselected"] {
+    border: 1px solid #ffa500;
+    background-color: #f4f4f5;
+    color: #09090b;
+}
+QCheckBox[class="tag-box-checked"] {
+    border: 1px solid #009ee0;
+    background-color: #009ee0;
+    color: white;
+}
