@@ -1454,6 +1454,13 @@ class RenamerApp(QWidget):
             dlg.resize(w, h)
         
         dlg_layout = QVBoxLayout(dlg)
+        # explanatory info
+        info = QLabel(
+            "Rename All: renames all files previewed.\n"
+            "Rename Selected: renames only files selected in the main window."
+        )
+        info.setWordWrap(True)
+        dlg_layout.addWidget(info)
         
         # preview table: Mode, Current Name, Proposed New Name
         tbl = QTableWidget(len(table_mapping), 3, dlg)
@@ -1490,12 +1497,20 @@ class RenamerApp(QWidget):
             self._start_rename_from_preview(table_mapping)
 
         def on_rename_selected():
-            selected_indices = {idx.row() for idx in tbl.selectionModel().selectedRows()}
-            if not selected_indices:
+            # Use main window selection, not preview table
+            main_selected = {idx.row() for idx in self.table_widget.selectionModel().selectedRows()}
+            if not main_selected:
                 QMessageBox.information(self, tr("information"), tr("no_items_selected"))
                 return
-            
-            selected_mapping = [item for i, item in enumerate(table_mapping) if i in selected_indices]
+            # Filter mapping for current mode and selected rows
+            selected_mapping = [
+                (mode, row, orig, new_name, new_path)
+                for (mode, row, orig, new_name, new_path) in table_mapping
+                if mode == self.rename_mode and row in main_selected
+            ]
+            if not selected_mapping:
+                QMessageBox.information(self, tr("information"), tr("no_items_selected"))
+                return
             dlg.accept()
             self._start_rename_from_preview(selected_mapping)
 
