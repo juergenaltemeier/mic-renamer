@@ -898,14 +898,18 @@ class RenamerApp(QWidget):
             elif check_state == Qt.Unchecked:
                 settings.tags.discard(code)
             tags_str = ",".join(sorted(settings.tags))
+            # Ensure the tags cell exists
             cell_tags = self.table_widget.item(row, 2)
-            if cell_tags:
-                self._ignore_table_changes = True
-                try:
-                    cell_tags.setText(tags_str)
-                    cell_tags.setToolTip(tags_str)
-                finally:
-                    self._ignore_table_changes = False
+            if not cell_tags:
+                cell_tags = QTableWidgetItem()
+                self.table_widget.setItem(row, 2, cell_tags)
+            # Update text without triggering on_table_item_changed
+            self._ignore_table_changes = True
+            try:
+                cell_tags.setText(tags_str)
+                cell_tags.setToolTip(tags_str)
+            finally:
+                self._ignore_table_changes = False
             self.update_row_background(row, settings)
         self.table_widget.sync_check_column()
         QTimer.singleShot(0, self.on_table_selection_changed)
