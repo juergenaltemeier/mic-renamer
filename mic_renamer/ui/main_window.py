@@ -116,10 +116,19 @@ class RenamerApp(QWidget):
         )
         main_layout.setSpacing(DEFAULT_SPACING)
 
+        # Main toolbar with actions, project input, and tag toggle
         self.toolbar = QToolBar()
         self.toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.toolbar.setIconSize(QSize(20, 20))
         self.setup_toolbar()
+        # Show/hide tags toggle button next to project input
+        self.btn_toggle_tags = QToolButton()
+        self.btn_toggle_tags.setIcon(resource_icon("eye.svg"))
+        self.btn_toggle_tags.setText(tr("show_tags"))
+        self.btn_toggle_tags.setCheckable(True)
+        self.btn_toggle_tags.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
+        self.toolbar.addWidget(self.btn_toggle_tags)
         main_layout.addWidget(self.toolbar)
 
         # no separate selected file display
@@ -247,14 +256,10 @@ class RenamerApp(QWidget):
             if sizes:
                 self.splitter.setSizes(sizes)
 
-        # Tag container spanning both columns with manual toggle
+        # Tag container spanning both columns
         self.tag_panel = TagPanel()
         self.tag_panel.tagToggled.connect(self.on_tag_toggled)
         self.tag_panel.arrowKeyPressed.connect(self.on_tag_panel_arrow_key)
-        self.btn_toggle_tags = QToolButton()
-        self.btn_toggle_tags.setIcon(resource_icon("eye.svg"))
-        self.btn_toggle_tags.setCheckable(True)
-        self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
 
         # timer for debouncing heavy selection updates
         self._sel_change_timer = QTimer(self)
@@ -262,10 +267,6 @@ class RenamerApp(QWidget):
         self._sel_change_timer.setInterval(100)
         self._sel_change_timer.timeout.connect(self._apply_selection_change)
 
-        btn_layout = QHBoxLayout()
-        btn_layout.addWidget(self.btn_toggle_tags)
-        btn_layout.addStretch()
-        main_layout.addLayout(btn_layout)
         # Tag panel container (will be in vertical splitter)
         self.tag_container = QWidget()
         tag_container_layout = QVBoxLayout(self.tag_container)
@@ -305,6 +306,8 @@ class RenamerApp(QWidget):
         self.tag_container.setVisible(visible)
         self.btn_toggle_tags.setChecked(visible)
         self.btn_toggle_tags.setToolTip(tr("hide_tags") if visible else tr("show_tags"))
+        # Update button text according to visibility
+        self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
         
         # Initial deaktivieren
         self.set_item_controls_enabled(False)
@@ -657,8 +660,11 @@ class RenamerApp(QWidget):
                 action.setText(tr(key))
                 action.setToolTip(tr(tip))
                 
-        # update form labels
-        self.btn_toggle_tags.setToolTip(tr("hide_tags") if self.tag_panel.isVisible() else tr("show_tags"))
+        # update show/hide tags toggle
+        if hasattr(self, "btn_toggle_tags"):
+            visible = self.tag_panel.isVisible()
+            self.btn_toggle_tags.setToolTip(tr("hide_tags") if visible else tr("show_tags"))
+            self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
         self.mode_tabs.tabs.setTabText(0, tr("mode_normal"))
         self.mode_tabs.tabs.setTabText(1, tr("mode_position"))
         self.mode_tabs.tabs.setTabText(2, tr("mode_pa_mat"))
