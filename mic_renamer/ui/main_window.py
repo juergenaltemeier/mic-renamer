@@ -620,7 +620,6 @@ class RenamerApp(QWidget):
             "tip_preview_rename", "tip_settings"
         ]
         for action, key, tip in zip(actions, labels, tips):
-            self.logger.debug(f"Translating main toolbar action: key={key}, tip={tip}")
             action.setText(tr(key))
             action.setToolTip(tr(tip))
 
@@ -634,10 +633,9 @@ class RenamerApp(QWidget):
             "add_files", "add_folder", "add_folder_recursive", "add_untagged_folder", "add_untagged_folder_recursive", "set_import_directory"
         ]
         menu_tips = [
-            "tip_add_files", "tip_add_folder", "tip_add_folder_recursive", "tip_add_untagged_folder", "tip_add_untagged_folder_recursive", ""
+            "tip_add_files", "tip_add_folder", "tip_add_folder_recursive", "tip_add_untagged_folder", "tip_add_untagged_folder_recursive", "tip_set_import_directory"
         ]
         for action, key, tip in zip(menu_actions, menu_labels, menu_tips):
-            self.logger.debug(f"Translating Add menu action: key={key}, tip={tip}")
             action.setText(tr(key))
             action.setToolTip(tr(tip))
 
@@ -1517,6 +1515,7 @@ class RenamerApp(QWidget):
     def rename_selected(self):
         """Rename only the selected files using current project and mode."""
         rows = [idx.row() for idx in self.table_widget.selectionModel().selectedRows()]
+        self.logger.debug(f"rename_selected: Selected rows: {rows}") # Add logging here
         project = self.input_project.text().strip()
         # collect settings for selected rows
         items = []
@@ -1774,10 +1773,10 @@ class RenamerApp(QWidget):
         progress = self._create_progress_dialog(tr("renaming_files"), len(table_mapping))
         compressor = self._get_compressor() if compress else None
 
-        results = self._perform_rename_operations(progress, compressor)
+        results = self._perform_rename_operations(table_mapping, progress, compressor)
 
         progress.close()
-        self._process_rename_results(results, progress.wasCanceled())
+        self._process_rename_results(results, progress.wasCanceled(), self.rename_mode)
 
         self.set_status_message(None)
         self._enable_sorting()
@@ -1808,28 +1807,11 @@ class RenamerApp(QWidget):
             return None
 
     def _perform_rename_operations(
-        self, progress: QProgressDialog, compressor: ImageCompressor | None
+        self, table_mapping: list[tuple[int, str, str, str]], progress: QProgressDialog, compressor: ImageCompressor | None
     ) -> list[dict]:
         """Iterates through the mapping and performs the rename and compression."""
         results = []
-        for idx in range(self.table_widget.rowCount()):
-            row = idx
-            item0 = self.table_widget.item(row, 1)
-            if not item0:
-                continue
-
-            settings: ItemSettings = item0.data(ROLE_SETTINGS)
-            if settings is None:
-                # If settings are not available, use the path from UserRole
-                orig_path = item0.data(int(Qt.ItemDataRole.UserRole))
-                new_name = item0.text()
-                orig_dir = Path(orig_path).parent
-                new_path = str(orig_dir / new_name)
-            else:
-                # If settings are available, use them to get original and new paths
-                orig_path = settings.original_path
-                new_path = settings.new_path
-
+        for idx, (row, orig_path, new_name, new_path) in enumerate(table_mapping):
             # Ensure new_path is absolute
             if not Path(new_path).is_absolute():
                 new_path = str(Path(orig_path).parent / new_path)
@@ -1884,7 +1866,7 @@ class RenamerApp(QWidget):
             QApplication.processEvents()
         return results
 
-    def _process_rename_results(self, results: list[dict], was_canceled: bool):
+    def _process_rename_results(self, results: list[dict], was_canceled: bool, active_mode: str):
         """Processes the results of the rename operations, updating the UI."""
         used_tags: list[str] = []
         successful_renames = 0
@@ -1922,10 +1904,9 @@ Error: {res['error']} """
                             settings.compressed_bytes = res.get("new_size")
 
         # Remove successfully renamed rows from the table
+        active_table = getattr(self.mode_tabs, f"{active_mode}_tab")
         for row in sorted(rows_to_remove, reverse=True):
-            self.mode_tabs.normal_tab.removeRow(row)
-            self.mode_tabs.position_tab.removeRow(row)
-            self.mode_tabs.pa_mat_tab.removeRow(row)
+            active_table.removeRow(row)
 
         if was_canceled:
             QMessageBox.information(
@@ -1999,10 +1980,11 @@ Error: {res['error']} """
         if reply == QMessageBox.StandardButton.Yes:
             self.restore_session(show_dialog=False)
         else:
-            try:
-                session_file.unlink()
-            except OSError as e:
-                self.logger.error(f"Failed to remove session file: {e}")
+            if session_file.exists():
+                try:
+                    session_file.unlink()
+                except OSError as e:
+                    self.logger.error(f"Failed to remove session file: {e}")
 
     def restore_session(self, show_dialog=True):
         """Restores the application state from a session file."""

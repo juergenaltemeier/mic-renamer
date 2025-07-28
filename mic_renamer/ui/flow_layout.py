@@ -89,7 +89,7 @@ class FlowLayout(QLayout):
         """
         if 0 <= index < len(self._items):
             return self._items[index]
-        logger.warning(f"Attempted to access item at invalid index: {index}. Layout has {len(self._items)} items.")
+        logger.debug(f"Attempted to access item at invalid index: {index}. Layout has {len(self._items)} items.")
         return None
 
     def takeAt(self, index: int) -> QWidgetItem | None:
@@ -106,7 +106,7 @@ class FlowLayout(QLayout):
             item = self._items.pop(index)
             logger.debug(f"Item removed from FlowLayout at index {index}: {item.widget().objectName() if item.widget() else 'unknown'}")
             return item
-        logger.warning(f"Attempted to remove item at invalid index: {index}. Layout has {len(self._items)} items.")
+        logger.debug(f"Attempted to remove item at invalid index: {index}. Layout has {len(self._items)} items.")
         return None
 
     def expandingDirections(self) -> Qt.Orientations:
