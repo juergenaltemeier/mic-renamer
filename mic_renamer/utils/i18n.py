@@ -1,6 +1,12 @@
-current_language = 'en'
+from __future__ import annotations
 
-TRANSLATIONS = {
+import logging
+
+logger = logging.getLogger(__name__)
+
+current_language = "en"
+
+TRANSLATIONS: dict[str, dict[str, str]] = {
     'en': {
         'app_title': 'Micavac Renamer',
         'project_number_label': 'MC-No.:',
@@ -163,7 +169,7 @@ TRANSLATIONS = {
                 <li><b>Settings:</b> Customize application settings, such as language and accepted file types.</li>
             </ul>
         """,
-        'search_tags': 'Search tags...',
+        'search_tags': 'Search tags...', 
         'delete_selected_files': 'Delete Files',
         'tip_delete_selected_files': 'Delete selected files from disk',
         'delete_files_title': 'Delete Files',
@@ -334,7 +340,7 @@ TRANSLATIONS = {
                 <li><b>Einstellungen:</b> Passen Sie die Anwendungseinstellungen an, wie z. B. die Sprache und die akzeptierten Dateitypen.</li>
             </ul>
         """,
-        'search_tags': 'Tags suchen...',
+        'search_tags': 'Tags suchen...', 
         'delete_selected_files': 'Dateien löschen',
         'tip_delete_selected_files': 'Ausgewählte Dateien von der Festplatte löschen',
         'delete_files_title': 'Dateien löschen',
@@ -345,10 +351,49 @@ TRANSLATIONS = {
     }
 }
 
-def set_language(lang: str):
+def set_language(lang: str) -> None:
+    """
+    Sets the current language for the application.
+
+    Args:
+        lang (str): The language code (e.g., "en", "de") to set as the current language.
+                    If the language is not found in `TRANSLATIONS`, the language remains unchanged.
+    """
     global current_language
     if lang in TRANSLATIONS:
         current_language = lang
+        logger.info(f"Language set to: {current_language}")
+    else:
+        logger.warning(f"Attempted to set unsupported language: {lang}. Language remains {current_language}.")
+
+def get_language() -> str:
+    """
+    Returns the currently active language code.
+
+    Returns:
+        str: The current language code (e.g., "en", "de").
+    """
+    return current_language
 
 def tr(key: str) -> str:
-    return TRANSLATIONS.get(current_language, {}).get(key, key)
+    """
+    Translates the given key into the current language.
+
+    If the key is not found in the translations for the current language,
+    it falls back to the English translation. If still not found, the key itself
+    is returned as a fallback.
+
+    Args:
+        key (str): The translation key to look up.
+
+    Returns:
+        str: The translated string. If no translation is found, the original key is returned.
+    """
+    # Attempt to get the translation for the current language.
+    # If not found, fall back to English. If still not found, return the key itself.
+    translated_text = TRANSLATIONS.get(current_language, {}).get(key, TRANSLATIONS.get("en", {}).get(key, key))
+    
+    if translated_text == key:
+        logger.warning(f"Translation key '{key}' not found in language '{current_language}' or 'en'.")
+    
+    return translated_text

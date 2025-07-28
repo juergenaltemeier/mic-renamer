@@ -1,38 +1,57 @@
-import os
-import re
 import logging
 import json
-from PySide6.QtWidgets import (
-    QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
-    QFileDialog, QInputDialog, QMessageBox,
-    QApplication, QLabel,
-    QProgressDialog, QDialog, QDialogButtonBox, QComboBox,
-    QTableWidget, QTableWidgetItem,
-    QMenu, QToolButton, QSizePolicy, QToolBar
+import re
+import os
+from datetime import datetime
+from pathlib import Path
+
+from PySide6.QtCore import (
+    QItemSelectionModel,
+    QSize,
+    Qt,
+    QThread,
+    QTimer,
+    Slot,
 )
-from PySide6.QtGui import QAction, QPixmap, QPixmapCache, QImage
-from PySide6.QtCore import Qt, QTimer, QSize, QThread, Slot, QItemSelectionModel
+from PySide6.QtGui import QAction, QImage, QPixmap, QPixmapCache
+from PySide6.QtWidgets import (
+    QApplication,
+    QComboBox,
+    QDialog,
+    QDialogButtonBox,
+    QFileDialog,
+    QHBoxLayout,
+    QInputDialog,
+    QLabel,
+    QMenu,
+    QMessageBox,
+    QProgressDialog,
+    QSizePolicy,
+    QSplitter,
+    QTableWidget,
+    QTableWidgetItem,
+    QToolBar,
+    QToolButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 from .. import config_manager
-from ..utils.i18n import tr, set_language
-from .dialogs.help_dialog import HelpDialog
-from .settings_dialog import SettingsDialog
-from .theme import resource_icon
-from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
-from .panels import (
-    MediaViewer,
-    ModeTabs,
-    TagPanel,
-)
-from .rename_options_dialog import RenameOptionsDialog
-from .otp_input import OtpInput
-from ..logic.settings import ItemSettings
-from ..logic.renamer import Renamer
 from ..logic.image_compressor import ImageCompressor
+from ..logic.renamer import Renamer
+from ..logic.settings import ItemSettings
 from ..logic.tag_usage import increment_tags
 from ..logic.undo_manager import UndoManager
+from ..utils.i18n import set_language, tr
 from ..utils.workers import PreviewLoader
-from datetime import datetime
+from .constants import DEFAULT_MARGIN, DEFAULT_SPACING
+from .dialogs.help_dialog import HelpDialog
+from .otp_input import OtpInput
+from .panels import MediaViewer, ModeTabs, TagPanel
+from .rename_options_dialog import RenameOptionsDialog
+from .settings_dialog import SettingsDialog
+from .theme import resource_icon
+
 
 
 def _validate_and_format_date(date_str: str) -> str:
@@ -98,7 +117,23 @@ MODE_POSITION = "position"
 MODE_PA_MAT = "pa_mat"
 
 class RenamerApp(QWidget):
+    """
+    The main window of the Mic-Renamer application.
+
+    This class orchestrates the entire user interface, including the toolbar,
+    media preview, file list, and tag panel. It handles user interactions,
+    manages application state, and coordinates with the backend logic for
+    renaming, compression, and other operations.
+    """
+
     def __init__(self, state_manager=None):
+        """
+        Initializes the main application window.
+
+        Args:
+            state_manager: An optional instance of the StateManager for
+                           persisting application state.
+        """
         super().__init__()
         self.logger = logging.getLogger(__name__)
         self.state_manager = state_manager
@@ -108,93 +143,97 @@ class RenamerApp(QWidget):
         self._rename_thread = None
         self._preview_loader: PreviewLoader | None = None
         self._session_recording_started = False
+        self.status_message = "" # Initialize status_message here
         self.setWindowTitle(tr("app_title"))
 
+        self._setup_ui()
+        self._connect_signals()
+        self._load_initial_state()
+        self._setup_shortcuts()
+
+    def _setup_ui(self):
+        """Creates and arranges all UI components."""
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(
             DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN
         )
         main_layout.setSpacing(DEFAULT_SPACING)
 
-        # Main toolbar with actions, project input, and tag toggle
+        self._setup_toolbar()
+        main_layout.addWidget(self.toolbar)
+
+        self._setup_main_splitter()
+        self._setup_tag_panel()
+
+        self.tag_splitter = QSplitter(Qt.Vertical)
+        self.tag_splitter.addWidget(self.splitter)
+        self.tag_splitter.addWidget(self.tag_container)
+        main_layout.addWidget(self.tag_splitter, 1)
+
+        self._setup_status_bar()
+        main_layout.addLayout(self.status_layout)
+
+    def _setup_toolbar(self):
+        """Configures the main application toolbar."""
         self.toolbar = QToolBar()
         self.toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.toolbar.setIconSize(QSize(20, 20))
-        self.setup_toolbar()
-        # Show/hide tags toggle button next to project input
+        self.setup_toolbar()  # This method is defined below and populates the toolbar
+
         self.btn_toggle_tags = QToolButton()
         self.btn_toggle_tags.setIcon(resource_icon("eye.svg"))
         self.btn_toggle_tags.setText(tr("show_tags"))
         self.btn_toggle_tags.setCheckable(True)
         self.btn_toggle_tags.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
         self.toolbar.addWidget(self.btn_toggle_tags)
-        main_layout.addWidget(self.toolbar)
 
-        # no separate selected file display
-
-        # main splitter between preview and table; will be nested in a vertical splitter with tag panel
+    def _setup_main_splitter(self):
+        """Sets up the main horizontal splitter for viewer and table."""
         self.splitter = QSplitter(Qt.Horizontal)
-        # placeholder: do not add to layout yet, will be added after tag panel is created
+        viewer_widget = self._create_viewer_widget()
+        table_container = self._create_table_container()
+        self.splitter.addWidget(viewer_widget)
+        self.splitter.addWidget(table_container)
 
+    def _create_viewer_widget(self) -> QWidget:
+        """Creates the widget containing the media viewer and its controls."""
         viewer_widget = QWidget()
         viewer_layout = QVBoxLayout(viewer_widget)
-
         self.image_viewer = MediaViewer()
+        viewer_toolbar = self._create_viewer_toolbar()
+        viewer_layout.addLayout(viewer_toolbar)
+        viewer_layout.addWidget(self.image_viewer, 5)
+        return viewer_widget
 
+    def _create_viewer_toolbar(self) -> QHBoxLayout:
+        """Creates the toolbar for the media viewer."""
         self.viewer_actions: list[QAction] = []
         self.viewer_buttons: list[QToolButton] = []
         viewer_toolbar = QHBoxLayout()
         icon_size = QSize(20, 20)
 
-        act_zoom_fit = QAction(resource_icon("zoom-fit.svg"), "Fit", self)
-        act_zoom_fit.triggered.connect(self.image_viewer.zoom_fit)
-        btn_fit = QToolButton()
-        btn_fit.setDefaultAction(act_zoom_fit)
-        btn_fit.setIconSize(icon_size)
-        viewer_toolbar.addWidget(btn_fit)
-        self.viewer_actions.append(act_zoom_fit)
-        self.viewer_buttons.append(btn_fit)
+        actions = {
+            "zoom_fit": (resource_icon("zoom-fit.svg"), "Fit", self.image_viewer.zoom_fit),
+            "prev": (resource_icon("prev.svg"), "Prev", self.goto_previous_item),
+            "next": (resource_icon("next.svg"), "Next", self.goto_next_item),
+            "rot_left": (resource_icon("rotate-left.svg"), "Rotate Left", self.image_viewer.rotate_left),
+            "rot_right": (resource_icon("rotate-right.svg"), "Rotate Right", self.image_viewer.rotate_right),
+        }
 
-        act_prev = QAction(resource_icon("prev.svg"), "Prev", self)
-        act_prev.triggered.connect(self.goto_previous_item)
-        btn_prev = QToolButton()
-        btn_prev.setDefaultAction(act_prev)
-        btn_prev.setIconSize(icon_size)
-        viewer_toolbar.addWidget(btn_prev)
-        self.viewer_actions.append(act_prev)
-        self.viewer_buttons.append(btn_prev)
+        for name, (icon, text, slot) in actions.items():
+            action = QAction(icon, text, self)
+            action.triggered.connect(slot)
+            button = QToolButton()
+            button.setDefaultAction(action)
+            button.setIconSize(icon_size)
+            viewer_toolbar.addWidget(button)
+            self.viewer_actions.append(action)
+            self.viewer_buttons.append(button)
 
-        act_next = QAction(resource_icon("next.svg"), "Next", self)
-        act_next.triggered.connect(self.goto_next_item)
-        btn_next = QToolButton()
-        btn_next.setDefaultAction(act_next)
-        btn_next.setIconSize(icon_size)
-        viewer_toolbar.addWidget(btn_next)
-        self.viewer_actions.append(act_next)
-        self.viewer_buttons.append(btn_next)
+        return viewer_toolbar
 
-        act_rot_left = QAction(resource_icon("rotate-left.svg"), "Rotate Left", self)
-        act_rot_left.triggered.connect(self.image_viewer.rotate_left)
-        btn_rot_left = QToolButton()
-        btn_rot_left.setDefaultAction(act_rot_left)
-        btn_rot_left.setIconSize(icon_size)
-        viewer_toolbar.addWidget(btn_rot_left)
-        self.viewer_actions.append(act_rot_left)
-        self.viewer_buttons.append(btn_rot_left)
-
-        act_rot_right = QAction(resource_icon("rotate-right.svg"), "Rotate Right", self)
-        act_rot_right.triggered.connect(self.image_viewer.rotate_right)
-        btn_rot_right = QToolButton()
-        btn_rot_right.setDefaultAction(act_rot_right)
-        btn_rot_right.setIconSize(icon_size)
-        viewer_toolbar.addWidget(btn_rot_right)
-        self.viewer_actions.append(act_rot_right)
-        self.viewer_buttons.append(btn_rot_right)
-
-        viewer_layout.addLayout(viewer_toolbar)
-        viewer_layout.addWidget(self.image_viewer, 5)
-
+    def _create_table_container(self) -> QWidget:
+        """Creates the widget containing the mode tabs and file table."""
         table_container = QWidget()
         table_layout = QVBoxLayout(table_container)
         table_layout.setContentsMargins(
@@ -203,140 +242,103 @@ class RenamerApp(QWidget):
         table_layout.setSpacing(DEFAULT_SPACING)
 
         self.mode_tabs = ModeTabs()
-        # mode selection combobox
         self.combo_mode = QComboBox()
         self.combo_mode.addItem(tr("mode_normal"), MODE_NORMAL)
         self.combo_mode.addItem(tr("mode_position"), MODE_POSITION)
         self.combo_mode.addItem(tr("mode_pa_mat"), MODE_PA_MAT)
-        self.combo_mode.currentIndexChanged.connect(self.mode_tabs.tabs.setCurrentIndex)
         self.toolbar.addWidget(self.combo_mode)
+
         self.table_widget: QTableWidget = self.mode_tabs.current_table()
-        self.mode_tabs.tabs.currentChanged.connect(self.on_tab_changed)
-
-        self._ignore_table_changes = False
-        self.mode_tabs.normal_tab.itemChanged.connect(self.on_table_item_changed)
-        self.mode_tabs.position_tab.itemChanged.connect(self.on_table_item_changed)
-        self.mode_tabs.pa_mat_tab.itemChanged.connect(self.on_table_item_changed)
-
-        self.mode_tabs.normal_tab.pathsAdded.connect(lambda _: self.update_status())
-        # After adding new items, refresh tag, date, and suffix cells
-        self.mode_tabs.normal_tab.pathsAdded.connect(self._on_paths_added)
-        self.mode_tabs.position_tab.pathsAdded.connect(lambda _: self.update_status())
-        self.mode_tabs.position_tab.pathsAdded.connect(self._on_paths_added)
-        self.mode_tabs.pa_mat_tab.pathsAdded.connect(lambda _: self.update_status())
-        self.mode_tabs.pa_mat_tab.pathsAdded.connect(self._on_paths_added)
-
-        (self.mode_tabs.normal_tab).remove_selected_requested.connect(self.remove_selected_items)
-        (self.mode_tabs.position_tab).remove_selected_requested.connect(self.remove_selected_items)
-        (self.mode_tabs.pa_mat_tab).remove_selected_requested.connect(self.remove_selected_items)
-
-        (self.mode_tabs.normal_tab).delete_selected_requested.connect(self.delete_selected_files)
-        (self.mode_tabs.position_tab).delete_selected_requested.connect(self.delete_selected_files)
-        (self.mode_tabs.pa_mat_tab).delete_selected_requested.connect(self.delete_selected_files)
-
-        (self.mode_tabs.normal_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
-        (self.mode_tabs.position_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
-        (self.mode_tabs.pa_mat_tab).clear_suffix_requested.connect(self.clear_selected_suffixes)
-        # Append suffix to selected rows via context menu
-        (self.mode_tabs.normal_tab).append_suffix_requested.connect(self.add_suffix_for_selected)
-        (self.mode_tabs.position_tab).append_suffix_requested.connect(self.add_suffix_for_selected)
-        (self.mode_tabs.pa_mat_tab).append_suffix_requested.connect(self.add_suffix_for_selected)
-
-        (self.mode_tabs.normal_tab).clear_list_requested.connect(self.clear_all)
-        (self.mode_tabs.position_tab).clear_list_requested.connect(self.clear_all)
-        (self.mode_tabs.pa_mat_tab).clear_list_requested.connect(self.clear_all)
-        
         table_layout.addWidget(self.mode_tabs)
+        return table_container
 
-        self.splitter.addWidget(viewer_widget)
-        self.splitter.addWidget(table_container)
-
-        if self.state_manager:
-            sizes = self.state_manager.get("splitter_sizes")
-            if sizes:
-                self.splitter.setSizes(sizes)
-
-        # Tag container spanning both columns
+    def _setup_tag_panel(self):
+        """Sets up the tag panel and its container."""
         self.tag_panel = TagPanel()
-        self.tag_panel.tagToggled.connect(self.on_tag_toggled)
-        self.tag_panel.arrowKeyPressed.connect(self.on_tag_panel_arrow_key)
-
-        # timer for debouncing heavy selection updates
-        self._sel_change_timer = QTimer(self)
-        self._sel_change_timer.setSingleShot(True)
-        self._sel_change_timer.setInterval(100)
-        self._sel_change_timer.timeout.connect(self._apply_selection_change)
-
-        # Tag panel container (will be in vertical splitter)
         self.tag_container = QWidget()
         tag_container_layout = QVBoxLayout(self.tag_container)
         tag_container_layout.setContentsMargins(0, 0, 0, 0)
         tag_container_layout.setSpacing(0)
         tag_container_layout.addWidget(self.tag_panel)
-        # Allow resizing: wrap horizontal splitter and tag container in a vertical splitter
-        self.tag_splitter = QSplitter(Qt.Vertical)
-        self.tag_splitter.addWidget(self.splitter)
-        self.tag_splitter.addWidget(self.tag_container)
-        # Restore saved sizes if available
-        sizes = config_manager.get("tag_panel_splitter_sizes", None)
-        if sizes:
-            try:
-                self.tag_splitter.setSizes(sizes)
-            except Exception:
-                pass
-        # Save sizes on user resize
-        self.tag_splitter.splitterMoved.connect(self._on_tag_splitter_moved)
-        main_layout.addWidget(self.tag_splitter, 1)
-        
-        status_layout = QHBoxLayout()
+
+    def _setup_status_bar(self):
+        """Sets up the status bar at the bottom of the window."""
+        self.status_layout = QHBoxLayout()
         self.lbl_status = QLabel()
         self.lbl_status.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.lbl_status.setMaximumHeight(
             self.lbl_status.fontMetrics().height() + 4
         )
-        status_layout.addWidget(self.lbl_status)
-        
+        self.status_layout.addWidget(self.lbl_status)
+
         self.lbl_session_status = QLabel()
         self.lbl_session_status.setFixedSize(16, 16)
-        status_layout.addWidget(self.lbl_session_status)
-        main_layout.addLayout(status_layout)
+        self.status_layout.addWidget(self.lbl_session_status)
 
-        visible = config_manager.get("tag_panel_visible", False)
-        # initial visibility of tag container
-        self.tag_container.setVisible(visible)
-        self.btn_toggle_tags.setChecked(visible)
-        self.btn_toggle_tags.setToolTip(tr("hide_tags") if visible else tr("show_tags"))
-        # Update button text according to visibility
-        self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
-        
-        # Initial deaktivieren
-        self.set_item_controls_enabled(False)
-        self.mode_tabs.normal_tab.itemSelectionChanged.connect(self.on_table_selection_changed)
-        self.mode_tabs.position_tab.itemSelectionChanged.connect(self.on_table_selection_changed)
-        self.mode_tabs.pa_mat_tab.itemSelectionChanged.connect(self.on_table_selection_changed)
+    def _connect_signals(self):
+        """Connects all signals to their corresponding slots."""
+        self.btn_toggle_tags.clicked.connect(self.toggle_tag_panel)
+        self.combo_mode.currentIndexChanged.connect(self.mode_tabs.tabs.setCurrentIndex)
+        self.mode_tabs.tabs.currentChanged.connect(self.on_tab_changed)
 
-        self.status_message = ""
-        self.update_translations()
-        self.status_message = ""
-        self.update_status()
-        self.apply_toolbar_style(config_manager.get("toolbar_style", "icons"))
+        self._ignore_table_changes = False
+        for table in self.mode_tabs.all_tables():
+            table.itemChanged.connect(self.on_table_item_changed)
+            table.pathsAdded.connect(self.update_status)
+            table.pathsAdded.connect(self._on_paths_added)
+            table.remove_selected_requested.connect(self.remove_selected_items)
+            table.delete_selected_requested.connect(self.delete_selected_files)
+            table.clear_suffix_requested.connect(self.clear_selected_suffixes)
+            table.append_suffix_requested.connect(self.add_suffix_for_selected)
+            table.clear_list_requested.connect(self.clear_all)
+            table.itemSelectionChanged.connect(self.on_table_selection_changed)
+
+        self.tag_panel.tagToggled.connect(self.on_tag_toggled)
+        self.tag_panel.arrowKeyPressed.connect(self.on_tag_panel_arrow_key)
+        self.tag_splitter.splitterMoved.connect(self._on_tag_splitter_moved)
+
+        self._sel_change_timer = QTimer(self)
+        self._sel_change_timer.setSingleShot(True)
+        self._sel_change_timer.setInterval(100)
+        self._sel_change_timer.timeout.connect(self._apply_selection_change)
 
         self._session_save_timer = QTimer(self)
         self._session_save_timer.setSingleShot(True)
         self._session_save_timer.setInterval(2000)  # 2 seconds
         self._session_save_timer.timeout.connect(self.save_session)
-        
+
         self.table_widget.itemChanged.connect(self.on_change_made)
         self.input_project.textChanged.connect(self.on_change_made)
-        self.table_widget.pathsAdded.connect(self.on_change_made)
-        self.table_widget.remove_selected_requested.connect(self.on_change_made)
-        self.table_widget.clear_list_requested.connect(self.on_change_made)
-        self.table_widget.clear_suffix_requested.connect(self.on_change_made)
+
+    def _load_initial_state(self):
+        """Loads and applies the initial state of the application."""
+        if self.state_manager:
+            sizes = self.state_manager.get("splitter_sizes")
+            if sizes:
+                self.splitter.setSizes(sizes)
+
+        sizes = config_manager.get("tag_panel_splitter_sizes", None)
+        if sizes:
+            try:
+                self.tag_splitter.setSizes(sizes)
+            except Exception as e:
+                self.logger.warning(f"Could not set tag splitter sizes: {e}")
+
+        visible = config_manager.get("tag_panel_visible", False)
+        self.tag_container.setVisible(visible)
+        self.btn_toggle_tags.setChecked(visible)
+        self.btn_toggle_tags.setToolTip(tr("hide_tags") if visible else tr("show_tags"))
+        self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
+
+        self.set_item_controls_enabled(False)
+        self.update_translations()
+        self.status_message = ""
+        self.update_status()
+        self.apply_toolbar_style(config_manager.get("toolbar_style", "icons"))
 
         self.set_session_status(True)
         self.check_for_crashed_session()
 
-        self._setup_shortcuts()
 
     def _setup_shortcuts(self):
         find_action = QAction(self)
@@ -707,36 +709,44 @@ class RenamerApp(QWidget):
             self._import_paths(files)
 
     def add_folder_dialog(self):
-        folder = QFileDialog.getExistingDirectory(
-            self,
-            tr("add_folder"),
-            config_manager.get('default_import_directory', '')
-        )
-        if folder:
-            entries = os.listdir(folder)
+        """Opens a dialog to select a folder and adds its contents to the list."""
+        folder_path = self._get_import_directory(tr("add_folder"))
+        if not folder_path:
+            return
+
+        try:
             paths = [
-                os.path.join(folder, name)
-                for name in entries
-                if os.path.isfile(os.path.join(folder, name)) and\
-                   os.path.splitext(name)[1].lower() in ItemSettings.ACCEPT_EXTENSIONS
+                str(p)
+                for p in folder_path.iterdir()
+                if p.is_file() and p.suffix.lower() in ItemSettings.ACCEPT_EXTENSIONS
             ]
             if paths:
                 self._import_paths(paths)
+            else:
+                QMessageBox.information(self, tr("no_files_found"), tr("no_files_found_in_folder"))
+        except OSError as e:
+            self.logger.error(f"Error reading folder {folder_path}: {e}")
+            QMessageBox.warning(self, tr("error"), tr("error_reading_folder").format(folder=folder_path, error=e))
 
     def add_folder_with_subdirectories(self):
-        folder = QFileDialog.getExistingDirectory(
-            self,
-            tr("add_folder_recursive"),
-            config_manager.get('default_import_directory', '')
-        )
-        if folder:
-            paths = []
-            for root, _, files in os.walk(folder):
-                for name in files:
-                    if os.path.splitext(name)[1].lower() in ItemSettings.ACCEPT_EXTENSIONS:
-                        paths.append(os.path.join(root, name))
+        """Opens a dialog to select a folder and adds its contents recursively."""
+        folder_path = self._get_import_directory(tr("add_folder_recursive"))
+        if not folder_path:
+            return
+
+        try:
+            paths = [
+                str(p)
+                for p in folder_path.rglob("*")
+                if p.is_file() and p.suffix.lower() in ItemSettings.ACCEPT_EXTENSIONS
+            ]
             if paths:
                 self._import_paths(paths)
+            else:
+                QMessageBox.information(self, tr("no_files_found"), tr("no_files_found_in_folder"))
+        except OSError as e:
+            self.logger.error(f"Error reading folder {folder_path}: {e}")
+            QMessageBox.warning(self, tr("error"), tr("error_reading_folder").format(folder=folder_path, error=e))
 
     def add_untagged_from_folder(self):
         self._add_untagged_files(recursive=False)
@@ -744,40 +754,51 @@ class RenamerApp(QWidget):
     def add_untagged_from_folder_recursive(self):
         self._add_untagged_files(recursive=True)
 
-    def _add_untagged_files(self, recursive: bool):
-        folder = QFileDialog.getExistingDirectory(
+    def _get_import_directory(self, title: str) -> Path | None:
+        """Opens a dialog to select a directory and returns it as a Path object."""
+        directory = QFileDialog.getExistingDirectory(
             self,
-            tr("add_folder"),
+            title,
             config_manager.get('default_import_directory', '')
         )
-        if not folder:
+        if directory:
+            return Path(directory)
+        return None
+
+    def _add_untagged_files(self, recursive: bool):
+        """Adds files from a selected folder that do not contain any known tags."""
+        folder_path = self._get_import_directory(tr("add_folder"))
+        if not folder_path:
             return
 
-        all_tags = set(self.tag_panel.tags_info.keys())
-        paths = []
-        if recursive:
-            for root, _, files in os.walk(folder):
-                for name in files:
-                    if self._is_untagged_file(name, all_tags):
-                        paths.append(os.path.join(root, name))
-        else:
-            for name in os.listdir(folder):
-                if os.path.isfile(os.path.join(folder, name)) and self._is_untagged_file(name, all_tags):
-                    paths.append(os.path.join(folder, name))
-        
-        if paths:
-            self._import_paths(paths)
+        try:
+            all_tags = set(self.tag_panel.tags_info.keys())
+            paths = []
+            file_iterator = folder_path.rglob("*") if recursive else folder_path.iterdir()
+
+            for p in file_iterator:
+                if p.is_file() and self._is_untagged_file(p.name, all_tags):
+                    paths.append(str(p))
+
+            if paths:
+                self._import_paths(paths)
+            else:
+                QMessageBox.information(self, tr("no_untagged_files_found"), tr("no_untagged_files_found_in_folder"))
+        except OSError as e:
+            self.logger.error(f"Error reading folder {folder_path}: {e}")
+            QMessageBox.warning(self, tr("error"), tr("error_reading_folder").format(folder=folder_path, error=e))
 
     def _is_untagged_file(self, filename: str, all_tags: set[str]) -> bool:
-        base, ext = os.path.splitext(filename)
-        if ext.lower() not in ItemSettings.ACCEPT_EXTENSIONS:
+        """Checks if a filename contains any of the known tags."""
+        p = Path(filename)
+        base = p.stem
+        ext = p.suffix.lower()
+
+        if ext not in ItemSettings.ACCEPT_EXTENSIONS:
             return False
-        
+
         parts = base.split('_')
-        for part in parts:
-            if part in all_tags:
-                return False
-        return True
+        return not any(part in all_tags for part in parts)
 
     def _import_paths(self, paths: list[str]) -> None:
         """Import given file paths into the table with a progress dialog."""
@@ -797,9 +818,10 @@ class RenamerApp(QWidget):
                 break
             # Normalize the path to use forward slashes for consistency
             normalized_path = path.replace("\\", "/")
-            # import into active mode tab only
-            target = self.mode_tabs.current_table()
-            target.add_paths([normalized_path])
+            # Import into all mode tabs
+            self.mode_tabs.normal_tab.add_paths([normalized_path])
+            self.mode_tabs.position_tab.add_paths([normalized_path])
+            self.mode_tabs.pa_mat_tab.add_paths([normalized_path])
             progress.setValue(idx)
             QApplication.processEvents()
         progress.close()
@@ -1071,6 +1093,8 @@ class RenamerApp(QWidget):
         # If a thread is already running, request it to quit and wait for it to finish.
         if self._preview_thread and self._preview_thread.isRunning():
             self.logger.debug("Stopping previous preview loader.")
+            if self._preview_loader: # Ensure _preview_loader is not None
+                self._preview_loader.stop()
             self._preview_thread.quit()
             self._preview_thread.wait(500) # Wait up to 500ms
 
@@ -1144,6 +1168,10 @@ class RenamerApp(QWidget):
         self.update_status()
         self._session_save_timer.start()
 
+    def clear_cache(self):
+        QPixmapCache.clear()
+        self.logger.debug("QPixmapCache cleared.")
+
     def undo_rename(self):
         if not self.undo_manager.has_history():
             QMessageBox.information(self, tr("undo_nothing_title"), tr("undo_nothing_msg"))
@@ -1175,6 +1203,7 @@ class RenamerApp(QWidget):
         self._session_save_timer.start()
 
     def delete_selected_files(self):
+        """Permanently deletes the selected files from the disk after confirmation."""
         rows = sorted({idx.row() for idx in self.table_widget.selectionModel().selectedRows()})
         if not rows:
             return
@@ -1190,20 +1219,26 @@ class RenamerApp(QWidget):
         if reply == QMessageBox.StandardButton.No:
             return
 
+        errors = []
         for row in reversed(rows):
             item = self.table_widget.item(row, 1)
             if not item:
                 continue
 
-            path = item.data(int(Qt.ItemDataRole.UserRole))
+            path_str = item.data(int(Qt.ItemDataRole.UserRole))
+            path = Path(path_str)
             try:
-                os.remove(path)
+                path.unlink()
                 self.logger.info(f"Deleted file: {path}")
             except OSError as e:
                 self.logger.error(f"Error deleting file {path}: {e}")
-                QMessageBox.warning(
-                    self, tr("delete_failed_title"), tr("delete_failed_msg").format(path=path, error=e)
-                )
+                errors.append((path.name, str(e)))
+
+        if errors:
+            error_msg = "\n".join([f"- {name}: {err}" for name, err in errors])
+            QMessageBox.warning(
+                self, tr("delete_failed_title"), tr("delete_failed_msg").format(errors=error_msg)
+            )
 
         self.remove_selected_items()
 
@@ -1677,24 +1712,36 @@ class RenamerApp(QWidget):
         self.update_status()
 
     def execute_rename_with_progress(self, table_mapping, compress: bool = False):
+        """Executes the renaming process with a progress dialog."""
         self.image_viewer.clear_media()
         self.set_status_message(tr("renaming_files"))
         self.table_widget.setSortingEnabled(False)
-        total = len(table_mapping)
-        progress = QProgressDialog(
-            tr("renaming_files"),
-            tr("abort"),
-            0,
-            total,
-            self,
-        )
+
+        progress = self._create_progress_dialog(tr("renaming_files"), len(table_mapping))
+        compressor = self._get_compressor() if compress else None
+
+        results = self._perform_rename_operations(table_mapping, progress, compressor)
+
+        progress.close()
+        self._process_rename_results(results, progress.wasCanceled())
+
+        self.set_status_message(None)
+        self._enable_sorting()
+        self._session_save_timer.start()
+
+    def _create_progress_dialog(self, title: str, total: int) -> QProgressDialog:
+        """Creates and configures a progress dialog."""
+        progress = QProgressDialog(title, tr("abort"), 0, total, self)
         progress.setWindowModality(Qt.WindowModal)
         progress.setMinimumDuration(200)
         progress.setValue(0)
+        return progress
 
-        if compress:
+    def _get_compressor(self) -> ImageCompressor | None:
+        """Creates an ImageCompressor instance based on current settings."""
+        try:
             cfg = config_manager.load()
-            compressor = ImageCompressor(
+            return ImageCompressor(
                 max_size_kb=cfg.get("compression_max_size_kb", 2048),
                 quality=cfg.get("compression_quality", 95),
                 reduce_resolution=cfg.get("compression_reduce_resolution", True),
@@ -1702,43 +1749,56 @@ class RenamerApp(QWidget):
                 max_width=cfg.get("compression_max_width", 0) or None,
                 max_height=cfg.get("compression_max_height", 0) or None,
             )
-        else:
-            compressor = None
+        except Exception as e:
+            self.logger.error(f"Failed to create ImageCompressor: {e}")
+            return None
 
-        results: list[dict] = []
-        for idx, (row, orig, new_name, new_path) in enumerate(table_mapping, start=1):
+    def _perform_rename_operations(
+        self, table_mapping, progress: QProgressDialog, compressor: ImageCompressor | None
+    ) -> list[dict]:
+        """Iterates through the mapping and performs the rename and compression."""
+        results = []
+        for idx, (row, orig_str, new_name, new_path_str) in enumerate(table_mapping, start=1):
             if progress.wasCanceled():
                 break
+
+            orig_path = Path(orig_str)
+            new_path = Path(new_path_str)
             result = {
                 "row": row,
-                "orig": orig,
+                "orig": orig_path,
                 "new": new_path,
                 "old_size": None,
                 "new_size": None,
                 "error": None,
             }
+
             try:
-                orig_abs = os.path.abspath(orig)
-                new_abs = os.path.abspath(new_path)
-                if orig_abs != new_abs:
-                    os.rename(orig, new_path)
+                if orig_path.resolve() != new_path.resolve():
+                    orig_path.rename(new_path)
+
                 final_path = new_path
-                if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
-                    old_size = os.path.getsize(new_path)
-                    final_path, new_size, _ = compressor.compress(new_path)
+                if compressor and new_path.suffix.lower() not in MediaViewer.VIDEO_EXTS:
+                    old_size = new_path.stat().st_size
+                    final_path, new_size, _ = compressor.compress(str(new_path))
                     result["old_size"] = old_size
                     result["new_size"] = new_size
-                result["new"] = final_path
+                result["new"] = Path(final_path)
+
             except Exception as e:
+                self.logger.error(f"Error processing {orig_path} -> {new_path}: {e}")
                 result["error"] = str(e)
+
             results.append(result)
             progress.setValue(idx)
             QApplication.processEvents()
+        return results
 
-        progress.close()
+    def _process_rename_results(self, results: list[dict], was_canceled: bool):
+        """Processes the results of the rename operations, updating the UI."""
         used_tags: list[str] = []
-        done = len(results)
-        total_local = total
+        successful_renames = 0
+
         for res in results:
             if res.get("error"):
                 QMessageBox.warning(
@@ -1747,36 +1807,36 @@ class RenamerApp(QWidget):
                     f"Error renaming:\n{res['orig']}\n→ {res['new']}\nError: {res['error']}"
                 )
                 continue
+
+            successful_renames += 1
             row = res["row"]
             new_path = res["new"]
-            for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
+
+            for table in self.mode_tabs.all_tables():
                 item0 = table.item(row, 1)
                 if item0:
-                    item0.setText(os.path.basename(new_path))
-                    item0.setData(int(Qt.ItemDataRole.UserRole), new_path)
+                    item0.setText(new_path.name)
+                    item0.setData(int(Qt.ItemDataRole.UserRole), str(new_path))
                     settings = item0.data(ROLE_SETTINGS)
                     if settings and self.rename_mode == MODE_NORMAL:
                         used_tags.extend(settings.tags)
-                    self.undo_manager.record(row, res["orig"], new_path)
-                    if compressor and os.path.splitext(new_path)[1].lower() not in MediaViewer.VIDEO_EXTS:
+                    self.undo_manager.record(row, str(res["orig"]), str(new_path))
+                    if res.get("old_size") is not None:
                         if settings:
                             settings.size_bytes = res.get("old_size")
                             settings.compressed_bytes = res.get("new_size")
 
-        if progress.wasCanceled():
+        if was_canceled:
             QMessageBox.information(
                 self,
                 tr("partial_rename"),
-                tr("partial_rename_msg").format(done=done, total=total_local)
+                tr("partial_rename_msg").format(done=successful_renames, total=len(results))
             )
         else:
             QMessageBox.information(self, tr("done"), tr("rename_done"))
             if used_tags and self.rename_mode == MODE_NORMAL:
                 increment_tags(used_tags)
                 self.tag_panel.rebuild()
-        self.set_status_message(None)
-        self._enable_sorting()
-        self._session_save_timer.start()
 
     def update_status(self) -> None:
         """Refresh the selection count and optional message."""
@@ -1796,12 +1856,14 @@ class RenamerApp(QWidget):
         )
 
     def save_session(self):
+        """Saves the current state of the application to a session file."""
         self.logger.info("Saving session...")
-        session_file = os.path.join(config_manager.config_dir, "session.json")
+        session_file = Path(config_manager.config_dir) / "session.json"
         data = {
             "project_number": self.input_project.text(),
             "files": []
         }
+
         for row in range(self.mode_tabs.normal_tab.rowCount()):
             item = self.mode_tabs.normal_tab.item(row, 1)
             if not item:
@@ -1810,18 +1872,20 @@ class RenamerApp(QWidget):
             if not settings:
                 continue
             data["files"].append(settings.to_dict())
-        
+
         try:
             with open(session_file, "w") as f:
                 json.dump(data, f, indent=2)
             self.logger.info("Session saved successfully.")
             self.set_session_status(True)
-        except Exception as e:
+        except (IOError, json.JSONDecodeError) as e:
             self.logger.error(f"Failed to save session: {e}")
+            QMessageBox.warning(self, tr("error"), tr("session_save_failed").format(error=e))
 
     def check_for_crashed_session(self):
-        session_file = os.path.join(config_manager.config_dir, "session.json")
-        if not os.path.exists(session_file):
+        """Checks for a crashed session file and prompts the user to restore it."""
+        session_file = Path(config_manager.config_dir) / "session.json"
+        if not session_file.exists():
             return
 
         reply = QMessageBox.question(
@@ -1834,11 +1898,15 @@ class RenamerApp(QWidget):
         if reply == QMessageBox.StandardButton.Yes:
             self.restore_session(show_dialog=False)
         else:
-            os.remove(session_file)
+            try:
+                session_file.unlink()
+            except OSError as e:
+                self.logger.error(f"Failed to remove session file: {e}")
 
     def restore_session(self, show_dialog=True):
-        session_file = os.path.join(config_manager.config_dir, "session.json")
-        if not os.path.exists(session_file):
+        """Restores the application state from a session file."""
+        session_file = Path(config_manager.config_dir) / "session.json"
+        if not session_file.exists():
             if show_dialog:
                 QMessageBox.information(
                     self,
@@ -1854,45 +1922,21 @@ class RenamerApp(QWidget):
                 tr("restore_session_msg"),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
-
             if reply == QMessageBox.StandardButton.No:
                 return
-        
+
         try:
             with open(session_file, "r") as f:
                 data = json.load(f)
-            
+
             self.input_project.setText(data.get("project_number", ""))
-            
-            paths_to_add = []
-            settings_map = {}
-            for item_data in data.get("files", []):
-                try:
-                    settings = ItemSettings.from_dict(item_data)
-                    if os.path.exists(settings.original_path):
-                        paths_to_add.append(settings.original_path)
-                        settings_map[settings.original_path] = settings
-                    else:
-                        self.logger.warning(f"File not found, skipping: {settings.original_path}")
-                except Exception as e:
-                    self.logger.error(f"Failed to restore item: {item_data}. Error: {e}")
+
+            paths_to_add, settings_map = self._prepare_restored_files(data)
 
             if paths_to_add:
                 self._import_paths(paths_to_add)
 
-            for row in range(self.mode_tabs.normal_tab.rowCount()):
-                item = self.mode_tabs.normal_tab.item(row, 1)
-                if not item:
-                    continue
-                path = item.data(int(Qt.ItemDataRole.UserRole))
-                if path in settings_map:
-                    settings = settings_map[path]
-                    for table in [self.mode_tabs.normal_tab, self.mode_tabs.position_tab, self.mode_tabs.pa_mat_tab]:
-                        table.item(row, 1).setData(ROLE_SETTINGS, settings)
-                        table.item(row, 2).setText(",".join(sorted(settings.tags)))
-                        table.item(row, 3).setText(settings.date)
-                        table.item(row, 4).setText(settings.suffix)
-                        self.update_row_background(row, settings)
+            self._apply_restored_settings(settings_map)
 
             self.logger.info("Session restored successfully.")
             self._session_recording_started = True
@@ -1901,18 +1945,54 @@ class RenamerApp(QWidget):
                 tr("restore_session_title"),
                 tr("session_restored_successfully"),
             )
-        except Exception as e:
+        except (IOError, json.JSONDecodeError) as e:
             self.logger.error(f"Failed to restore session: {e}")
             QMessageBox.warning(
                 self,
                 tr("restore_session_title"),
-                tr("session_restore_failed"),
+                tr("session_restore_failed").format(error=e),
             )
         finally:
-            if os.path.exists(session_file) and not show_dialog:
-                os.remove(session_file)
+            if session_file.exists() and not show_dialog:
+                try:
+                    session_file.unlink()
+                except OSError as e:
+                    self.logger.error(f"Failed to remove session file: {e}")
+
+    def _prepare_restored_files(self, data: dict) -> tuple[list[str], dict[str, ItemSettings]]:
+        """Prepares the list of files and settings to be restored."""
+        paths_to_add = []
+        settings_map = {}
+        for item_data in data.get("files", []):
+            try:
+                settings = ItemSettings.from_dict(item_data)
+                if Path(settings.original_path).exists():
+                    paths_to_add.append(settings.original_path)
+                    settings_map[settings.original_path] = settings
+                else:
+                    self.logger.warning(f"File not found, skipping: {settings.original_path}")
+            except Exception as e:
+                self.logger.error(f"Failed to restore item: {item_data}. Error: {e}")
+        return paths_to_add, settings_map
+
+    def _apply_restored_settings(self, settings_map: dict[str, ItemSettings]):
+        """Applies the restored settings to the table."""
+        for row in range(self.mode_tabs.normal_tab.rowCount()):
+            item = self.mode_tabs.normal_tab.item(row, 1)
+            if not item:
+                continue
+            path = item.data(int(Qt.ItemDataRole.UserRole))
+            if path in settings_map:
+                settings = settings_map[path]
+                for table in self.mode_tabs.all_tables():
+                    table.item(row, 1).setData(ROLE_SETTINGS, settings)
+                    table.item(row, 2).setText(",".join(sorted(settings.tags)))
+                    table.item(row, 3).setText(settings.date)
+                    table.item(row, 4).setText(settings.suffix)
+                    self.update_row_background(row, settings)
 
     def closeEvent(self, event):
+        """Handles the application closing event."""
         self.logger.info("Close event triggered.")
         if self._preview_loader:
             self.logger.debug("Stopping preview loader on close.")
@@ -1927,13 +2007,16 @@ class RenamerApp(QWidget):
             self.state_manager.set("height", self.height())
             self.state_manager.set("splitter_sizes", self.splitter.sizes())
             self.state_manager.save()
-        
+
         if self.image_viewer.video_player.player:
             self.image_viewer.video_player.player.stop()
-            
+
         # On clean shutdown, remove the session file
-        session_file = os.path.join(config_manager.config_dir, "session.json")
-        if os.path.exists(session_file):
-            os.remove(session_file)
-            
+        session_file = Path(config_manager.config_dir) / "session.json"
+        if session_file.exists():
+            try:
+                session_file.unlink()
+            except OSError as e:
+                self.logger.error(f"Failed to remove session file on exit: {e}")
+
         super().closeEvent(event)

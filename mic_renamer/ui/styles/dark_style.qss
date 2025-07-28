@@ -1,5 +1,6 @@
 /* dark_style.qss */
 
+/* Base styling for all QWidget elements */
 QWidget {
     background-color: #1c1c1c; /* Dark background */
     color: #f0f0f0; /* Light text */
@@ -7,10 +8,12 @@ QWidget {
     font-size: 12px; /* Smaller font size */
 }
 
+/* Styling for the main application window */
 QMainWindow {
     background-color: #1c1c1c;
 }
 
+/* Styling for standard push buttons and tool buttons */
 QPushButton, QToolButton {
     background-color: #333333;
     color: #f0f0f0;
@@ -20,30 +23,35 @@ QPushButton, QToolButton {
     font-weight: 500;
 }
 
+/* Hover state for buttons */
 QPushButton:hover, QToolButton:hover {
     background-color: #444444;
     border-color: #009ee0;
 }
 
+/* Pressed state for buttons */
 QPushButton:pressed, QToolButton:pressed {
     background-color: #222222;
 }
 
-/* Primary button style */
+/* Primary button style (e.g., for important actions) */
 QPushButton[cssClass="primary"] {
     background-color: #009ee0;
     color: white;
 }
 
+/* Hover state for primary buttons */
 QPushButton[cssClass="primary"]:hover {
     background-color: #008ac7;
 }
 
+/* Pressed state for primary buttons */
 QPushButton[cssClass="primary"]:pressed {
     background-color: #0075ad;
 }
 
 
+/* Styling for various input fields */
 QLineEdit, QTextEdit, QSpinBox, QDoubleSpinBox, QComboBox {
     background-color: #2b2b2b;
     border: 1px solid #555555;
@@ -52,11 +60,13 @@ QLineEdit, QTextEdit, QSpinBox, QDoubleSpinBox, QComboBox {
     color: #f0f0f0;
 }
 
+/* Focus state for input fields */
 QLineEdit:focus, QTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
     border-color: #009ee0;
     outline: 0;
 }
 
+/* Styling for QTableView (e.g., file list table) */
 QTableView {
     border: 1px solid #333333;
     gridline-color: #333333;
@@ -64,6 +74,7 @@ QTableView {
     border-radius: 4px;
 }
 
+/* Styling for QHeaderView sections (table headers) */
 QHeaderView::section {
     background-color: #333333;
     padding: 4px; /* Smaller padding */
@@ -72,6 +83,7 @@ QHeaderView::section {
     color: #f0f0f0;
 }
 
+/* Styling for QTabWidget panes (content area of tabs) */
 QTabWidget::pane {
     border: 1px solid #333333;
     border-top: 0px;
@@ -79,6 +91,7 @@ QTabWidget::pane {
     padding: 8px; /* Smaller padding */
 }
 
+/* Styling for individual tabs in QTabBar */
 QTabBar::tab {
     background: #2b2b2b;
     border: 1px solid #333333;
@@ -90,34 +103,41 @@ QTabBar::tab {
     color: #f0f0f0;
 }
 
+/* Styling for the currently selected tab */
 QTabBar::tab:selected {
     background: #1c1c1c;
-    border-bottom-color: #1c1c1c;
+    border-bottom-color: #1c1c1c; /* Hide bottom border to blend with pane */
 }
 
+/* Styling for unselected tabs */
 QTabBar::tab:!selected {
-    margin-top: 2px;
+    margin-top: 2px; /* Slightly lower unselected tabs */
     background: #222222;
 }
 
+/* Styling for QSplitter handles */
 QSplitter::handle {
     background: #333333;
 }
 
+/* Styling for horizontal splitter handles */
 QSplitter::handle:horizontal {
     width: 1px;
 }
 
+/* Styling for vertical splitter handles */
 QSplitter::handle:vertical {
     height: 1px;
 }
 
+/* Styling for QGroupBox (e.g., for grouping settings) */
 QGroupBox {
     border: 1px solid #333333;
     border-radius: 4px;
-    margin-top: 6px;
+    margin-top: 6px; /* Space for the title */
 }
 
+/* Styling for the title of a QGroupBox */
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
@@ -125,10 +145,12 @@ QGroupBox::title {
     left: 10px;
 }
 
+/* Styling for QScrollArea */
 QScrollArea {
     border: none;
 }
 
+/* Styling for vertical scroll bars */
 QScrollBar:vertical {
     border: none;
     background: #2b2b2b;
@@ -136,17 +158,20 @@ QScrollBar:vertical {
     margin: 0px 0px 0px 0px;
 }
 
+/* Styling for the vertical scroll bar handle */
 QScrollBar::handle:vertical {
     background: #555555;
     min-height: 20px;
     border-radius: 4px;
 }
 
+/* Hide add/sub-line buttons for vertical scroll bars */
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     border: none;
     background: none;
 }
 
+/* Styling for horizontal scroll bars */
 QScrollBar:horizontal {
     border: none;
     background: #2b2b2b;
@@ -154,17 +179,20 @@ QScrollBar:horizontal {
     margin: 0px 0px 0px 0px;
 }
 
+/* Styling for the horizontal scroll bar handle */
 QScrollBar::handle:horizontal {
     background: #555555;
     min-width: 20px;
     border-radius: 4px;
 }
 
+/* Hide add/sub-line buttons for horizontal scroll bars */
 QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
     border: none;
     background: none;
 }
-/* TagBox styling */
+
+/* Base styling for TagBox custom checkboxes */
 QCheckBox[class="tag-box"] {
     margin: 0px;
     padding: 0px;
@@ -172,21 +200,26 @@ QCheckBox[class="tag-box"] {
     background-color: #2b2b2b;
     color: #f0f0f0;
 }
+
+/* Styling for preselected TagBox (e.g., for search results) */
 QCheckBox[class="tag-box-preselected"] {
     margin: 0px;
     padding: 0px;
-    border: 1px solid #ffa500;
+    border: 1px solid #ffa500; /* Orange border for preselected */
     background-color: #555555;
     color: white;
 }
+
+/* Styling for checked TagBox */
 QCheckBox[class="tag-box-checked"] {
     margin: 0px;
     padding: 0px;
-    border: 1px solid #009ee0;
+    border: 1px solid #009ee0; /* Blue border for checked */
     background-color: #009ee0;
     color: white;
 }
-/* Hide the default checkbox indicator */
+
+/* Hide the default checkbox indicator for all TagBox states */
 QCheckBox[class="tag-box"]::indicator,
 QCheckBox[class="tag-box-preselected"]::indicator,
 QCheckBox[class="tag-box-checked"]::indicator {

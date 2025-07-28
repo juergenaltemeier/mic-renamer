@@ -1,3 +1,7 @@
+# Default configuration settings for the mic-renamer application.
+# These values are used if no user-specific settings are found or if settings are reset.
+# This file is bundled with the application and should not be directly modified by users.
+# User-specific settings are stored in 'app_settings.yaml' in the configuration directory.
 accepted_extensions:
   - .jpg
   - .jpeg
