@@ -197,6 +197,6 @@ class PreviewLoader(QObject):
 
 # Set a reasonable cache limit for QPixmapCache to manage memory usage for image previews.
 # The value is in kilobytes (KB). 20480 KB = 20 MB.
-QPixmapCache.setCacheLimit(20480)
+QPixmapCache.setCacheLimit(10240)
 logger.info(f"QPixmapCache limit set to {QPixmapCache.cacheLimit()} KB.")
 

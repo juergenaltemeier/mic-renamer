@@ -47,6 +47,7 @@ class ImageViewer(QGraphicsView):
         reader = QImageReader(path)
         reader.setAutoTransform(True)
         img = reader.read()
+        del reader # Explicitly delete the reader
         if img.isNull() and path.lower().endswith(".heic"):
             try:
                 from PIL import Image
@@ -57,6 +58,8 @@ class ImageViewer(QGraphicsView):
                 pil_img = pil_img.convert("RGBA")
                 data = pil_img.tobytes("raw", "RGBA")
                 img = QImage(data, pil_img.width, pil_img.height, QImage.Format_RGBA8888)
+                del pil_img # Explicitly delete the PIL image
+                del data # Explicitly delete the bytes data
             except Exception:
                 img = QImage()
         if img.isNull():
@@ -64,6 +67,7 @@ class ImageViewer(QGraphicsView):
             self.set_pixmap(self.placeholder_pixmap)
             return
         pix = QPixmap.fromImage(img)
+        del img # Explicitly delete the QImage
         self.set_pixmap(pix)
 
     def set_pixmap(self, pixmap: QPixmap) -> None:

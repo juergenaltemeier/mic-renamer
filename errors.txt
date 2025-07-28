@@ -1,0 +1,4 @@
+Error renaming:
+D:\C230105 Bilder\Aktuell\C123456_250609_001_001.jpg
+→ D:\C230105 Bilder\Aktuell\C123456_pos_003.jpg
+Error: Failed to rename file from D:\C230105 Bilder\Aktuell\C123456_250609_001_001.jpg to D:\C230105 Bilder\Aktuell\C123456_pos_003.jpg: [WinError 2] The system cannot find the file specified: 'D:\\C230105 Bilder\\Aktuell\\C123456_250609_001_001.jpg' -> 'D:\\C230105 Bilder\\Aktuell\\C123456_pos_003.jpg'

@@ -265,6 +265,7 @@ class MediaViewer(QWidget):
         self.stack = QStackedLayout(self)
         self.stack.addWidget(self.image_viewer)
         self.stack.addWidget(self.video_player)
+        self.current_media_path: str | None = None # Initialize current_media_path
         logger.info("MediaViewer initialized.")
 
     def clear_media(self) -> None:
@@ -276,6 +277,7 @@ class MediaViewer(QWidget):
         self.video_player.player.stop() # Stop video playback.
         self.video_player.player.setSource(QUrl()) # Clear the video media source.
         self.image_viewer.load_image("") # Clear the image viewer (loads placeholder).
+        self.current_media_path = None # Reset current media path
         logger.info("MediaViewer cleared all loaded media.")
 
     def load_path(self, path: str) -> None:
@@ -296,6 +298,7 @@ class MediaViewer(QWidget):
             logger.debug("Empty path provided to MediaViewer. Clearing media.")
             return
         
+        self.current_media_path = path # Update current media path
         ext = Path(path).suffix.lower() # Get file extension in lowercase.
         
         if ext in self.IMAGE_EXTS: # If it's an image file.
@@ -386,4 +389,4 @@ class MediaViewer(QWidget):
         """
         if self.stack.currentWidget() == self.image_viewer:
             self.image_viewer.rotate_right()
-            logger.debug("Rotate right ignored: video player is active.")
+            logger.debug("Rotate right requested for image viewer.")

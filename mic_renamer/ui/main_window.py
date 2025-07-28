@@ -5,36 +5,10 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from PySide6.QtCore import (
-    QItemSelectionModel,
-    QSize,
-    Qt,
-    QThread,
-    QTimer,
-    Slot,
-)
-from PySide6.QtGui import QAction, QImage, QPixmap, QPixmapCache
-from PySide6.QtWidgets import (
-    QApplication,
-    QComboBox,
-    QDialog,
-    QDialogButtonBox,
-    QFileDialog,
-    QHBoxLayout,
-    QInputDialog,
-    QLabel,
-    QMenu,
-    QMessageBox,
-    QProgressDialog,
-    QSizePolicy,
-    QSplitter,
-    QTableWidget,
-    QTableWidgetItem,
-    QToolBar,
-    QToolButton,
-    QVBoxLayout,
-    QWidget,
-)
+import gc
+from PySide6.QtCore import (QItemSelectionModel, QPoint, QSize, Qt, Signal, Slot, QThread, QTimer)
+from PySide6.QtGui import QImage, QPixmap, QPixmapCache, QAction
+from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QSizePolicy, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QProgressDialog, QToolBar, QMenu, QToolButton, QSplitter, QComboBox, QDialogButtonBox, QInputDialog)
 
 from .. import config_manager
 from ..logic.image_compressor import ImageCompressor
@@ -196,13 +170,42 @@ class RenamerApp(QWidget):
         self.splitter.addWidget(table_container)
 
     def _create_viewer_widget(self) -> QWidget:
-        """Creates the widget containing the media viewer and its controls."""
+        """Creates the widget for displaying media (image/video) previews."""
         viewer_widget = QWidget()
         viewer_layout = QVBoxLayout(viewer_widget)
-        self.image_viewer = MediaViewer()
-        viewer_toolbar = self._create_viewer_toolbar()
-        viewer_layout.addLayout(viewer_toolbar)
-        viewer_layout.addWidget(self.image_viewer, 5)
+        viewer_layout.setContentsMargins(0, 0, 0, 0)
+        viewer_layout.setSpacing(0)
+
+        self.media_viewer = MediaViewer() # Assign MediaViewer instance to self.media_viewer
+        viewer_layout.addWidget(self.media_viewer)
+
+        viewer_toolbar = QToolBar()
+        viewer_toolbar.setIconSize(QSize(20, 20))
+        viewer_layout.addWidget(viewer_toolbar)
+
+        self.viewer_actions = []
+        self.viewer_buttons = []
+
+        icon_size = QSize(20, 20)
+
+        actions = {
+            "zoom_fit": (resource_icon("zoom-fit.svg"), "Fit", self.media_viewer.zoom_fit),
+            "prev": (resource_icon("prev.svg"), "Prev", self.goto_previous_item),
+            "next": (resource_icon("next.svg"), "Next", self.goto_next_item),
+            "rot_left": (resource_icon("rotate-left.svg"), "Rotate Left", self.media_viewer.rotate_left),
+            "rot_right": (resource_icon("rotate-right.svg"), "Rotate Right", self.media_viewer.rotate_right),
+        }
+
+        for name, (icon, text, slot) in actions.items():
+            action = QAction(icon, text, self)
+            action.triggered.connect(slot)
+            button = QToolButton()
+            button.setDefaultAction(action)
+            button.setIconSize(icon_size)
+            viewer_toolbar.addWidget(button)
+            self.viewer_actions.append(action)
+            self.viewer_buttons.append(button)
+
         return viewer_widget
 
     def _create_viewer_toolbar(self) -> QHBoxLayout:
@@ -213,11 +216,11 @@ class RenamerApp(QWidget):
         icon_size = QSize(20, 20)
 
         actions = {
-            "zoom_fit": (resource_icon("zoom-fit.svg"), "Fit", self.image_viewer.zoom_fit),
+            "zoom_fit": (resource_icon("zoom-fit.svg"), "Fit", self.media_viewer.zoom_fit),
             "prev": (resource_icon("prev.svg"), "Prev", self.goto_previous_item),
             "next": (resource_icon("next.svg"), "Next", self.goto_next_item),
-            "rot_left": (resource_icon("rotate-left.svg"), "Rotate Left", self.image_viewer.rotate_left),
-            "rot_right": (resource_icon("rotate-right.svg"), "Rotate Right", self.image_viewer.rotate_right),
+            "rot_left": (resource_icon("rotate-left.svg"), "Rotate Left", self.media_viewer.rotate_left),
+            "rot_right": (resource_icon("rotate-right.svg"), "Rotate Right", self.media_viewer.rotate_right),
         }
 
         for name, (icon, text, slot) in actions.items():
@@ -617,6 +620,7 @@ class RenamerApp(QWidget):
             "tip_preview_rename", "tip_settings"
         ]
         for action, key, tip in zip(actions, labels, tips):
+            self.logger.debug(f"Translating main toolbar action: key={key}, tip={tip}")
             action.setText(tr(key))
             action.setToolTip(tr(tip))
 
@@ -633,6 +637,7 @@ class RenamerApp(QWidget):
             "tip_add_files", "tip_add_folder", "tip_add_folder_recursive", "tip_add_untagged_folder", "tip_add_untagged_folder_recursive", ""
         ]
         for action, key, tip in zip(menu_actions, menu_labels, menu_tips):
+            self.logger.debug(f"Translating Add menu action: key={key}, tip={tip}")
             action.setText(tr(key))
             action.setToolTip(tr(tip))
 
@@ -819,9 +824,7 @@ class RenamerApp(QWidget):
             # Normalize the path to use forward slashes for consistency
             normalized_path = path.replace("\\", "/")
             # Import into all mode tabs
-            self.mode_tabs.normal_tab.add_paths([normalized_path])
-            self.mode_tabs.position_tab.add_paths([normalized_path])
-            self.mode_tabs.pa_mat_tab.add_paths([normalized_path])
+            self.mode_tabs.current_table().add_paths([normalized_path])
             progress.setValue(idx)
             QApplication.processEvents()
         progress.close()
@@ -842,7 +845,7 @@ class RenamerApp(QWidget):
             if self._preview_loader:
                 self.logger.debug("Stopping previous preview loader due to no current row.")
                 self._preview_loader.stop()
-            self.image_viewer.load_path("")
+            self.media_viewer.load_path("")
             self.set_item_controls_enabled(False)
             (self.table_widget).sync_check_column()
             self.update_status()
@@ -1090,6 +1093,11 @@ class RenamerApp(QWidget):
         """Load preview image/video using a background thread."""
         self.logger.debug("Request to load preview for: %s", path)
         
+        # Clear previous pixmap from cache if a new path is being loaded
+        if self.media_viewer.current_media_path and self.media_viewer.current_media_path != path:
+            QPixmapCache.remove(self.media_viewer.current_media_path)
+            self.logger.debug(f"Removed {self.media_viewer.current_media_path} from QPixmapCache.")
+
         # If a thread is already running, request it to quit and wait for it to finish.
         if self._preview_thread and self._preview_thread.isRunning():
             self.logger.debug("Stopping previous preview loader.")
@@ -1099,22 +1107,22 @@ class RenamerApp(QWidget):
             self._preview_thread.wait(500) # Wait up to 500ms
 
         if not path:
-            self.image_viewer.load_path("")
+            self.media_viewer.load_path("")
             return
 
         # Check if it's a video file - handle directly without background thread
         ext = os.path.splitext(path)[1].lower()
         if ext in MediaViewer.VIDEO_EXTS:
-            self.image_viewer.load_path(path)
+            self.media_viewer.load_path(path)
             return
 
         # Handle images with background loading and caching
         pix = QPixmap()
         if QPixmapCache.find(path, pix):
-            self.image_viewer.show_pixmap(pix)
+            self.media_viewer.show_pixmap(pix)
             return
 
-        self._preview_loader = PreviewLoader(path, self.image_viewer.size())
+        self._preview_loader = PreviewLoader(path, self.media_viewer.size())
         self._preview_thread = QThread()
         self._preview_loader.moveToThread(self._preview_thread)
         self._preview_thread.started.connect(self._preview_loader.run)
@@ -1136,12 +1144,18 @@ class RenamerApp(QWidget):
         self._preview_loader = None
         if image.isNull():
             logging.getLogger(__name__).warning("Failed to load preview: %s", path)
-            placeholder = self.image_viewer.image_viewer.placeholder_pixmap
-            self.image_viewer.show_pixmap(placeholder)
+            placeholder = self.media_viewer.image_viewer.placeholder_pixmap
+            self.media_viewer.show_pixmap(placeholder)
             return
         pixmap = QPixmap.fromImage(image)
+        # Explicitly clear the QImage to potentially free memory sooner
+        image = QImage()
         QPixmapCache.insert(path, pixmap)
-        self.image_viewer.show_pixmap(pixmap)
+        self.media_viewer.show_pixmap(pixmap)
+        # Explicitly remove the pixmap from the cache after it's displayed
+        
+        del image # Explicitly delete the QImage object
+        gc.collect() # Force garbage collection
 
     def goto_previous_item(self):
         row = self.table_widget.currentRow()
@@ -1161,7 +1175,7 @@ class RenamerApp(QWidget):
         self.mode_tabs.normal_tab.setRowCount(0)
         self.mode_tabs.position_tab.setRowCount(0)
         self.mode_tabs.pa_mat_tab.setRowCount(0)
-        self.image_viewer.load_path("")
+        self.media_viewer.load_path("")
         for cb in self.tag_panel.checkbox_map.values():
             cb.setChecked(False)
         self.set_item_controls_enabled(False)
@@ -1194,7 +1208,7 @@ class RenamerApp(QWidget):
             self.mode_tabs.position_tab.removeRow(row)
             self.mode_tabs.pa_mat_tab.removeRow(row)
         if self.table_widget.rowCount() == 0:
-            self.image_viewer.load_path("")
+            self.media_viewer.load_path("")
             self.set_item_controls_enabled(False)
         else:
             new_row = min(rows[0], self.table_widget.rowCount() - 1)
@@ -1461,8 +1475,44 @@ class RenamerApp(QWidget):
             renamer = Renamer(project, items, dest_dir=dest_dir, mode=mode)
             mapping = renamer.build_mapping()
             for settings, orig, new in mapping:
+                settings.new_path = new # Set new_path attribute
                 full.append((mode, settings, orig, new))
         return full
+
+    def build_active_tab_rename_mapping(self, dest_dir: str | None = None):
+        """Build rename mapping only for items in the currently active mode tab."""
+        project = self.input_project.text().strip()
+        if not re.fullmatch(r"C\d{6}", project):
+            QMessageBox.warning(self, tr("missing_project"), tr("missing_project_msg"))
+            return None
+
+        active_mode = self.rename_mode
+        active_table = getattr(self.mode_tabs, f"{active_mode}_tab")
+
+        items = []
+        for row in range(active_table.rowCount()):
+            item0 = active_table.item(row, 1)
+            if not item0:
+                continue
+            settings: ItemSettings = item0.data(ROLE_SETTINGS)
+            if settings is None:
+                path = item0.data(int(Qt.ItemDataRole.UserRole))
+                settings = ItemSettings(path)
+            items.append(settings)
+
+        if not items:
+            return []
+
+        renamer = Renamer(project, items, dest_dir=dest_dir, mode=active_mode)
+        mapping = renamer.build_mapping()
+        
+        # The mapping from renamer.build_mapping() is (settings, orig, new)
+        # We need to convert it to (mode, settings, orig, new) for consistency with full mapping
+        full_mapping = []
+        for settings, orig, new in mapping:
+            settings.new_path = new # Set new_path attribute
+            full_mapping.append((active_mode, settings, orig, new))
+        return full_mapping
     
     def rename_selected(self):
         """Rename only the selected files using current project and mode."""
@@ -1533,24 +1583,28 @@ class RenamerApp(QWidget):
                 final_table_mapping.append((row, orig, new_name, new_path))
         
         self.execute_rename_with_progress(final_table_mapping, compress=compress)
+        self.logger.info(f"Final table mapping for execution: {final_table_mapping}")
 
     def preview_rename(self):
-        # build full mapping across all tabs
-        mapping = self.build_full_rename_mapping()
+        # build mapping for the active tab only
+        mapping = self.build_active_tab_rename_mapping()
         if not mapping:
             QMessageBox.information(self, tr("no_files"), tr("no_files_msg"))
+            self.logger.warning("No mapping generated. Aborting preview.")
             return
 
         # prepare mapping entries: (mode, row, orig_path, new_name, new_path)
         table_mapping: list[tuple[str,int,str,str,str]] = []
         for mode, settings, orig, new in mapping:
             new_name = os.path.basename(new)
-            table = getattr(self.mode_tabs, f"{mode}_tab")
-            for row in range(table.rowCount()):
-                item0 = table.item(row, 1)
+            # Use the active table directly, as mapping is already for the active tab
+            active_table = getattr(self.mode_tabs, f"{mode}_tab")
+            for row in range(active_table.rowCount()):
+                item0 = active_table.item(row, 1)
                 if item0 and item0.data(int(Qt.ItemDataRole.UserRole)) == orig:
                     table_mapping.append((mode, row, orig, new_name, new))
                     break
+        self.logger.info(f"Table mapping for preview: {table_mapping}")
         
         dlg = QDialog(self)
         dlg.setWindowTitle(tr("preview_rename"))
@@ -1713,14 +1767,14 @@ class RenamerApp(QWidget):
 
     def execute_rename_with_progress(self, table_mapping, compress: bool = False):
         """Executes the renaming process with a progress dialog."""
-        self.image_viewer.clear_media()
+        self.media_viewer.clear_media()
         self.set_status_message(tr("renaming_files"))
         self.table_widget.setSortingEnabled(False)
 
         progress = self._create_progress_dialog(tr("renaming_files"), len(table_mapping))
         compressor = self._get_compressor() if compress else None
 
-        results = self._perform_rename_operations(table_mapping, progress, compressor)
+        results = self._perform_rename_operations(progress, compressor)
 
         progress.close()
         self._process_rename_results(results, progress.wasCanceled())
@@ -1754,16 +1808,35 @@ class RenamerApp(QWidget):
             return None
 
     def _perform_rename_operations(
-        self, table_mapping, progress: QProgressDialog, compressor: ImageCompressor | None
+        self, progress: QProgressDialog, compressor: ImageCompressor | None
     ) -> list[dict]:
         """Iterates through the mapping and performs the rename and compression."""
         results = []
-        for idx, (row, orig_str, new_name, new_path_str) in enumerate(table_mapping, start=1):
+        for idx in range(self.table_widget.rowCount()):
+            row = idx
+            item0 = self.table_widget.item(row, 1)
+            if not item0:
+                continue
+
+            settings: ItemSettings = item0.data(ROLE_SETTINGS)
+            if settings is None:
+                # If settings are not available, use the path from UserRole
+                orig_path = item0.data(int(Qt.ItemDataRole.UserRole))
+                new_name = item0.text()
+                orig_dir = Path(orig_path).parent
+                new_path = str(orig_dir / new_name)
+            else:
+                # If settings are available, use them to get original and new paths
+                orig_path = settings.original_path
+                new_path = settings.new_path
+
+            # Ensure new_path is absolute
+            if not Path(new_path).is_absolute():
+                new_path = str(Path(orig_path).parent / new_path)
+
             if progress.wasCanceled():
                 break
 
-            orig_path = Path(orig_str)
-            new_path = Path(new_path_str)
             result = {
                 "row": row,
                 "orig": orig_path,
@@ -1774,23 +1847,40 @@ class RenamerApp(QWidget):
             }
 
             try:
-                if orig_path.resolve() != new_path.resolve():
-                    orig_path.rename(new_path)
+                orig_path_obj = Path(orig_path)
+                new_path_obj = Path(new_path)
 
-                final_path = new_path
-                if compressor and new_path.suffix.lower() not in MediaViewer.VIDEO_EXTS:
-                    old_size = new_path.stat().st_size
-                    final_path, new_size, _ = compressor.compress(str(new_path))
+                if orig_path_obj.resolve() != new_path_obj.resolve():
+                    # Attempt to rename the file
+                    try:
+                        orig_path_obj.rename(new_path_obj)
+                    except FileExistsError:
+                        # If the destination file already exists, try to remove it first
+                        # This might happen if a previous rename failed partially
+                        self.logger.warning(f"Destination file {new_path_obj} already exists. Attempting to remove it.")
+                        try:
+                            new_path_obj.unlink()
+                            orig_path_obj.rename(new_path_obj)
+                        except Exception as unlink_e:
+                            raise Exception(f"Failed to remove existing destination file {new_path_obj}: {unlink_e}") from unlink_e
+                    except Exception as rename_e:
+                        raise Exception(f"Failed to rename file from {orig_path_obj} to {new_path_obj}: {rename_e}") from rename_e
+
+                final_path = new_path_obj
+                if compressor and new_path_obj.suffix.lower() not in MediaViewer.VIDEO_EXTS:
+                    old_size = new_path_obj.stat().st_size
+                    # Ensure the compressor handles the file path correctly and doesn't leave it locked
+                    final_path, new_size, _ = compressor.compress(str(new_path_obj))
                     result["old_size"] = old_size
                     result["new_size"] = new_size
                 result["new"] = Path(final_path)
 
             except Exception as e:
-                self.logger.error(f"Error processing {orig_path} -> {new_path}: {e}")
+                self.logger.exception(f"Error processing {orig_path} -> {new_path}") # Log full traceback
                 result["error"] = str(e)
 
             results.append(result)
-            progress.setValue(idx)
+            progress.setValue(idx + 1)
             QApplication.processEvents()
         return results
 
@@ -1798,19 +1888,24 @@ class RenamerApp(QWidget):
         """Processes the results of the rename operations, updating the UI."""
         used_tags: list[str] = []
         successful_renames = 0
+        rows_to_remove = []
 
         for res in results:
             if res.get("error"):
                 QMessageBox.warning(
                     self,
                     tr("rename_failed"),
-                    f"Error renaming:\n{res['orig']}\n→ {res['new']}\nError: {res['error']}"
+                    f"""Error renaming:
+Original: {res['orig']}
+New: {res['new']}
+Error: {res['error']} """
                 )
                 continue
 
             successful_renames += 1
             row = res["row"]
             new_path = res["new"]
+            rows_to_remove.append(row)
 
             for table in self.mode_tabs.all_tables():
                 item0 = table.item(row, 1)
@@ -1825,6 +1920,12 @@ class RenamerApp(QWidget):
                         if settings:
                             settings.size_bytes = res.get("old_size")
                             settings.compressed_bytes = res.get("new_size")
+
+        # Remove successfully renamed rows from the table
+        for row in sorted(rows_to_remove, reverse=True):
+            self.mode_tabs.normal_tab.removeRow(row)
+            self.mode_tabs.position_tab.removeRow(row)
+            self.mode_tabs.pa_mat_tab.removeRow(row)
 
         if was_canceled:
             QMessageBox.information(
@@ -2008,8 +2109,8 @@ class RenamerApp(QWidget):
             self.state_manager.set("splitter_sizes", self.splitter.sizes())
             self.state_manager.save()
 
-        if self.image_viewer.video_player.player:
-            self.image_viewer.video_player.player.stop()
+        if self.media_viewer.video_player.player:
+            self.media_viewer.video_player.player.stop()
 
         # On clean shutdown, remove the session file
         session_file = Path(config_manager.config_dir) / "session.json"
