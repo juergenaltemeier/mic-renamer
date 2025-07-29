@@ -9,6 +9,15 @@ current_language = "en"
 TRANSLATIONS: dict[str, dict[str, str]] = {
     'en': {
         'app_title': 'Micavac Renamer',
+        'restore_session': 'Restore Session',
+        'restore_session_msg': 'A previous session was found. Do you want to restore it?',
+        'session_saved': 'Session saved',
+        'session_not_saved': 'Session not saved',
+        'edit_menu': 'Edit',
+        'tip_restore_session': 'Restore the last saved session',
+        'no_session_to_restore': 'No session to restore.',
+        'session_restored_successfully': 'Session restored successfully.',
+        'session_restore_failed': 'Failed to restore session.',
         'project_number_label': 'MC-No.:',
         'project_number_placeholder': 'C123456',
         'selected_file_label': 'Selected File:',

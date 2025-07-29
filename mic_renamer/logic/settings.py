@@ -63,6 +63,7 @@ class ItemSettings:
     pa_mat: str = ""
     size_bytes: int = 0
     compressed_bytes: int = 0
+    new_path: str = ""
 
     def to_dict(self) -> dict:
         """
@@ -101,7 +102,6 @@ class ItemSettings:
         try:
             return cls(
                 original_path=data["original_path"], # 'original_path' is a mandatory field
-                new_path=data.get("new_path", ""), # Added new_path from dict
                 tags={tag.upper() for tag in data.get("tags", [])}, # Convert tags to uppercase set
                 suffix=data.get("suffix", ""),
                 date=data.get("date", ""),

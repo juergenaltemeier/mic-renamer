@@ -15,6 +15,7 @@ import logging
 from typing import Any, Callable, Iterable, List, Tuple
 
 from PySide6.QtCore import QObject, QSize, Qt, Signal, Slot
+from PySide6.QtCore import QBuffer, QByteArray, QObject, QSize, Qt, Signal, Slot
 from PySide6.QtGui import QImage, QImageReader, QPixmapCache
 
 logger = logging.getLogger(__name__)
@@ -103,7 +104,7 @@ class PreviewLoader(QObject):
                                 Arguments: (image_path, loaded_qimage).
     """
 
-    finished = Signal(str, QImage)
+    finished = Signal(str, QByteArray)
 
     def __init__(self, path: str, target_size: QSize) -> None:
         """
@@ -162,18 +163,27 @@ class PreviewLoader(QObject):
                 logger.debug(f"Scaled image {self._path} from {img.width()}x{img.height()} to {scaled_img.width()}x{scaled_img.height()}")
                 img = scaled_img
 
-        except Exception as e:
-            # Catch any errors during image loading or processing.
-            logger.error(f"Error loading or scaling preview for {self._path}: {e}")
-            img = QImage() # Ensure an empty QImage is used on error.
-        finally:
-            # Emit the finished signal with the path and the (potentially empty or scaled) QImage.
+            # Convert QImage to QByteArray (PNG format)
+            byte_array = QByteArray()
+            buffer = QBuffer(byte_array)
+            buffer.open(QBuffer.WriteOnly)
+            img.save(buffer, "PNG") # Save as PNG to preserve quality
+            buffer.close()
+            
+            # Emit the finished signal with the path and the QByteArray
             if not self._stop:
-                self.finished.emit(self._path, img)
+                self.finished.emit(self._path, byte_array)
                 logger.info(f"PreviewLoader finished for {self._path}.")
             else:
                 logger.info(f"PreviewLoader for {self._path} stopped before emitting finished signal.")
-
+            
+        except Exception as e:
+            # Catch any errors during image loading or processing.
+            logger.error(f"Error loading or scaling preview for {self._path}: {e}")
+            # Emit empty QByteArray on error
+            if not self._stop: # Only emit on error if not stopped
+                self.finished.emit(self._path, QByteArray())
+        
     def path(self) -> str:
         """
         Returns the path of the image being loaded by this worker.

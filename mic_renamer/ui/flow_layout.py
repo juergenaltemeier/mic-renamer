@@ -224,8 +224,8 @@ class FlowLayout(QLayout):
 
         for item in self._items:
             item_widget = item.widget()
-            if item_widget and not item_widget.isVisible():
-                continue # Skip invisible widgets
+            if item_widget is None or not item_widget.isVisible():
+                continue # Skip invisible or None widgets
 
             hint = item.sizeHint() # Get the preferred size of the current item.
             space_x = self.spacing() # Horizontal spacing between items.

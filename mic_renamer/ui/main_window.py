@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 import gc
-from PySide6.QtCore import (QItemSelectionModel, QPoint, QSize, Qt, Signal, Slot, QThread, QTimer)
+from PySide6.QtCore import (QByteArray, QItemSelectionModel, QPoint, QSize, Qt, Signal, Slot, QThread, QTimer)
 from PySide6.QtGui import QImage, QPixmap, QPixmapCache, QAction
 from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QSizePolicy, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QProgressDialog, QToolBar, QMenu, QToolButton, QSplitter, QComboBox, QDialogButtonBox, QInputDialog)
 
@@ -110,6 +110,7 @@ class RenamerApp(QWidget):
         """
         super().__init__()
         self.logger = logging.getLogger(__name__)
+        set_language(config_manager.get("language", "en"))
         self.state_manager = state_manager
         self.undo_manager = UndoManager()
         self.rename_mode = MODE_NORMAL
@@ -334,7 +335,6 @@ class RenamerApp(QWidget):
         self.btn_toggle_tags.setText(tr("hide_tags") if visible else tr("show_tags"))
 
         self.set_item_controls_enabled(False)
-        self.update_translations()
         self.status_message = ""
         self.update_status()
         self.apply_toolbar_style(config_manager.get("toolbar_style", "icons"))
@@ -1102,7 +1102,22 @@ class RenamerApp(QWidget):
             if self._preview_loader: # Ensure _preview_loader is not None
                 self._preview_loader.stop()
             self._preview_thread.quit()
-            self._preview_thread.wait(500) # Wait up to 500ms
+            if not self._preview_thread.wait(1000): # Wait up to 1000ms
+                self.logger.warning("Preview thread did not quit gracefully, terminating.")
+                self._preview_thread.terminate()
+                self._preview_thread.wait(2000) # Wait longer for termination
+            
+            # Disconnect signals before deleting objects to prevent crashes
+            self._preview_loader.finished.disconnect(self._preview_thread.quit)
+            self._preview_loader.finished.disconnect(self._preview_loader.deleteLater)
+            self._preview_thread.finished.disconnect(self._preview_thread.deleteLater)
+            self._preview_loader.finished.disconnect(self._on_preview_loaded)
+
+            # Explicitly delete the old objects
+            self._preview_loader.deleteLater()
+            self._preview_thread.deleteLater()
+            self._preview_loader = None
+            self._preview_thread = None
 
         if not path:
             self.media_viewer.load_path("")
@@ -1132,28 +1147,23 @@ class RenamerApp(QWidget):
         
         self.current_preview_thread = self._preview_thread
 
-    @Slot(str, QImage)
-    def _on_preview_loaded(self, path: str, image: QImage) -> None:
+    @Slot(str, QByteArray)
+    def _on_preview_loaded(self, path: str, image_data: QByteArray) -> None:
         self.logger.debug("Preview loaded for: %s. Current loader path: %s", path, self._preview_loader.path() if self._preview_loader else "None")
         if self._preview_loader and self._preview_loader.path() != path:
             self.logger.debug("Ignoring stale preview for: %s", path)
             return
         self._preview_thread = None
         self._preview_loader = None
-        if image.isNull():
+        if image_data.isEmpty():
             logging.getLogger(__name__).warning("Failed to load preview: %s", path)
             placeholder = self.media_viewer.image_viewer.placeholder_pixmap
             self.media_viewer.show_pixmap(placeholder)
             return
-        pixmap = QPixmap.fromImage(image)
-        # Explicitly clear the QImage to potentially free memory sooner
-        image = QImage()
+        pixmap = QPixmap()
+        pixmap.loadFromData(image_data)
         QPixmapCache.insert(path, pixmap)
         self.media_viewer.show_pixmap(pixmap)
-        # Explicitly remove the pixmap from the cache after it's displayed
-        
-        del image # Explicitly delete the QImage object
-        gc.collect() # Force garbage collection
 
     def goto_previous_item(self):
         row = self.table_widget.currentRow()
@@ -1178,6 +1188,8 @@ class RenamerApp(QWidget):
             cb.setChecked(False)
         self.set_item_controls_enabled(False)
         self.update_status()
+        QPixmapCache.clear() # Clear the pixmap cache
+        self.logger.debug("QPixmapCache cleared in clear_all.")
         self._session_save_timer.start()
 
     def clear_cache(self):

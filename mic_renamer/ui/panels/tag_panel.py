@@ -193,7 +193,9 @@ class TagPanel(QWidget):
         # Clear existing checkboxes from the layout and the map.
         while self.tag_layout.count() > 0:
             item = self.tag_layout.takeAt(0)
-            if item and item.widget():
+            if item is None: # Add this check
+                continue
+            if item.widget():
                 widget = item.widget()
                 self.tag_layout.removeWidget(widget) # Remove from layout.
                 widget.deleteLater() # Schedule for deletion.
