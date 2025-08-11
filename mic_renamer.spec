@@ -4,24 +4,32 @@
 block_cipher = None
 
 
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_submodules, collect_data_files
 import os
 
 icon_file = 'favicon.ico' if os.path.exists('favicon.ico') else None
 
 hiddenimports = collect_submodules('mic_renamer')
+hiddenimports.append('pillow_heif.heif')
+hiddenimports.append('graphviz')
+hiddenimports.append('imageio_ffmpeg.binaries')
 
+
+datas=[('mic_renamer/config/defaults.yaml', 'mic_renamer/config'),
+       ('mic_renamer/config/tags.json', 'mic_renamer/config'),
+       ('mic_renamer/favicon.png', 'mic_renamer'),
+       ('mic_renamer/resources/icons/*.svg',
+        'mic_renamer/resources/icons'),
+       ('mic_renamer/ui/styles/*.qss', 'mic_renamer/ui/styles')]
+
+datas += collect_data_files('pytz')
+datas += collect_data_files('tzdata')
 
 a = Analysis(
     ['mic_renamer/__main__.py'],
     pathex=['.'],
     binaries=[],
-    datas=[('mic_renamer/config/defaults.yaml', 'mic_renamer/config'),
-           ('mic_renamer/config/tags.json', 'mic_renamer/config'),
-           ('mic_renamer/favicon.png', 'mic_renamer'),
-           ('mic_renamer/resources/icons/*.svg',
-            'mic_renamer/resources/icons'),
-           ('mic_renamer/ui/styles/*.qss', 'mic_renamer/ui/styles')],
+    datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],
     runtime_hooks=[],

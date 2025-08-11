@@ -126,6 +126,9 @@ class RenamerApp(QWidget):
         self._load_initial_state()
         self._setup_shortcuts()
 
+    def _check_and_offer_certificate_install(self):
+        pass
+
     def _setup_ui(self):
         """Creates and arranges all UI components."""
         main_layout = QVBoxLayout(self)

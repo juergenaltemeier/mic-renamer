@@ -128,7 +128,10 @@ class Application:
         return QApplication(sys.argv)
 
     def _apply_theme(self):
-        """Loads the theme from config and applies it to the application."""
+        """
+        Loads the theme from config and applies it to the application.
+
+        """
         theme = config_manager.get("theme", "dark")
         try:
             apply_styles(self.app, theme)
@@ -207,6 +210,7 @@ class Application:
         """
         self.logger.info("Showing main window.")
         self.window.show()
+        self.window._check_and_offer_certificate_install() # Call after showing window
         try:
             result = self.app.exec()
             self.logger.info("Application finished with exit code %d.", result)

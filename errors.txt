@@ -1,4 +1,3 @@
-Error renaming:
-D:\C230105 Bilder\Aktuell\C123456_250609_001_001.jpg
-→ D:\C230105 Bilder\Aktuell\C123456_pos_003.jpg
-Error: Failed to rename file from D:\C230105 Bilder\Aktuell\C123456_250609_001_001.jpg to D:\C230105 Bilder\Aktuell\C123456_pos_003.jpg: [WinError 2] The system cannot find the file specified: 'D:\\C230105 Bilder\\Aktuell\\C123456_250609_001_001.jpg' -> 'D:\\C230105 Bilder\\Aktuell\\C123456_pos_003.jpg'
+ "C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe" sign /f
+     "D:\mic-renamer\MicRenamerInternal.pfx" /p "MG3dVFCgTNenFQhF9yWz" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v
+     "D:\mic-renamer\dist\mic-renamer\MIC-ImageRenamer.exe"
