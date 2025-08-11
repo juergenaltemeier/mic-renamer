@@ -130,8 +130,8 @@ class DragDropTableWidget(QTableWidget):
         self.setColumnWidth(0, 24) # Set specific width for the checkbox column.
         self._updating_checks = False # Internal flag to prevent signal loops during checkbox updates.
         self.mode = "normal" # Default renaming mode.
-        self.setColumnCount(5) # Define 5 columns: Checkbox, Filename, Tags/Pos/PA_MAT, Date, Suffix.
-        self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix"]) # Initial header labels.
+        self.setColumnCount(6) # Define 6 columns: Checkbox, Filename, Tags/Pos/PA_MAT, Date, Suffix, Path.
+        self.setHorizontalHeaderLabels(["", "Filename", "Tags", "Date", "Suffix", "Path"]) # Initial header labels.
         
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents) # Checkbox column resizes to content.
@@ -139,6 +139,8 @@ class DragDropTableWidget(QTableWidget):
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Interactive) # Tags/Pos/PA_MAT column interactive.
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents) # Date column resizes to content.
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents) # Suffix column resizes to content.
+        header.setSectionResizeMode(5, QHeaderView.ResizeMode.Interactive) # Path column interactive.
+        self.setColumnWidth(5, 50) # Set initial width of Path column to be small.
         header.setStretchLastSection(True) # Last column stretches to fill available space.
         
         self.setColumnHidden(0, True) # Initially hide the checkbox column.
@@ -566,19 +568,19 @@ class DragDropTableWidget(QTableWidget):
         # Update horizontal header labels and column visibility based on mode.
         if mode == "position":
             self.setHorizontalHeaderLabels([
-                "", "Filename", "Pos", "Date", "Suffix"
+                "", "Filename", "Pos", "Date", "Suffix", "Path"
             ])
             self.setColumnHidden(2, False) # Show 'Pos' column.
             self.setColumnHidden(3, True) # Hide 'Date' column.
         elif mode == "pa_mat":
             self.setHorizontalHeaderLabels([
-                "", "Filename", "PA_MAT", "Date", "Suffix"
+                "", "Filename", "PA_MAT", "Date", "Suffix", "Path"
             ])
             self.setColumnHidden(2, False) # Show 'PA_MAT' column.
             self.setColumnHidden(3, False) # Show 'Date' column.
         else: # Default to "normal" mode.
             self.setHorizontalHeaderLabels(
-                ["", "Filename", "Tags", "Date", "Suffix"]
+                ["", "Filename", "Tags", "Date", "Suffix", "Path"]
             )
             self.setColumnHidden(2, False) # Show 'Tags' column.
             self.setColumnHidden(3, False) # Show 'Date' column.
@@ -647,9 +649,9 @@ class DragDropTableWidget(QTableWidget):
             logger.warning("Viewport width is too small to set equal column widths.")
             return
         
-        # Distribute width among the 4 interactive columns.
-        equal_width = total_width // 4
-        for i in range(1, 5):
+        # Distribute width among the 5 interactive columns.
+        equal_width = total_width // 5
+        for i in range(1, 6):
             self.setColumnWidth(i, equal_width)
         logger.info(f"Set equal column widths to {equal_width}px for interactive columns.")
 
@@ -866,6 +868,10 @@ class DragDropTableWidget(QTableWidget):
             # Column 4: Suffix.
             suffix_item = QTableWidgetItem(extracted_suffix)
             suffix_item.setToolTip(extracted_suffix)
+
+            # Column 5: Path.
+            path_item = QTableWidgetItem(processed_path)
+            path_item.setToolTip(processed_path)
             
             # Set all items in the new row.
             self.setItem(row, 0, check_item)
@@ -873,6 +879,7 @@ class DragDropTableWidget(QTableWidget):
             self.setItem(row, 2, tags_item)
             self.setItem(row, 3, date_item)
             self.setItem(row, 4, suffix_item)
+            self.setItem(row, 5, path_item)
             added_count += 1
             logger.debug(f"Added row for file: {processed_path}")
 
