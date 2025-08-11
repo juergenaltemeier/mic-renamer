@@ -2032,7 +2032,8 @@ Error: {res['error']} """
             paths_to_add, settings_map = self._prepare_restored_files(data)
 
             if paths_to_add:
-                self._import_paths(paths_to_add)
+                for table in self.mode_tabs.all_tables():
+                    table.add_paths(paths_to_add)
 
             self._apply_restored_settings(settings_map)
 

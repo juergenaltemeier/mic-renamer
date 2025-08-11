@@ -81,28 +81,28 @@ class StateManager:
 
     def save(self) -> None:
         """
-        Saves the current application state to the state file (`state.json`).
+        Saves the current application state to the state file (`state.json`) atomically.
 
-        Ensures that the parent directory for the state file exists before attempting
-        to write. Handles potential file I/O errors gracefully.
+        This is achieved by writing to a temporary file first and then renaming it,
+        which prevents the state file from becoming corrupted if the application crashes
+        during the save operation.
         """
+        temp_path = self.path.with_suffix(".tmp")
         try:
-            # Ensure the parent directory exists. `parents=True` creates any missing parent directories.
-            # `exist_ok=True` prevents an error if the directory already exists.
             self.path.parent.mkdir(parents=True, exist_ok=True)
-            # Open the file in write mode and dump the current state as JSON with indentation.
-            with self.path.open("w", encoding="utf-8") as f:
+            with temp_path.open("w", encoding="utf-8") as f:
                 json.dump(self.state, f, indent=2)
+            temp_path.rename(self.path)
             logger.info(f"Successfully saved state to {self.path}.")
         except (IOError, OSError) as e:
-            # Log errors related to file writing or directory creation.
             logger.error(f"Failed to save state to {self.path}: {e}")
         except json.JSONEncodeError as e:
-            # Log errors if the state dictionary cannot be serialized to JSON.
             logger.error(f"Failed to encode state to JSON for {self.path}: {e}")
         except Exception as e:
-            # Catch any other unexpected errors during saving.
             logger.error(f"An unexpected error occurred while saving state to {self.path}: {e}")
+        finally:
+            if temp_path.exists():
+                temp_path.unlink()
 
     def get(self, key: str, default: Any = None) -> Any:
         """

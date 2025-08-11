@@ -71,6 +71,32 @@ class Application:
         # Create and configure the main application window.
         self.window = self._create_main_window()
 
+        # Install the global exception handler.
+        self._install_exception_hook()
+
+    def _install_exception_hook(self):
+        """
+        Installs a global exception hook to catch unhandled exceptions.
+        """
+        sys.excepthook = self._handle_exception
+
+    def _handle_exception(self, exc_type, exc_value, exc_traceback):
+        """
+        Handles unhandled exceptions, logs them, and shows a critical error message.
+        """
+        if issubclass(exc_type, KeyboardInterrupt):
+            sys.__excepthook__(exc_type, exc_value, exc_traceback)
+            return
+
+        self.logger.critical("Unhandled exception caught:", exc_info=(exc_type, exc_value, exc_traceback))
+
+        error_message = (
+            "An unexpected error occurred and the application must close.\n\n"
+            f"Details of the error have been logged to:\n{self.logger.handlers[0].baseFilename}"
+        )
+        QMessageBox.critical(None, "Application Error", error_message)
+        self.app.quit()
+
     def _configure_logging(self):
         """
         Configures the logging system, including log rotation.
