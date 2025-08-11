@@ -501,27 +501,20 @@ class SettingsDialog(QDialog):
             logger.debug("Restore defaults canceled by user.")
             return
 
-        config_path = Path(config_manager.config_dir) # Get the path to the user's config directory.
         try:
-            if config_path.exists():
-                # Recursively remove the configuration directory.
-                shutil.rmtree(config_path)
-                logger.info(f"Removed configuration directory: {config_path}")
+            config_manager.restore_defaults()
+            logger.info("Restored default settings.")
             
             QMessageBox.information(
                 self,
                 title,
                 tr("restore_defaults_done_msg"), # Assuming a translation key for this message.
             )
-            # Quit the entire application after restoring defaults.
-            QApplication.instance().quit()
-            logger.info("Application quitting after restoring defaults.")
-        except OSError as e:
-            logger.error(f"Failed to restore defaults by deleting {config_path}: {e}")
-            QMessageBox.warning(self, title, tr("failed_to_reset_settings").format(error=e)) # Assuming a translation key
+            self.accept() # Accept and close the dialog
+
         except Exception as e:
             logger.critical(f"An unexpected error occurred during restore defaults: {e}")
-            QMessageBox.critical(self, title, tr("unexpected_error_reset_settings").format(error=e)) # Assuming a translation key
+            QMessageBox.critical(self, title, tr("unexpected_error_reset_settings").format(error=e))
 
     def closeEvent(self, event) -> None:
         """
