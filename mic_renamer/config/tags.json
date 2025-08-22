@@ -53,5 +53,11 @@
   "VU1": {"en": "Vaccum Unit Bottom", "de": "Vakuumeinheit unten"},
   "VU2": {"en": "Vaccum Unit Top", "de": "Vakuumeinheit oben"},
   "WIRE": {"en": "Wiring and pneumatic", "de": "Verkabelung und Pneumatik"},
-  "FOUND": {"en": "Foundations", "de": "Fundamente"}
+  "FOUND": {"en": "Foundations", "de": "Fundamente"},
+  "FBAM": {"en": "Mistake BAMO", "de": "Fehler BAMO"},
+  "FCD": {"en": "Mistake CEDEE", "de": "Fehler CeeDee"},
+  "FKMK": {"en": "Mistake Koncar", "de": "Fehler Koncar"},
+  "FUAP": {"en": "Mistake UAP", "de": "Fehler UAP"},
+  "FTKP": {"en": "Mistake Turn Key Partner", "de": "Fehler Turn Key Partner  diverse"},
+  "FCUS": {"en": "Mistake made by suppliers from the customer's side", "de": "Fehler von Lieferanten, von Kundenseite"}
 }

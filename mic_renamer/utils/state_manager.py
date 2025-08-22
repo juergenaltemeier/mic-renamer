@@ -92,6 +92,8 @@ class StateManager:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             with temp_path.open("w", encoding="utf-8") as f:
                 json.dump(self.state, f, indent=2)
+            if self.path.exists():
+                self.path.unlink()
             temp_path.rename(self.path)
             logger.info(f"Successfully saved state to {self.path}.")
         except (IOError, OSError) as e:

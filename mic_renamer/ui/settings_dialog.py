@@ -11,6 +11,7 @@ import shutil
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import requests
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -271,6 +272,12 @@ class SettingsDialog(QDialog):
         btn_remove.clicked.connect(self._remove_selected_tag_row) # Connect to remove row method.
         hl_buttons.addWidget(btn_remove)
         hl_buttons.addStretch() # Push buttons to the left.
+
+        btn_update_tags = QPushButton(tr("update_tags_from_github"))
+        btn_update_tags.setToolTip(tr("update_tags_from_github_desc"))
+        btn_update_tags.clicked.connect(self._update_tags_from_github)
+        hl_buttons.addWidget(btn_update_tags)
+
         layout.addLayout(hl_buttons)
         logger.debug("Tags table and controls added.")
 
@@ -460,6 +467,59 @@ class SettingsDialog(QDialog):
             self.tbl_tags.removeRow(row)
             logger.info(f"Removed tag row for code: {tag_code} at index {row}.")
         logger.info(f"Removed {len(selected_rows)} tag rows.")
+
+    def _update_tags_from_github(self) -> None:
+        """
+        Downloads the latest tags.json from a GitHub repository and updates the local file.
+        New tags are added, and existing tag descriptions are updated.
+        """
+        github_url = "https://raw.githubusercontent.com/juergenaltemeier/mic-renamer/main/mic_renamer/config/tags.json"
+
+        if not github_url:
+            QMessageBox.warning(self, tr("error"), tr("github_url_not_configured"))
+            return
+
+        try:
+            response = requests.get(github_url, timeout=10)
+            response.raise_for_status()
+            github_tags = response.json()
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to download tags from GitHub: {e}")
+            QMessageBox.warning(self, tr("error"), tr("tags_download_failed").format(error=e))
+            return
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse tags from GitHub: {e}")
+            QMessageBox.warning(self, tr("error"), tr("tags_parse_failed").format(error=e))
+            return
+
+        try:
+            with open(DEFAULT_TAGS_FILE, 'r', encoding='utf-8') as f:
+                local_tags = json.load(f)
+        except (IOError, json.JSONDecodeError):
+            local_tags = {}
+
+        # Merge tags
+        merged_tags = local_tags.copy()
+        for tag, description in github_tags.items():
+            merged_tags[tag] = description
+
+        reply = QMessageBox.question(
+            self,
+            tr("update_tags"),
+            tr("confirm_update_tags"),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+
+        if reply == QMessageBox.StandardButton.Yes:
+            try:
+                with open(DEFAULT_TAGS_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(merged_tags, f, indent=2, ensure_ascii=False)
+                logger.info(f"Tags successfully updated from {github_url}.")
+                QMessageBox.information(self, tr("success"), tr("tags_update_success"))
+            except IOError as e:
+                logger.error(f"Failed to write updated tags to {DEFAULT_TAGS_FILE}: {e}")
+                QMessageBox.warning(self, tr("error"), tr("tags_write_failed").format(error=e))
 
     def reset_usage(self) -> None:
         """
