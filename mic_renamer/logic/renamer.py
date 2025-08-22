@@ -145,7 +145,7 @@ class Renamer:
             counter = self.config.start_index
             for item in items_in_group:
                 # Construct the base name including the project name and the `pa_mat` or date key.
-                base = f"{self.project}_PA_MAT{key}"
+                base = f"{self.project}_PA_MAT_{key}"
                 # If indexing is required, append the formatted counter to the base name.
                 # The counter is formatted with leading zeros based on `index_padding` for consistent naming.
                 if use_index:
