@@ -1,3 +1,18 @@
- "C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe" sign /f
-     "D:\mic-renamer\MicRenamerInternal.pfx" /p "MG3dVFCgTNenFQhF9yWz" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v
-     "D:\mic-renamer\dist\mic-renamer\MIC-ImageRenamer.exe"
+PS D:\mic-renamer> pyinstaller mic_renamer.spec
+211 INFO: PyInstaller: 6.15.0, contrib hooks: 2025.8
+211 INFO: Python: 3.13.3
+246 INFO: Platform: Windows-11-10.0.26100-SP0
+246 INFO: Python environment: C:\Python313
+481 INFO: Module search paths (PYTHONPATH):
+['C:\\Python313\\Scripts\\pyinstaller.exe',
+ 'C:\\Python313\\python313.zip',
+ 'C:\\Python313\\DLLs',
+ 'C:\\Python313\\Lib',
+ 'C:\\Python313',
+ 'C:\\Python313\\Lib\\site-packages',
+ 'C:\\Python313\\Lib\\site-packages\\setuptools\\_vendor',
+ 'D:\\mic-renamer',
+ 'D:\\mic-renamer']
+891 INFO: Appending 'datas' from .spec
+ERROR: Unable to find 'D:\\mic-renamer\\mic-renamer\\venv\\Lib\\site-packages\\requests' when adding binary and data files.
+PS D:\mic-renamer> 

@@ -10,7 +10,7 @@ openpyxl==3.1.5
 packaging==25.0
 pandas==2.3.1
 pillow==11.3.0
-pillow_heif==1.0.0
+pi-heif
 pluggy==1.6.0
 pydot==4.0.1
 Pygments==2.19.2
