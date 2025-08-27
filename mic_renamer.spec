@@ -15,7 +15,7 @@ hiddenimports.append('graphviz')
 hiddenimports.append('imageio_ffmpeg.binaries')
 
 
-datas=[('mic_renamer/config/defaults.yaml', 'mic_renamer/config'),
+datas=[('LICENSE', '.'), ('LICENSE-RESTRICTED.md', '.'), ('THIRDPARTY-LICENSES.md', '.')],('mic_renamer/config/defaults.yaml', 'mic_renamer/config'),
        ('mic_renamer/config/tags.json', 'mic_renamer/config'),
        ('mic_renamer/favicon.png', 'mic_renamer'),
        ('mic_renamer/resources/icons/*.svg',
