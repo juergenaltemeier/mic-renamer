@@ -12,10 +12,9 @@ cancellation.
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable, Iterable, List, Tuple
+from typing import Any, Callable, Iterable
 
 from PySide6.QtCore import QObject, QSize, Qt, Signal, Slot
-from PySide6.QtCore import QBuffer, QByteArray, QObject, QSize, Qt, Signal, Slot
 from PySide6.QtGui import QImage, QImageReader, QPixmapCache
 
 logger = logging.getLogger(__name__)
@@ -104,7 +103,7 @@ class PreviewLoader(QObject):
                                 Arguments: (image_path, loaded_qimage).
     """
 
-    finished = Signal(str, QByteArray)
+    finished = Signal(str, QImage)
 
     def __init__(self, path: str, target_size: QSize) -> None:
         """
@@ -121,6 +120,19 @@ class PreviewLoader(QObject):
         self._target_size = target_size
         self._stop = False # Flag to signal the loader to stop.
         logger.debug(f"PreviewLoader initialized for path: {self._path}, target size: {self._target_size.width()}x{self._target_size.height()}")
+
+    @Slot(str, QSize)
+    def request(self, path: str, target_size: QSize) -> None:
+        """
+        Queued-slot to request loading a preview for the given path and target size.
+
+        This is safe to call from the UI thread; it will run in the worker thread
+        due to QObject thread-affinity and Qt's queued connections.
+        """
+        self._path = path
+        self._target_size = target_size
+        self._stop = False
+        self.run()
 
     @Slot()
     def run(self) -> None:
@@ -142,11 +154,23 @@ class PreviewLoader(QObject):
             reader = QImageReader(self._path)
             if not reader.canRead():
                 logger.warning(f"QImageReader cannot read image file: {self._path}. Format unsupported or file corrupted.")
-                self.finished.emit(self._path, img) # Emit empty QImage on failure.
+                self.finished.emit(self._path, QImage()) # Emit empty QImage on failure.
                 return
 
             # Enable auto-transformation (e.g., for EXIF orientation).
             reader.setAutoTransform(True)
+            # Ensure a sensible scaled size to cap memory/CPU in early selection storms
+            fallback = QSize(1280, 720)
+            target = self._target_size if (self._target_size.isValid() and self._target_size.width() >= 16 and self._target_size.height() >= 16) else fallback
+            try:
+                orig = reader.size()
+                if orig.isValid():
+                    scaled = orig.scaled(target, Qt.KeepAspectRatio)
+                    reader.setScaledSize(scaled)
+                else:
+                    reader.setScaledSize(target)
+            except Exception:
+                reader.setScaledSize(target)
             img = reader.read()
 
             if img.isNull():
@@ -154,25 +178,9 @@ class PreviewLoader(QObject):
                 self.finished.emit(self._path, QImage()) # Emit empty QImage on read failure.
                 return
 
-            # If not stopped and target size is valid, scale the image.
-            if not self._stop and self._target_size.isValid() and not img.isNull():
-                # Scale the image, keeping aspect ratio and using smooth transformation for quality.
-                scaled_img = img.scaled(
-                    self._target_size, Qt.KeepAspectRatio, Qt.SmoothTransformation
-                )
-                logger.debug(f"Scaled image {self._path} from {img.width()}x{img.height()} to {scaled_img.width()}x{scaled_img.height()}")
-                img = scaled_img
-
-            # Convert QImage to QByteArray (PNG format)
-            byte_array = QByteArray()
-            buffer = QBuffer(byte_array)
-            buffer.open(QBuffer.WriteOnly)
-            img.save(buffer, "PNG") # Save as PNG to preserve quality
-            buffer.close()
-            
-            # Emit the finished signal with the path and the QByteArray
+            # Emit the finished signal with the path and the QImage directly
             if not self._stop:
-                self.finished.emit(self._path, byte_array)
+                self.finished.emit(self._path, img)
                 logger.info(f"PreviewLoader finished for {self._path}.")
             else:
                 logger.info(f"PreviewLoader for {self._path} stopped before emitting finished signal.")
@@ -180,9 +188,9 @@ class PreviewLoader(QObject):
         except Exception as e:
             # Catch any errors during image loading or processing.
             logger.error(f"Error loading or scaling preview for {self._path}: {e}")
-            # Emit empty QByteArray on error
+            # Emit empty image on error
             if not self._stop: # Only emit on error if not stopped
-                self.finished.emit(self._path, QByteArray())
+                self.finished.emit(self._path, QImage())
         
     def path(self) -> str:
         """
@@ -209,4 +217,3 @@ class PreviewLoader(QObject):
 # The value is in kilobytes (KB). 20480 KB = 20 MB.
 QPixmapCache.setCacheLimit(10240)
 logger.info(f"QPixmapCache limit set to {QPixmapCache.cacheLimit()} KB.")
-

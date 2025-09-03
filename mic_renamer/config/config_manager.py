@@ -265,6 +265,15 @@ class ConfigManager:
 
         self._config = defaults # Update the cached configuration.
         self.save(defaults) # Save the restored defaults to disk.
+
+        # Also restore the default tags file to bundled defaults.
+        try:
+            from ..logic.tag_loader import restore_default_tags
+            restore_default_tags()
+            logger.info("Tags restored to bundled defaults.")
+        except Exception as e:
+            logger.error(f"Failed to restore default tags during restore_defaults: {e}")
+
         logger.info("Configuration successfully restored to defaults.")
         return defaults
 
@@ -284,32 +293,49 @@ class ConfigManager:
             logger.info(f"Config file {self.config_file} not found. Saving current config to create it.")
             self.save(cfg)
         
-        # Ensure tags and tag usage files exist by calling their respective restore/save functions.
+        # Ensure tags and tag usage files exist. Only create defaults if missing.
         try:
-            from ..logic.tag_loader import restore_default_tags
+            from ..logic.tag_loader import (
+                BUNDLED_TAGS_FILE,
+                BUNDLED_TAGS_JSON,
+            )
             from ..logic.tag_usage import save_counts
-            
-            # Restore default tags if the tags file is missing or needs to be reset.
-            # This function handles its own file creation and error logging.
-            restore_default_tags()
+
+            # Determine configured tags file path (absolute)
+            tags_file_str = cfg.get("tags_file", "tags.json")
+            tags_path = Path(tags_file_str)
+            if not tags_path.is_absolute():
+                tags_path = self.config_dir / tags_path
+
+            if not tags_path.is_file():
+                logger.info(f"Tags file not found at {tags_path}. Creating from defaults once.")
+                try:
+                    tags_path.parent.mkdir(parents=True, exist_ok=True)
+                    try:
+                        # Prefer bundled file when available
+                        tags_path.write_text(BUNDLED_TAGS_FILE.read_text(encoding="utf-8"), encoding="utf-8")
+                    except Exception:
+                        # Fallback to embedded JSON
+                        tags_path.write_text(BUNDLED_TAGS_JSON, encoding="utf-8")
+                    logger.info(f"Created default tags file at {tags_path}.")
+                except Exception as e:
+                    logger.error(f"Failed to create default tags file at {tags_path}: {e}")
 
             # Ensure the tag usage file exists and is initialized (if not already).
             usage_file_path_str = cfg.get("tag_usage_file")
             if usage_file_path_str:
                 usage_path = Path(usage_file_path_str)
-                # If the path is relative, resolve it against the config directory.
                 if not usage_path.is_absolute():
                     usage_path = self.config_dir / usage_path
-                
                 if not usage_path.is_file():
                     logger.info(f"Tag usage file {usage_path} not found. Initializing with empty counts.")
                     try:
-                        save_counts({}) # This function handles directory creation and saving.
+                        save_counts({})
                     except Exception as e:
                         logger.error(f"Failed to initialize tag usage file {usage_path}: {e}")
             else:
                 logger.warning("'tag_usage_file' setting is missing in config. Cannot ensure its existence.")
         except ImportError as e:
-            logger.error(f"Failed to import tag_loader or tag_usage for file assurance: {e}")
+            logger.error(f"Failed to import dependencies for file assurance: {e}")
         except Exception as e:
             logger.error(f"An unexpected error occurred during file assurance: {e}")

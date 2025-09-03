@@ -1,0 +1,534 @@
+2025-09-03 12:43:06,976 - mic_renamer.app - INFO - Mic-Renamer application starting...
+2025-09-03 12:43:07,003 - mic_renamer.ui.theme - INFO - Applying 'dark' theme.
+2025-09-03 12:43:07,004 - mic_renamer.ui.theme - INFO - Loaded main stylesheet from: D:\mic-renamer\mic_renamer\ui\styles\dark_style.qss
+2025-09-03 12:43:07,004 - mic_renamer.ui.theme - INFO - All styles applied successfully.
+2025-09-03 12:43:07,004 - mic_renamer.app - INFO - Applied 'dark' theme.
+2025-09-03 12:43:07,008 - mic_renamer.utils.state_manager - INFO - StateManager initialized. State file path: C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\state.json
+2025-09-03 12:43:07,018 - mic_renamer.utils.state_manager - INFO - Successfully loaded state from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\state.json.
+2025-09-03 12:43:07,019 - mic_renamer.utils.i18n - INFO - Language set to: en
+2025-09-03 12:43:07,019 - mic_renamer.logic.undo_manager - INFO - UndoManager initialized.
+2025-09-03 12:43:07,030 - mic_renamer.ui.otp_input - INFO - OtpInput widget initialized.
+2025-09-03 12:43:08,144 - mic_renamer.ui.panels.media_viewer - INFO - VideoPlayer UI setup complete.
+2025-09-03 12:43:08,177 - mic_renamer.ui.panels.media_viewer - INFO - MediaViewer initialized.
+2025-09-03 12:43:08,199 - mic_renamer.ui.panels.mode_tabs - INFO - ModeTabs widget initialized.
+2025-09-03 12:43:08,202 - mic_renamer.ui.panels.file_table - INFO - DragDropTableWidget initialized.
+2025-09-03 12:43:08,214 - mic_renamer.ui.panels.file_table - INFO - DragDropTableWidget initialized.
+2025-09-03 12:43:08,219 - mic_renamer.ui.panels.file_table - INFO - DragDropTableWidget initialized.
+2025-09-03 12:43:08,228 - mic_renamer.ui.panels.file_table - INFO - Setting table mode to: normal
+2025-09-03 12:43:08,228 - mic_renamer.ui.panels.file_table - INFO - Setting table mode to: position
+2025-09-03 12:43:08,228 - mic_renamer.ui.panels.file_table - INFO - Setting table mode to: pa_mat
+2025-09-03 12:43:08,268 - mic_renamer.ui.panels.tag_panel - INFO - TagPanel initialized.
+2025-09-03 12:43:08,268 - mic_renamer.ui.flow_layout - INFO - FlowLayout initialized.
+2025-09-03 12:43:08,269 - mic_renamer.ui.panels.tag_panel - INFO - Rebuilding TagPanel for language: default
+2025-09-03 12:43:08,272 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:08,273 - mic_renamer.logic.tag_usage - INFO - Successfully loaded tag usage counts from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tag_usage.json.
+2025-09-03 12:43:08,355 - mic_renamer.app - INFO - Showing main window.
+2025-09-03 12:43:08,371 - mic_renamer.ui.panels.file_table - INFO - Set equal column widths to 180px for interactive columns.
+2025-09-03 12:43:08,372 - mic_renamer.ui.panels.file_table - INFO - Set equal column widths to 127px for interactive columns.
+2025-09-03 12:43:08,372 - mic_renamer.ui.panels.file_table - INFO - Set equal column widths to 127px for interactive columns.
+2025-09-03 12:43:16,833 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:16,862 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:16,868 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:16,871 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:16,931 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:16,933 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:16,982 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:16,987 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,024 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_026.jpg.
+2025-09-03 12:43:17,028 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,030 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,058 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,062 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,082 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,084 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,101 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,106 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,126 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,134 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,152 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,154 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,172 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,173 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,193 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,202 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,215 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,217 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,234 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,236 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,250 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,252 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,266 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,268 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,284 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,286 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,300 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,302 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,317 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,319 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,334 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,336 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,352 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,353 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,368 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,371 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,386 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,387 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,401 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,403 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,418 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,419 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,437 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,438 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,453 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,455 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,473 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,475 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,490 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,495 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,507 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,512 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,528 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,533 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,548 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,550 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,565 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,567 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,582 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,584 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,603 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,605 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,621 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,623 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,640 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,645 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,657 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,663 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,679 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,682 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,699 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,701 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,717 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,719 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,733 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,735 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,750 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,752 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,766 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,768 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,783 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,785 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,800 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,802 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,817 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,819 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,833 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,835 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,852 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,854 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,871 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,873 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,894 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,899 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,915 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,917 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,933 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,935 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,951 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,953 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,969 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,971 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:17,985 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:17,987 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,000 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,002 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,017 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,019 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,033 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,035 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,050 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,052 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,066 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,069 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,086 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,088 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,105 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,107 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,124 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,130 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,148 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,149 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,166 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,168 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,183 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,186 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,201 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,204 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,219 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,221 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,237 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,239 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,254 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,257 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,271 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,274 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,290 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,297 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,314 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,316 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,333 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,335 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,352 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,354 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,371 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,372 - mic_renamer.utils.meta_utils - WARNING - An unexpected error occurred while reading EXIF from D:\C230105 Bilder\Aktuell\C000000_250629_001.jpg: cannot access local variable 'exif' where it is not associated with a value
+2025-09-03 12:43:18,373 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,388 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,389 - mic_renamer.utils.meta_utils - WARNING - An unexpected error occurred while reading EXIF from D:\C230105 Bilder\Aktuell\C000000_250629_002_test.jpg: cannot access local variable 'exif' where it is not associated with a value
+2025-09-03 12:43:18,390 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,418 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,419 - mic_renamer.utils.meta_utils - WARNING - An unexpected error occurred while reading EXIF from D:\C230105 Bilder\Aktuell\C000000_250630_test.jpg: cannot access local variable 'exif' where it is not associated with a value
+2025-09-03 12:43:18,421 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,448 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,450 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,470 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,473 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,486 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,488 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,503 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,505 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,521 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,523 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,537 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,539 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,553 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,556 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,571 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,573 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,587 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,590 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,606 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,609 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,626 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,633 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,647 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,653 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,669 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,671 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,687 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,689 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,702 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,705 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,720 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,723 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,738 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,740 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,754 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,756 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,770 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,773 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,788 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,790 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,805 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,811 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,829 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,832 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,850 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,852 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,867 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,869 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,885 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,887 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,904 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,907 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,921 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,924 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,939 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,945 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,961 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,965 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:18,983 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:18,985 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,002 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,005 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,021 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,023 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,039 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,044 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,058 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,064 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,082 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,085 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,100 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,102 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,118 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,122 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,137 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,140 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,155 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,159 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,176 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,180 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,199 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,202 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,217 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,220 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,236 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,239 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,256 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,262 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,282 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,284 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,300 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,303 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,320 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,323 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,341 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,349 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,365 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,368 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,383 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,386 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,401 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,404 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,422 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,428 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,442 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,448 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,466 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,469 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,487 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,489 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,506 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,512 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,527 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,533 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,550 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,552 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,568 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,572 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,600 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,603 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,621 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,624 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,640 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,647 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,664 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,667 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,684 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,687 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,703 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,706 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,723 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,728 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,747 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,751 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,770 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,774 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,800 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,802 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,820 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,823 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,846 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,851 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,867 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,869 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,889 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,896 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,917 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,920 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,939 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,946 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,964 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,967 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:19,985 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:19,987 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,006 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,012 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,032 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,035 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,055 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,063 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,082 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,085 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,101 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,103 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,120 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,123 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,145 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,148 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,166 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,170 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,188 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,190 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,207 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,217 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,234 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,236 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:20,255 - mic_renamer.logic.tag_loader - INFO - Successfully loaded tags from C:\Users\Jürgen Altemeier\AppData\Local\mic_renamer\mic_renamer\tags.json.
+2025-09-03 12:43:20,258 - mic_renamer.ui.panels.file_table - INFO - Successfully added 1 new paths to the table.
+2025-09-03 12:43:21,216 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_029.jpg.
+2025-09-03 12:43:21,449 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_033.jpg.
+2025-09-03 12:43:21,702 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_040.jpg.
+2025-09-03 12:43:22,121 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_031.jpg.
+2025-09-03 12:43:22,432 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_042.jpg.
+2025-09-03 12:43:22,764 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_034.jpg.
+2025-09-03 12:43:23,122 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_030.jpg.
+2025-09-03 12:43:23,273 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_037.jpg.
+2025-09-03 12:43:24,133 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_028.jpg.
+2025-09-03 12:43:24,341 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_036.jpg.
+2025-09-03 12:43:24,481 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_039.jpg.
+2025-09-03 12:43:24,616 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_041.jpg.
+2025-09-03 12:43:24,949 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_035.jpg.
+2025-09-03 12:43:25,130 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_031.jpg.
+2025-09-03 12:43:25,484 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_040.jpg.
+2025-09-03 12:43:27,041 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_037.jpg.
+2025-09-03 12:43:27,474 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_034.jpg.
+2025-09-03 12:43:28,429 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_032.jpg.
+2025-09-03 12:43:28,698 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_038.jpg.
+2025-09-03 12:43:29,915 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_021.jpg.
+2025-09-03 12:43:30,139 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_014.jpg.
+2025-09-03 12:43:30,261 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_012.jpg.
+2025-09-03 12:43:30,425 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_008.jpg.
+2025-09-03 12:43:31,537 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_010.jpg.
+2025-09-03 12:43:31,710 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_011.jpg.
+2025-09-03 12:43:31,842 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_017.jpg.
+2025-09-03 12:43:32,015 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_020.jpg.
+2025-09-03 12:43:32,169 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_022.jpg.
+2025-09-03 12:43:32,643 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_009.jpg.
+2025-09-03 12:43:32,957 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_019.jpg.
+2025-09-03 12:43:33,132 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_023.jpg.
+2025-09-03 12:43:34,316 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250621_002.jpg.
+2025-09-03 12:43:34,764 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_015.jpg.
+2025-09-03 12:43:35,051 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_001.jpg.
+2025-09-03 12:43:35,459 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_008.jpg.
+2025-09-03 12:43:35,616 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_012.jpg.
+2025-09-03 12:43:36,040 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250621_004.jpg.
+2025-09-03 12:43:36,176 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_010.jpg.
+2025-09-03 12:43:37,209 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_006.jpg.
+2025-09-03 12:43:38,304 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_014.jpg.
+2025-09-03 12:43:38,434 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_015.jpg.
+2025-09-03 12:43:38,808 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_008.jpg.
+2025-09-03 12:43:39,081 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_003.jpg.
+2025-09-03 12:43:40,896 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_013.jpg.
+2025-09-03 12:43:41,659 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_016.jpg.
+2025-09-03 12:43:41,965 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250622_008.jpg.
+2025-09-03 12:43:42,514 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250614_020.jpg.
+2025-09-03 12:43:42,732 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250619_007.jpg.
+2025-09-03 12:43:43,177 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250620_001.jpg.
+2025-09-03 12:43:43,807 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250615.jpg.
+2025-09-03 12:43:44,032 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250619_008.jpg.
+2025-09-03 12:43:45,548 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C240073_250617.jpg.
+2025-09-03 12:43:46,273 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_043.jpg.
+2025-09-03 12:43:46,430 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_030.jpg.
+2025-09-03 12:43:46,616 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_041.jpg.
+2025-09-03 12:43:46,863 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_029.jpg.
+2025-09-03 12:43:47,041 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_038.jpg.
+2025-09-03 12:43:47,887 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_033.jpg.
+2025-09-03 12:43:48,066 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_031.jpg.
+2025-09-03 12:43:48,537 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_032.jpg.
+2025-09-03 12:43:48,693 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_034.jpg.
+2025-09-03 12:43:48,875 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_036.jpg.
+2025-09-03 12:43:49,227 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_029.jpg.
+2025-09-03 12:43:49,403 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_043.jpg.
+2025-09-03 12:43:51,306 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_030.jpg.
+2025-09-03 12:43:51,545 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_039.jpg.
+2025-09-03 12:43:52,091 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_026.jpg.
+2025-09-03 12:43:52,510 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_037.jpg.
+2025-09-03 12:43:53,039 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_031.jpg.
+2025-09-03 12:43:53,213 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_043.jpg.
+2025-09-03 12:43:53,866 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_047.jpg.
+2025-09-03 12:43:54,259 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_050.jpg.
+2025-09-03 12:43:56,120 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_046.jpg.
+2025-09-03 12:43:57,901 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_051.jpg.
+2025-09-03 12:43:58,075 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_048.jpg.
+2025-09-03 12:43:58,277 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_044.jpg.
+2025-09-03 12:43:58,485 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_040.jpg.
+2025-09-03 12:43:58,839 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_053.jpg.
+2025-09-03 12:43:59,325 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_052.jpg.
+2025-09-03 12:44:00,149 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_045.jpg.
+2025-09-03 12:44:01,714 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_055.jpg.
+2025-09-03 12:44:02,350 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_049.jpg.
+2025-09-03 12:44:03,070 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_038.jpg.
+2025-09-03 12:44:03,730 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_053.jpg.
+2025-09-03 12:44:04,277 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_045.jpg.
+2025-09-03 12:44:04,739 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_039.jpg.
+2025-09-03 12:44:05,257 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_054.jpg.
+2025-09-03 12:44:06,056 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_050.jpg.
+2025-09-03 12:44:06,195 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_051.jpg.
+2025-09-03 12:44:06,345 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_052.jpg.
+2025-09-03 12:44:06,692 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_041.jpg.
+2025-09-03 12:44:08,899 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_046.jpg.
+2025-09-03 12:44:09,341 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_066.jpg.
+2025-09-03 12:44:09,498 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_072.jpg.
+2025-09-03 12:44:10,483 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_070.jpg.
+2025-09-03 12:44:11,759 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_069.jpg.
+2025-09-03 12:44:13,145 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_052.jpg.
+2025-09-03 12:44:16,911 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_057.jpg.
+2025-09-03 12:44:17,108 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_067_test.jpg.
+2025-09-03 12:44:17,335 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_053.jpg.
+2025-09-03 12:44:17,540 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_061.jpg.
+2025-09-03 12:44:17,755 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_050.jpg.
+2025-09-03 12:44:18,694 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_055.jpg.
+2025-09-03 12:44:20,209 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_039.jpg.
+2025-09-03 12:44:20,549 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_052.jpg.
+2025-09-03 12:44:20,719 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_054.jpg.
+2025-09-03 12:44:21,055 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_040.jpg.
+2025-09-03 12:44:21,732 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_045.jpg.
+2025-09-03 12:44:21,856 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_048.jpg.
+2025-09-03 12:44:22,037 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_042.jpg.
+2025-09-03 12:44:22,323 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_037.jpg.
+2025-09-03 12:44:23,291 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_044.jpg.
+2025-09-03 12:44:24,179 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_046.jpg.
+2025-09-03 12:44:24,944 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_047.jpg.
+2025-09-03 12:44:25,156 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_056.jpg.
+2025-09-03 12:44:25,941 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_002.jpg.
+2025-09-03 12:44:26,162 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_068_test.jpg.
+2025-09-03 12:44:26,360 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_069.jpg.
+2025-09-03 12:44:26,581 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_071.jpg.
+2025-09-03 12:44:26,717 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_063.jpg.
+2025-09-03 12:44:28,186 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_005.jpg.
+2025-09-03 12:44:28,341 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_006.jpg.
+2025-09-03 12:44:28,690 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_066.jpg.
+2025-09-03 12:44:28,804 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_065.jpg.
+2025-09-03 12:44:29,214 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_001.jpg.
+2025-09-03 12:44:29,537 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_007.jpg.
+2025-09-03 12:44:29,792 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_068_test.jpg.
+2025-09-03 12:44:30,164 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_060.jpg.
+2025-09-03 12:44:30,535 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_070.jpg.
+2025-09-03 12:44:30,827 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_041.jpg.
+2025-09-03 12:44:31,135 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_054.jpg.
+2025-09-03 12:44:31,650 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_052.jpg.
+2025-09-03 12:44:31,986 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_045.jpg.
+2025-09-03 12:44:32,332 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_057.jpg.
+2025-09-03 12:44:33,104 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_056.jpg.
+2025-09-03 12:44:34,360 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_035.jpg.
+2025-09-03 12:44:34,568 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_033.jpg.
+2025-09-03 12:44:34,685 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_036.jpg.
+2025-09-03 12:44:34,901 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_029.jpg.
+2025-09-03 12:44:35,163 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_026.jpg.
+2025-09-03 12:44:35,803 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_041.jpg.
+2025-09-03 12:44:35,940 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_042.jpg.
+2025-09-03 12:44:36,638 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_034.jpg.
+2025-09-03 12:44:38,508 - mic_renamer.ui.main_window - INFO - Saving session...
+2025-09-03 12:44:38,512 - mic_renamer.ui.main_window - INFO - Session saved successfully.
+2025-09-03 12:44:40,245 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_032.jpg.
+2025-09-03 12:44:41,837 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_027.jpg.
+2025-09-03 12:44:42,415 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_039.jpg.
+2025-09-03 12:44:42,963 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_033.jpg.
+2025-09-03 12:44:43,594 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_038.jpg.
+2025-09-03 12:44:43,797 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_043.jpg.
+2025-09-03 12:44:44,485 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_030.jpg.
+2025-09-03 12:44:44,711 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_035.jpg.
+2025-09-03 12:44:45,196 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_001.jpg.
+2025-09-03 12:44:45,370 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_007.jpg.
+2025-09-03 12:44:45,561 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_004.jpg.
+2025-09-03 12:44:45,723 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_067_test.jpg.
+2025-09-03 12:44:45,903 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_005.jpg.
+2025-09-03 12:44:46,093 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_072.jpg.
+2025-09-03 12:44:46,395 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_003.jpg.
+2025-09-03 12:44:47,310 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_069.jpg.
+2025-09-03 12:44:48,045 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_066.jpg.
+2025-09-03 12:44:48,263 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250622_067_test.jpg.
+2025-09-03 12:44:48,432 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_006.jpg.
+2025-09-03 12:44:48,557 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_007.jpg.
+2025-09-03 12:44:51,077 - mic_renamer.utils.workers - INFO - PreviewLoader finished for D:/C230105 Bilder/Aktuell/C000000_250623_002.jpg.

@@ -6,8 +6,8 @@ from datetime import datetime
 from pathlib import Path
 
 import gc
-from PySide6.QtCore import (QByteArray, QItemSelectionModel, QPoint, QSize, Qt, Signal, Slot, QThread, QTimer)
-from PySide6.QtGui import QImage, QPixmap, QPixmapCache, QAction
+from PySide6.QtCore import (QItemSelectionModel, QPoint, QSize, Qt, Signal, Slot, QThread, QTimer)
+from PySide6.QtGui import QImage, QPixmap, QPixmapCache, QAction, QImageReader
 from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QSizePolicy, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QProgressDialog, QToolBar, QMenu, QToolButton, QSplitter, QComboBox, QDialogButtonBox, QInputDialog)
 
 from .. import config_manager
@@ -125,6 +125,23 @@ class RenamerApp(QWidget):
         self._connect_signals()
         self._load_initial_state()
         self._setup_shortcuts()
+        # Track last requested preview path to ignore stale worker results
+        self._last_preview_path: str | None = None
+        # Hold a single pending preview path if a load is already in progress
+        self._pending_preview_path: str | None = None
+        # Create a persistent preview worker thread and loader
+        try:
+            self._preview_thread = QThread(self)
+            self._preview_loader = PreviewLoader("", self.size())
+            self._preview_loader.moveToThread(self._preview_thread)
+            self._preview_loader.finished.connect(self._on_preview_loaded)
+            self._preview_thread.start()
+            self._is_preview_loading = False
+        except Exception as e:
+            self.logger.error(f"Failed to initialize preview worker thread: {e}")
+            self._preview_thread = None
+            self._preview_loader = None
+            self._is_preview_loading = False
 
     def _check_and_offer_certificate_install(self):
         pass
@@ -306,7 +323,7 @@ class RenamerApp(QWidget):
 
         self._sel_change_timer = QTimer(self)
         self._sel_change_timer.setSingleShot(True)
-        self._sel_change_timer.setInterval(100)
+        self._sel_change_timer.setInterval(180)
         self._sel_change_timer.timeout.connect(self._apply_selection_change)
 
         self._session_save_timer = QTimer(self)
@@ -893,7 +910,9 @@ class RenamerApp(QWidget):
         item_to_preview = self.table_widget.item(current_row, 1)
         if item_to_preview:
             path_to_preview = item_to_preview.data(int(Qt.ItemDataRole.UserRole))
-            self.load_preview(path_to_preview)
+            # Avoid reloading the same path repeatedly
+            if path_to_preview != getattr(self.media_viewer, "current_media_path", None):
+                self.load_preview(path_to_preview)
 
         self.table_widget.sync_check_column()
         self.update_status()
@@ -1093,34 +1112,18 @@ class RenamerApp(QWidget):
     def load_preview(self, path: str):
         """Load preview image/video using a background thread."""
         self.logger.debug("Request to load preview for: %s", path)
+        self._last_preview_path = path or ""
         
         # Clear previous pixmap from cache if a new path is being loaded
         if self.media_viewer.current_media_path and self.media_viewer.current_media_path != path:
             QPixmapCache.remove(self.media_viewer.current_media_path)
             self.logger.debug(f"Removed {self.media_viewer.current_media_path} from QPixmapCache.")
 
-        # If a thread is already running, request it to quit and wait for it to finish.
-        if self._preview_thread and self._preview_thread.isRunning():
-            self.logger.debug("Stopping previous preview loader.")
-            if self._preview_loader: # Ensure _preview_loader is not None
-                self._preview_loader.stop()
-            self._preview_thread.quit()
-            if not self._preview_thread.wait(1000): # Wait up to 1000ms
-                self.logger.warning("Preview thread did not quit gracefully, terminating.")
-                self._preview_thread.terminate()
-                self._preview_thread.wait(2000) # Wait longer for termination
-            
-            # Disconnect signals before deleting objects to prevent crashes
-            self._preview_loader.finished.disconnect(self._preview_thread.quit)
-            self._preview_loader.finished.disconnect(self._preview_loader.deleteLater)
-            self._preview_thread.finished.disconnect(self._preview_thread.deleteLater)
-            self._preview_loader.finished.disconnect(self._on_preview_loaded)
-
-            # Explicitly delete the old objects
-            self._preview_loader.deleteLater()
-            self._preview_thread.deleteLater()
-            self._preview_loader = None
-            self._preview_thread = None
+        # If a load is already running, queue the request as pending and return.
+        if self._preview_loader and self._is_preview_loading:
+            self.logger.debug("Preview already loading; queueing pending request for %s", path)
+            self._pending_preview_path = path
+            return
 
         if not path:
             self.media_viewer.load_path("")
@@ -1133,40 +1136,74 @@ class RenamerApp(QWidget):
             return
 
         # Handle images with background loading and caching
-        pix = QPixmap()
-        if QPixmapCache.find(path, pix):
-            self.media_viewer.show_pixmap(pix)
-            return
+        try:
+            pix = QPixmap()
+            if QPixmapCache.find(path, pix) and not pix.isNull():
+                self.media_viewer.show_pixmap(pix)
+                return
+        except Exception:
+            # Fallback: ignore cache if API signature differs
+            pass
 
-        self._preview_loader = PreviewLoader(path, self.media_viewer.size())
-        self._preview_thread = QThread()
-        self._preview_loader.moveToThread(self._preview_thread)
-        self._preview_thread.started.connect(self._preview_loader.run)
-        self._preview_loader.finished.connect(self._preview_thread.quit)
-        self._preview_loader.finished.connect(self._preview_loader.deleteLater)
-        self._preview_thread.finished.connect(self._preview_thread.deleteLater)
-        self._preview_loader.finished.connect(self._on_preview_loaded)
-        self._preview_thread.start()
-        
-        self.current_preview_thread = self._preview_thread
+        # Issue a request to the persistent loader
+        if self._preview_loader and self._preview_thread and self._preview_thread.isRunning():
+            self._is_preview_loading = True
+            # Call queued-slot on worker thread
+            self._preview_loader.request(path, self.media_viewer.size())
+        else:
+            self.logger.warning("Preview worker not available; loading directly on UI thread as fallback.")
+            # UI-thread fallback: minimal load using QImageReader
+            reader = QImageReader(path)
+            reader.setAutoTransform(True)
+            image = reader.read()
+            if image.isNull():
+                placeholder = self.media_viewer.image_viewer.placeholder_pixmap
+                self.media_viewer.show_pixmap(placeholder)
+            else:
+                self.media_viewer.show_pixmap(QPixmap.fromImage(image))
+            self._is_preview_loading = False
 
-    @Slot(str, QByteArray)
-    def _on_preview_loaded(self, path: str, image_data: QByteArray) -> None:
-        self.logger.debug("Preview loaded for: %s. Current loader path: %s", path, self._preview_loader.path() if self._preview_loader else "None")
-        if self._preview_loader and self._preview_loader.path() != path:
-            self.logger.debug("Ignoring stale preview for: %s", path)
-            return
-        self._preview_thread = None
-        self._preview_loader = None
-        if image_data.isEmpty():
-            logging.getLogger(__name__).warning("Failed to load preview: %s", path)
-            placeholder = self.media_viewer.image_viewer.placeholder_pixmap
-            self.media_viewer.show_pixmap(placeholder)
-            return
-        pixmap = QPixmap()
-        pixmap.loadFromData(image_data)
-        QPixmapCache.insert(path, pixmap)
-        self.media_viewer.show_pixmap(pixmap)
+    @Slot(str, QImage)
+    def _on_preview_loaded(self, path: str, image: QImage) -> None:
+        try:
+            self.logger.debug("Preview loaded for: %s (last requested: %s)", path, self._last_preview_path)
+            # Ignore stale results that do not match the latest requested path
+            if path != (self._last_preview_path or ""):
+                self.logger.debug("Ignoring stale preview for: %s", path)
+                # If there is still a pending request, ensure it is started next
+                next_req = self._pending_preview_path
+                self._pending_preview_path = None
+                if next_req:
+                    self.load_preview(next_req)
+                return
+
+            # Mark loader as available for the next request
+            self._is_preview_loading = False
+
+            if image.isNull():
+                logging.getLogger(__name__).warning("Failed to load preview: %s", path)
+                placeholder = self.media_viewer.image_viewer.placeholder_pixmap
+                self.media_viewer.show_pixmap(placeholder)
+                # Chain next pending request if present
+                next_req = self._pending_preview_path
+                self._pending_preview_path = None
+                if next_req:
+                    self.load_preview(next_req)
+                return
+            pixmap = QPixmap.fromImage(image)
+            try:
+                QPixmapCache.insert(path, pixmap)
+            except Exception:
+                # Cache insert may fail if key too long or cache issues; ignore
+                pass
+            self.media_viewer.show_pixmap(pixmap)
+            # If we have a pending request queued, start it now (latest wins semantics)
+            next_req = self._pending_preview_path
+            self._pending_preview_path = None
+            if next_req and next_req != path:
+                self.load_preview(next_req)
+        except Exception as e:
+            self.logger.exception(f"Unhandled error in _on_preview_loaded for {path}: {e}")
 
     def goto_previous_item(self):
         row = self.table_widget.currentRow()
@@ -2094,12 +2131,18 @@ Error: {res['error']} """
         """Handles the application closing event."""
         self.logger.info("Close event triggered.")
         if self._preview_loader:
-            self.logger.debug("Stopping preview loader on close.")
-            self._preview_loader.stop()
+            try:
+                self.logger.debug("Stopping preview loader on close.")
+                self._preview_loader.stop()
+            except Exception:
+                pass
         if self._preview_thread and self._preview_thread.isRunning():
-            self.logger.debug("Waiting for preview thread to finish on close.")
-            self._preview_thread.quit()
-            self._preview_thread.wait()
+            try:
+                self.logger.debug("Waiting for preview thread to finish on close.")
+                self._preview_thread.quit()
+                self._preview_thread.wait(2000)
+            except Exception:
+                pass
 
         if self.state_manager:
             self.state_manager.set("width", self.width())
