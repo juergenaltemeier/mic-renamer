@@ -1,6 +1,6 @@
 {
   "AU": {"en": "Autoclave", "de": "Autoklav"},
-  "AU_DO": {"en": "Autoclave door & Drive", "de": "Autoklavtür & Antrieb"},
+  "AU_DO": {"en": "Autoclave door", "de": "Autoklavtür"},
   "AU_INS": {"en": "Autoclave insulation", "de": "Autoklav-Isolierung"},
   "BR": {"en": "Bridge for loading with aircaster or rail", "de": "Brücke zur Beladung mit Luftkissen oder Schiene"},
   "BO": {"en": "Bogie, trolley, drive", "de": "Fahrgestell, Wagen, Antrieb"},
